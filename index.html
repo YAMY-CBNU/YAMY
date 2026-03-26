@@ -1,0 +1,870 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cooking Steps - 맛있는 요리의 시작</title>
+  </head>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: white;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 100%;
+      margin: 0 auto;
+      background: white;
+      min-height: 100vh;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .section {
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      margin: 10px;
+      background: white;
+    }
+
+    .title-link {
+      color: white;
+      text-decoration: none;
+      display: inline-block;
+      transition:
+        color 0.2s ease,
+        transform 0.2s ease;
+    }
+
+    .title-link:hover {
+      color: #fffab4;
+      transform: scale(1.02);
+    }
+
+    #header {
+      background-color: rgb(255, 180, 29);
+      color: white;
+      padding: 10px 20px;
+      text-align: center;
+      border: none;
+      border-radius: 0;
+    }
+
+    #header h1 {
+      font-size: 4em;
+      font-weight: 700;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      margin-bottom: 10px;
+    }
+
+    #header p {
+      font-size: 1.2em;
+      text-shadow: #666 1px 1px 5px;
+      opacity: 0.9;
+      margin-bottom: 10px;
+    }
+
+    .search-bar {
+      max-width: 500px;
+      margin: 5px auto;
+      position: relative;
+      margin-top: 30px;
+    }
+
+    .search-bar input {
+      width: 100%;
+      padding: 10px 50px 10px 20px;
+      border: none;
+      border-radius: 30px;
+      font-size: 16px;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+    }
+
+    .search-bar input:focus {
+      outline: none;
+      background: white;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .search-btn {
+      position: absolute;
+      right: 5px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgb(255, 180, 29);
+      border: none;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    #main {
+      display: flex;
+      min-height: 600px;
+      gap: 10px;
+      margin: 10px;
+    }
+
+    #nav {
+      width: 12%;
+      background: #f8f9fa;
+      padding: 20px 10px;
+      position: sticky;
+      top: 20px;
+      height: fit-content;
+      align-self: flex-start;
+    }
+
+    #nav h3 {
+      color: rgb(255, 180, 29);
+      margin-bottom: 15px;
+      font-size: 1.1em;
+    }
+
+    #nav ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    #nav li {
+      margin-bottom: 10px;
+    }
+
+    #nav a {
+      color: #666;
+      text-decoration: none;
+      padding: 8px 12px;
+      display: block;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+
+    #nav a:hover,
+    #nav a.active {
+      background: rgb(255, 180, 29);
+      color: white;
+    }
+
+    #content {
+      width: 70%;
+      padding: 20px;
+    }
+
+    #ad {
+      width: 18%;
+      background: #f8f9fa;
+      padding: 20px 10px;
+      text-align: center;
+      position: sticky;
+      top: 20px;
+      height: fit-content;
+      align-self: flex-start;
+    }
+
+    .ad-banner {
+      background: linear-gradient(45deg, #ff6b6b, #ffd93d);
+      color: white;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 0.9em;
+      font-weight: bold;
+    }
+
+    .hero-section {
+      background: linear-gradient(135deg, #e3f2fd 0%, #f1f8e9 100%);
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 30px;
+      text-align: center;
+      border-left: 5px solid rgb(255, 180, 29);
+      border-right: 5px solid rgb(255, 180, 29);
+    }
+
+    .hero-section h1 {
+      color: #ff8c00;
+      font-size: 2em;
+      margin-bottom: 15px;
+      text-shadow: #717171 1px 1px 1px;
+    }
+
+    .hero-section p {
+      color: #555;
+      font-size: 1.1em;
+      line-height: 1.6;
+    }
+
+    .recipe-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 25px;
+      margin-bottom: 40px;
+    }
+
+    .recipe-card {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+
+    .recipe-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      border-color: rgb(255, 180, 29);
+    }
+
+    .recipe-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+
+    .recipe-card:hover img {
+      transform: scale(1.05);
+    }
+
+    .recipe-card-content {
+      padding: 20px;
+    }
+
+    .recipe-card h3 {
+      color: #333;
+      margin-bottom: 10px;
+      font-size: 1.3em;
+    }
+
+    .recipe-card p {
+      color: #666;
+      line-height: 1.5;
+      margin-bottom: 15px;
+    }
+
+    .recipe-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      font-size: 0.9em;
+    }
+
+    .difficulty {
+      color: #ff6b6b;
+      font-weight: bold;
+    }
+
+    .time {
+      color: #51cf66;
+      font-weight: bold;
+    }
+
+    .servings {
+      color: #9c27b0;
+      font-weight: bold;
+    }
+
+    .recipe-btn {
+      background: linear-gradient(135deg, rgb(255, 180, 29) 0%, #ff6600 100%);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      width: 100%;
+    }
+
+    .recipe-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    .categories {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .category-btn {
+      background: white;
+      border: 2px solid rgb(255, 180, 29);
+      color: rgb(255, 180, 29);
+      padding: 10px 20px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+
+    .category-btn:hover,
+    .category-btn.active {
+      background: rgb(255, 180, 29);
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    .stats-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      border-left: 5px solid rgb(255, 180, 29);
+    }
+
+    .stat-number {
+      font-size: 2.5em;
+      font-weight: bold;
+      color: rgb(255, 180, 29);
+      margin-bottom: 10px;
+    }
+
+    .stat-label {
+      color: #666;
+      font-weight: 500;
+    }
+
+    #footer {
+      background: #333;
+      color: white;
+      text-align: center;
+      padding: 40px 30px;
+      margin: 0;
+      border-radius: 0;
+    }
+
+    .footer-content {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .social-links {
+      margin: 20px 0;
+    }
+
+    .social-links a {
+      color: rgb(255, 180, 29);
+      text-decoration: none;
+      margin: 0 15px;
+      font-weight: bold;
+      transition: color 0.3s ease;
+    }
+
+    .social-links a:hover {
+      color: #ffd93d;
+    }
+
+    .footer-info {
+      margin-top: 20px;
+      font-size: 0.9em;
+      opacity: 0.8;
+    }
+
+    @media (max-width: 768px) {
+      #main {
+        flex-direction: column;
+      }
+
+      #nav,
+      #content,
+      #ad {
+        width: 100%;
+      }
+
+      #header h1 {
+        font-size: 2em;
+      }
+
+      .recipe-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-section h2 {
+        font-size: 1.5em;
+      }
+
+      .categories {
+        justify-content: flex-start;
+      }
+    }
+  </style>
+  <body>
+    <div class="container">
+      <div id="header">
+        <a href="index.html" class="title-link">
+          <h1>Cooking Steps 🍳</h1>
+        </a>
+        <p>맛있는 요리의 시작, 간단한 레시피로 누구나 요리 마스터!</p>
+        <div class="search-bar">
+          <input
+            type="text"
+            placeholder="찾고 싶은 요리를 검색해보세요..."
+            id="search-input"
+          />
+          <button class="search-btn" onclick="searchRecipes()">🔍</button>
+        </div>
+      </div>
+
+      <div id="main">
+        <div id="nav" class="section">
+          <h3>카테고리</h3>
+          <ul>
+            <li>
+              <a href="#" class="active" onclick="filterRecipes('all')">전체</a>
+            </li>
+            <li><a href="#" onclick="filterRecipes('korean')">한식</a></li>
+            <li><a href="#" onclick="filterRecipes('western')">양식</a></li>
+            <li><a href="#" onclick="filterRecipes('chinese')">중식</a></li>
+            <li><a href="#" onclick="filterRecipes('japanese')">일식</a></li>
+            <li><a href="#" onclick="filterRecipes('snack')">간식</a></li>
+          </ul>
+
+          <h3 style="margin-top: 30px">난이도별</h3>
+          <ul>
+            <li><a href="#" onclick="filterByDifficulty(1)">⭐ 초급</a></li>
+            <li><a href="#" onclick="filterByDifficulty(2)">⭐⭐ 중급</a></li>
+            <li><a href="#" onclick="filterByDifficulty(3)">⭐⭐⭐ 고급</a></li>
+          </ul>
+        </div>
+
+        <div id="content">
+          <div class="hero-section">
+            <h1>🍚 오늘 뭐 먹지?</h1>
+            <p>
+              간단한 재료로 만드는 맛있는 요리들을 소개합니다.<br />
+              초보자도 쉽게 따라할 수 있는 친절한 레시피로 요리의 즐거움을
+              느껴보세요!
+            </p>
+          </div>
+
+          <div class="categories">
+            <button class="category-btn active" onclick="filterRecipes('all')">
+              전체
+            </button>
+            <button class="category-btn" onclick="filterRecipes('quick')">
+              5분 요리
+            </button>
+            <button class="category-btn" onclick="filterRecipes('healthy')">
+              건강식
+            </button>
+            <button class="category-btn" onclick="filterRecipes('popular')">
+              인기 레시피
+            </button>
+          </div>
+
+          <div class="recipe-grid" id="recipe-grid">
+            <!-- 라면 레시피 카드 -->
+            <div
+              class="recipe-card"
+              data-category="korean quick popular"
+              data-difficulty="1"
+            >
+              <img
+                src="https://cdnweb01.wikitree.co.kr/webdata/editor/202504/16/img_20250416102835_b3807a44.webp"
+                alt="라면"
+              />
+              <div class="recipe-card-content">
+                <h3>기본 라면 끓이기</h3>
+                <p>누구나 쉽게 만들 수 있는 맛있는 라면 레시피입니다.</p>
+                <div class="recipe-meta">
+                  <span class="difficulty">난이도: ★☆☆</span>
+                  <span class="time">⏰ 5분</span>
+                  <span class="servings">👥 1인분</span>
+                </div>
+                <button
+                  class="recipe-btn"
+                  onclick="location.href = 'ramen.html'"
+                >
+                  레시피 보기 →
+                </button>
+              </div>
+            </div>
+
+            <!-- 계란볶음밥 카드 -->
+            <div
+              class="recipe-card"
+              data-category="korean quick"
+              data-difficulty="1"
+            >
+              <img
+                src="https://recipe1.ezmember.co.kr/cache/recipe/2018/11/15/828bdb4ac6853cf6a4fc48d2fd3cbf451.jpg"
+                alt="계란볶음밥"
+              />
+              <div class="recipe-card-content">
+                <h3>계란볶음밥</h3>
+                <p>간단한 재료로 만드는 든든한 한 끼 식사입니다.</p>
+                <div class="recipe-meta">
+                  <span class="difficulty">난이도: ★☆☆</span>
+                  <span class="time">⏰ 10분</span>
+                  <span class="servings">👥 1인분</span>
+                </div>
+                <button
+                  class="recipe-btn"
+                  onclick="alert('준비 중인 레시피입니다!')"
+                >
+                  레시피 보기 →
+                </button>
+              </div>
+            </div>
+
+            <!-- 김치찌개 카드 -->
+            <div
+              class="recipe-card"
+              data-category="korean healthy"
+              data-difficulty="2"
+            >
+              <img
+                src="https://recipe1.ezmember.co.kr/cache/recipe/2021/04/07/bd60b77a2c2b225e6b1b6b5708b3c4d51.jpg"
+                alt="김치찌개"
+              />
+              <div class="recipe-card-content">
+                <h3>김치찌개</h3>
+                <p>칼칼하고 시원한 김치찌개로 속을 확 풀어보세요.</p>
+                <div class="recipe-meta">
+                  <span class="difficulty">난이도: ★★☆</span>
+                  <span class="time">⏰ 20분</span>
+                  <span class="servings">👥 2인분</span>
+                </div>
+                <button
+                  class="recipe-btn"
+                  onclick="alert('준비 중인 레시피입니다!')"
+                >
+                  레시피 보기 →
+                </button>
+              </div>
+            </div>
+
+            <!-- 파스타 카드 -->
+            <div
+              class="recipe-card"
+              data-category="western popular"
+              data-difficulty="2"
+            >
+              <img
+                src="https://recipe1.ezmember.co.kr/cache/recipe/2020/08/12/f4b5b45b0708c9b14a3eb0b622ad0bb81.jpg"
+                alt="파스타"
+              />
+              <div class="recipe-card-content">
+                <h3>크림 파스타</h3>
+                <p>부드럽고 진한 크림 소스가 일품인 파스타입니다.</p>
+                <div class="recipe-meta">
+                  <span class="difficulty">난이도: ★★☆</span>
+                  <span class="time">⏰ 15분</span>
+                  <span class="servings">👥 1인분</span>
+                </div>
+                <button
+                  class="recipe-btn"
+                  onclick="alert('준비 중인 레시피입니다!')"
+                >
+                  레시피 보기 →
+                </button>
+              </div>
+            </div>
+
+            <!-- 토스트 카드 -->
+            <div
+              class="recipe-card"
+              data-category="western quick snack"
+              data-difficulty="1"
+            >
+              <img
+                src="https://recipe1.ezmember.co.kr/cache/recipe/2017/10/16/4b5e6a11ae6b175a48b3a9ca9b67b9b51.jpg"
+                alt="토스트"
+              />
+              <div class="recipe-card-content">
+                <h3>치즈 토스트</h3>
+                <p>바삭한 빵과 녹은 치즈의 환상적인 조합입니다.</p>
+                <div class="recipe-meta">
+                  <span class="difficulty">난이도: ★☆☆</span>
+                  <span class="time">⏰ 5분</span>
+                  <span class="servings">👥 1인분</span>
+                </div>
+                <button
+                  class="recipe-btn"
+                  onclick="alert('준비 중인 레시피입니다!')"
+                >
+                  레시피 보기 →
+                </button>
+              </div>
+            </div>
+
+            <!-- 샐러드 카드 -->
+            <div
+              class="recipe-card"
+              data-category="western healthy"
+              data-difficulty="1"
+            >
+              <img
+                src="https://recipe1.ezmember.co.kr/cache/recipe/2019/05/30/8b0ba2b4c7a1c3b0c7b4a2b8c7a1c3b01.jpg"
+                alt="샐러드"
+              />
+              <div class="recipe-card-content">
+                <h3>그린 샐러드</h3>
+                <p>신선한 채소로 만드는 건강한 샐러드입니다.</p>
+                <div class="recipe-meta">
+                  <span class="difficulty">난이도: ★☆☆</span>
+                  <span class="time">⏰ 10분</span>
+                  <span class="servings">👥 1인분</span>
+                </div>
+                <button
+                  class="recipe-btn"
+                  onclick="alert('준비 중인 레시피입니다!')"
+                >
+                  레시피 보기 →
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="ad" class="section">
+          <div class="ad-banner">🔥 오늘의 추천</div>
+          <p style="font-size: 0.9em; color: #666">
+            계절 요리부터<br />
+            간단 요리까지!
+          </p>
+          <div
+            style="
+              margin-top: 20px;
+              padding: 15px;
+              background: #e1f5fe;
+              border-radius: 8px;
+            "
+          >
+            <strong style="color: #0277bd">이번 주 인기</strong><br />
+            <small style="color: #555">
+              1. 라면 끓이기<br />
+              2. 계란볶음밥<br />
+              3. 김치찌개
+            </small>
+          </div>
+          <div
+            style="
+              margin-top: 20px;
+              padding: 15px;
+              background: #f1f8e9;
+              border-radius: 8px;
+            "
+          >
+            <strong style="color: #689f38">신규 레시피</strong><br />
+            <small style="color: #555">
+              매주 새로운<br />
+              레시피가 추가됩니다!
+            </small>
+          </div>
+        </div>
+      </div>
+
+      <div id="footer" class="section">
+        <div class="footer-content">
+          <p>&copy; 2025 Cooking Steps. 맛있는 요리의 시작! 🍳</p>
+          <div class="social-links">
+            <a href="#">Instagram</a> | <a href="#">YouTube</a> |
+            <a href="#">Blog</a> |
+            <a href="#">Contact</a>
+          </div>
+          <div class="footer-info">
+            <p>📧 cooking@steps.com | 📞 043-261-2260</p>
+            <p>충청북도 청주시 서원구 충대로 1, 전자정보3관</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // ────────────
+      // 1) 검색 기능
+      // ────────────
+      function searchRecipes() {
+        const searchTerm = document
+          .getElementById("search-input")
+          .value.toLowerCase();
+        const cards = document.querySelectorAll(".recipe-card");
+
+        cards.forEach((card) => {
+          const title = card.querySelector("h3").textContent.toLowerCase();
+          const description = card.querySelector("p").textContent.toLowerCase();
+
+          if (
+            searchTerm === "" ||
+            title.includes(searchTerm) ||
+            description.includes(searchTerm)
+          ) {
+            card.style.display = "block";
+          } else {
+            card.style.display = "none";
+          }
+        });
+      }
+
+      document
+        .getElementById("search-input")
+        .addEventListener("keypress", function (e) {
+          if (e.key === "Enter") {
+            searchRecipes();
+          }
+        });
+
+      // ────────────
+      // 2) 카테고리 필터링
+      // ────────────
+      function filterRecipes(category) {
+        const cards = document.querySelectorAll(".recipe-card");
+        const categoryBtns = document.querySelectorAll(".category-btn");
+        const navLinks = document.querySelectorAll("#nav a");
+
+        categoryBtns.forEach((btn) => btn.classList.remove("active"));
+        navLinks.forEach((link) => link.classList.remove("active"));
+
+        cards.forEach((card) => {
+          const cardCategories = card.getAttribute("data-category");
+          if (category === "all" || cardCategories.includes(category)) {
+            card.style.display = "block";
+          } else {
+            card.style.display = "none";
+          }
+        });
+
+        event.target.classList.add("active");
+      }
+
+      // ────────────
+      // 3) 난이도별 필터링
+      // ────────────
+      function filterByDifficulty(difficulty) {
+        const cards = document.querySelectorAll(".recipe-card");
+        const navLinks = document.querySelectorAll("#nav a");
+
+        navLinks.forEach((link) => link.classList.remove("active"));
+
+        cards.forEach((card) => {
+          const cardDifficulty = parseInt(card.getAttribute("data-difficulty"));
+          if (cardDifficulty === difficulty) {
+            card.style.display = "block";
+          } else {
+            card.style.display = "none";
+          }
+        });
+
+        event.target.classList.add("active");
+      }
+
+      // ────────────
+      // 4) 카드 호버 효과 강조 (CSS에도 transition이 있어 자연스럽게 이어짐)
+      // ────────────
+      document.querySelectorAll(".recipe-card").forEach((card) => {
+        card.addEventListener("mouseenter", function () {
+          this.style.transform = "translateY(-8px) scale(1.02)";
+        });
+        card.addEventListener("mouseleave", function () {
+          this.style.transform = "translateY(0) scale(1)";
+        });
+      });
+
+      // ────────────
+      // 5) 통계 숫자 애니메이션 (animateNumbers)
+      // ────────────
+      function animateNumbers() {
+        const statNumbers = document.querySelectorAll(".stat-number");
+
+        statNumbers.forEach((number) => {
+          const target = number.textContent;
+          const num = parseInt(target);
+          let current = 0;
+          const increment = num / 50;
+
+          const timer = setInterval(() => {
+            current += increment;
+            if (current >= num) {
+              number.textContent = target;
+              clearInterval(timer);
+            } else {
+              number.textContent =
+                Math.floor(current) +
+                (target.includes("+") ? "+" : target.includes("★") ? "★" : "");
+            }
+          }, 30);
+        });
+      }
+
+      // ──────────────────────
+      // 6) “페이지 로드 시 카드 슬쩍 올라오는 애니메이션”
+      // ──────────────────────
+
+      // (1) 카드들을 처음에 숨겨놓는다.
+      document.querySelectorAll(".recipe-card").forEach((card) => {
+        card.style.opacity = "0";
+        card.style.transform = "translateY(20px)";
+        card.style.transition = "all 0.6s ease";
+      });
+
+      // (2) window load 이벤트에서 바로 모든 카드에 애니메이션을 걸어준다.
+      window.addEventListener("load", () => {
+        // ★ 숫자 애니메이션도 같이 실행
+        animateNumbers();
+
+        const cards = document.querySelectorAll(".recipe-card");
+        cards.forEach((card, index) => {
+          setTimeout(() => {
+            card.style.opacity = "1";
+            card.style.transform = "translateY(0)";
+          }, index * 100);
+        });
+      });
+
+      // (3) 만약 이후 스크롤 시에도, 뷰포트에 들어오는 카드에 추가 애니메이션을 주고 싶다면
+      //     아래 코드를 활성화해두시면 됩니다.
+      /*
+      function isElementInViewport(el) {
+        const rect = el.getBoundingClientRect();
+        return (
+          rect.top >= 0 &&
+          rect.left >= 0 &&
+          rect.bottom <=
+            (window.innerHeight || document.documentElement.clientHeight) &&
+          rect.right <=
+            (window.innerWidth || document.documentElement.clientWidth)
+        );
+      }
+
+      function animateOnScroll() {
+        const cards = document.querySelectorAll(".recipe-card");
+        cards.forEach((card, index) => {
+          if (isElementInViewport(card)) {
+            setTimeout(() => {
+              card.style.opacity = "1";
+              card.style.transform = "translateY(0)";
+            }, index * 100);
+          }
+        });
+      }
+
+      window.addEventListener("scroll", animateOnScroll);
+      */
+    </script>
+  </body>
+</html>
