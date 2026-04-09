@@ -66,9 +66,13 @@ const elements = {
   ingredientCheckboxes: Array.from(
     document.querySelectorAll('#ingredient-form input[type="checkbox"]')
   ),
-  missingIngredients: document.getElementById("missing-ingredients"),
+  missingInfo: document.getElementById("missing-info"),
+  shoppingLinksWrap: document.getElementById("shopping-links-wrap"),
+  shoppingLinksList: document.getElementById("shopping-links-list"),
   indicatorDots: Array.from(document.querySelectorAll(".indicator-dot")),
 };
+
+const shoppingSearchBaseUrl = "https://www.coupang.com/np/search?q=";
 
 let currentStep = 0;
 let timerInterval = null;
@@ -218,12 +222,36 @@ function updateMissingIngredients() {
     .map((checkbox) => checkbox.value);
 
   if (missing.length === 0) {
-    elements.missingIngredients.innerHTML =
-      '<span style="color: #4caf50; font-weight: bold;">모든 재료가 준비되었습니다!</span>';
+    if (elements.missingInfo) {
+      elements.missingInfo.hidden = true;
+    }
+    if (elements.shoppingLinksWrap) {
+      elements.shoppingLinksWrap.hidden = true;
+    }
+    if (elements.shoppingLinksList) {
+      elements.shoppingLinksList.innerHTML = "";
+    }
     return;
   }
 
-  elements.missingIngredients.textContent = missing.join(", ");
+  if (elements.missingInfo) {
+    elements.missingInfo.hidden = false;
+  }
+
+  if (!elements.shoppingLinksWrap || !elements.shoppingLinksList) {
+    return;
+  }
+
+  const shoppingLinksMarkup = missing
+    .map((ingredient) => {
+      const searchUrl = `${shoppingSearchBaseUrl}${encodeURIComponent(ingredient)}`;
+
+      return `<a class="shopping-link" href="${searchUrl}" target="_blank" rel="noopener noreferrer">${ingredient}</a>`;
+    })
+    .join("");
+
+  elements.shoppingLinksList.innerHTML = shoppingLinksMarkup;
+  elements.shoppingLinksWrap.hidden = false;
 }
 
 elements.startTimerButton?.addEventListener("click", startTimer);

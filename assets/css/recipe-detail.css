@@ -166,6 +166,51 @@
   color: #f57c00;
 }
 
+#missing-ingredients {
+  display: block;
+  margin-top: 6px;
+  color: #555;
+  line-height: 1.5;
+}
+
+.shopping-links-wrap {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px dashed #f7b15b;
+}
+
+.shopping-links-title {
+  margin: 0;
+  color: #d97706;
+  font-weight: 700;
+  font-size: 0.92em;
+}
+
+.shopping-links-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.shopping-link {
+  text-decoration: none;
+  background: #fff;
+  color: #f57c00;
+  border: 1px solid #f9b56d;
+  border-radius: 999px;
+  padding: 6px 11px;
+  font-size: 0.86em;
+  font-weight: 700;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.shopping-link:hover {
+  background: #f57c00;
+  color: #fff;
+  transform: translateY(-1px);
+}
+
 .cooking-steps {
   background: #fff;
   padding: 25px;
@@ -485,6 +530,15 @@
   .timer-progress {
     width: 100%;
     margin: 0;
+  }
+
+  .shopping-links-list {
+    gap: 6px;
+  }
+
+  .shopping-link {
+    font-size: 0.82em;
+    padding: 6px 10px;
   }
 
   .notification {
