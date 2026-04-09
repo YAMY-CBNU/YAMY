@@ -43,6 +43,49 @@ body {
   text-align: center;
   border: none;
   border-radius: 0;
+  position: relative;
+}
+
+.header-auth {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.auth-link {
+  text-decoration: none;
+  font-size: 0.9em;
+  font-weight: 700;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.auth-link.login {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.auth-link.signup {
+  color: rgb(255, 140, 0);
+  background: #fff;
+}
+
+.auth-link:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+.auth-link.login:hover {
+  background: rgba(255, 255, 255, 0.24);
+}
+
+.auth-link.signup:hover {
+  background: #fff7e1;
 }
 
 #header h1 {
@@ -144,5 +187,16 @@ body {
 
   #header h1 {
     font-size: 2em;
+  }
+
+  .header-auth {
+    position: static;
+    justify-content: flex-end;
+    margin-bottom: 12px;
+  }
+
+  .auth-link {
+    font-size: 0.85em;
+    padding: 7px 12px;
   }
 }
