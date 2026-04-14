@@ -1,63 +1,223 @@
 <!DOCTYPE html>
 <html lang="ko">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>회원가입 - YAMY</title>
-    <link rel="stylesheet" href="./assets/css/common.css" />
-    <link rel="stylesheet" href="./assets/css/auth.css" />
-  </head>
-  <body>
-    <div class="container auth-page">
-      <div id="header">
-        <a href="index.html" class="title-link"><h1>YAMY 🍳</h1></a>
-        <p>맛있는 요리의 시작, 간단한 레시피로 누구나 요리 마스터!</p>
-      </div>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>회원가입 - YAMY</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#9d3d1c",
+            "primary-container": "#bd5532",
+            "on-primary": "#ffffff",
+            "secondary": "#74593d",
+            "on-secondary": "#ffffff",
+            "secondary-container": "#fed9b5",
+            "on-secondary-container": "#785e41",
+            "tertiary": "#8d4933",
+            "surface": "#fcf9f4",
+            "surface-container": "#f0ede9",
+            "surface-container-low": "#f6f3ee",
+            "surface-container-lowest": "#ffffff",
+            "on-surface": "#1c1c19",
+            "on-surface-variant": "#56423c",
+            "outline": "#8a726b",
+            "outline-variant": "#ddc0b8",
+            "background": "#fcf9f4",
+            "on-background": "#1c1c19",
+          },
+          fontFamily: {
+            "headline": ["Epilogue"],
+            "body": ["Plus Jakarta Sans"],
+          }
+        },
+      },
+    }
+  </script>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-font-smoothing: antialiased; }
+    h1, h2, h3 { font-family: 'Epilogue', sans-serif; }
+    .input-field {
+      width: 100%;
+      background: #f0ede9;
+      border: none;
+      border-bottom: 2px solid transparent;
+      padding: 0.65rem 1rem;
+      border-radius: 0.5rem;
+      color: #1c1c19;
+      transition: all 0.2s;
+      outline: none;
+    }
+    .input-field::placeholder { color: #8a726b; }
+    .input-field:focus {
+      border-bottom: 2px solid #9d3d1c;
+      box-shadow: 0 4px 12px -4px rgba(157, 61, 28, 0.1);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background h-screen overflow-hidden flex flex-col">
 
-      <main class="auth-main">
-        <section class="auth-card section">
-          <div class="auth-switch" aria-label="인증 페이지 선택">
-            <a href="login.html" class="switch-link">로그인</a>
-            <a href="signup.html" class="switch-link active">회원가입</a>
+  <!-- TopNavBar -->
+  <nav class="fixed top-0 w-full z-50 bg-[#f6f3ee]/90 backdrop-blur-md border-b border-[#ddc0b8]/20">
+    <div class="flex justify-between items-center px-10 py-4 w-full">
+      <a href="index.html" class="text-2xl font-bold text-[#9d3d1c] font-['Epilogue'] tracking-tight">YAMY</a>
+      <div class="flex items-center gap-4">
+        <a href="login.html" class="text-[#9d3d1c] font-bold border-b-2 border-[#9d3d1c] px-2 py-1 hover:opacity-80 transition-opacity">로그인</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content: Split Screen -->
+  <main class="flex pt-16 h-full overflow-hidden">
+
+    <!-- Left Side: Lifestyle Image (데스크탑만 표시) -->
+    <div class="hidden lg:block lg:w-1/2 relative h-full">
+      <img
+        alt="Cozy kitchen interior with warm morning light and fresh ingredients"
+        class="w-full h-full object-cover"
+        src="https://lh3.googleusercontent.com/aida-public/AB6AXuAqubcB6ESb_Xgwzkikp4kdhzvVg4bABokrfHuTF9UX7fuUkvsnAqpsVD9tLOUggC13Hkr-0qDBhdZqQ6ll3citqtN0Atw32nkhbILiwat6H0gso294gPew6MzoI5XArG2F9nbRRJjg-mwbEEzBDa8KVVQkJbN437x0qDM_eWmC5Oe6jMQ5fnac8V9MqetKHVg10-OXfvy8tdtGdmtjnJOO795CdoS_iLxqTcIimHvBSbKbqD7uWRCe6yQVtnF7p_XKpr0eOk4FDK8"
+      >
+      <div class="absolute inset-0 bg-black/10"></div>
+      <div class="absolute bottom-16 left-16 max-w-md">
+        <div class="bg-[#fcf9f4]/90 backdrop-blur-sm p-8 rounded-xl shadow-2xl">
+          <span class="text-[#9d3d1c] font-bold tracking-widest uppercase text-xs mb-4 block">Seasonal Inspiration</span>
+          <h2 class="text-3xl font-extrabold text-[#1c1c19] mb-4 leading-tight">가장 따뜻한 주방에서 시작되는 맛있는 이야기.</h2>
+          <p class="text-[#56423c] font-medium">당신의 일상이 레시피가 되는 공간, YAMY에 오신 것을 환영합니다.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Side: Signup Form -->
+    <div class="w-full lg:w-1/2 h-full overflow-y-auto bg-[#ffffff] flex items-center justify-center px-16 py-6">
+      <div class="w-full max-w-[480px]">
+
+        <!-- Tab Switcher (로그인/회원가입 전환) -->
+        <div class="flex border-b border-[#ddc0b8]/30 mb-8">
+          <a href="login.html" class="flex-1 py-4 text-sm font-semibold text-[#56423c] hover:text-[#9d3d1c] transition-colors text-center">로그인</a>
+          <a href="signup.html" class="flex-1 py-4 text-sm font-bold text-[#9d3d1c] border-b-2 border-[#9d3d1c] text-center">회원가입</a>
+        </div>
+
+        <!-- Header -->
+        <div class="mb-8">
+          <h1 class="text-2xl font-extrabold text-[#9d3d1c] tracking-tight mb-2">YAMY와 함께 시작해요!</h1>
+          <p class="text-sm text-[#56423c] leading-relaxed font-medium">
+            3초 가입으로 레시피 추천과 요리 기록 기능을 바로 이용할 수 있어요.
+          </p>
+        </div>
+
+        <!-- Signup Form: 기존 id, name, required, minlength 속성 유지 -->
+        <form class="space-y-5" action="#" method="post">
+
+          <!-- 닉네임 -->
+          <div class="space-y-2">
+            <label for="signup-name" class="block text-xs font-bold text-[#74593d] tracking-wider uppercase px-1">닉네임</label>
+            <input
+              id="signup-name"
+              name="name"
+              type="text"
+              placeholder="표시될 닉네임"
+              required
+              class="input-field"
+            >
           </div>
 
-          <h2>YAMY와 함께 시작해요!</h2>
-          <p class="auth-description">3초 가입으로 레시피 추천과 요리 기록 기능을 바로 이용할 수 있어요.</p>
-
-          <form class="auth-form" action="#" method="post">
-            <label for="signup-name">닉네임</label>
-            <input id="signup-name" name="name" type="text" placeholder="표시될 닉네임" required />
-
-            <label for="signup-email">이메일</label>
-            <input id="signup-email" name="email" type="email" placeholder="example@yamy.com" required />
-
-            <label for="signup-password">비밀번호</label>
-            <input id="signup-password" name="password" type="password" placeholder="8자 이상 입력" minlength="8" required />
-
-            <label for="signup-password-confirm">비밀번호 확인</label>
+          <!-- 이메일 -->
+          <div class="space-y-2">
+            <label for="signup-email" class="block text-xs font-bold text-[#74593d] tracking-wider uppercase px-1">이메일</label>
             <input
-              id="signup-password-confirm"
-              name="passwordConfirm"
-              type="password"
-              placeholder="비밀번호를 다시 입력해주세요"
-              minlength="8"
+              id="signup-email"
+              name="email"
+              type="email"
+              placeholder="example@yamy.com"
               required
-            />
+              class="input-field"
+            >
+          </div>
 
-            <label class="checkbox-label" for="agree-terms">
-              <input id="agree-terms" name="agree" type="checkbox" required />
+          <!-- 비밀번호 + 확인 -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="space-y-2">
+              <label for="signup-password" class="block text-xs font-bold text-[#74593d] tracking-wider uppercase px-1">비밀번호</label>
+              <input
+                id="signup-password"
+                name="password"
+                type="password"
+                placeholder="8자 이상 입력"
+                minlength="8"
+                required
+                class="input-field"
+              >
+            </div>
+            <div class="space-y-2">
+              <label for="signup-password-confirm" class="block text-xs font-bold text-[#74593d] tracking-wider uppercase px-1">비밀번호 확인</label>
+              <input
+                id="signup-password-confirm"
+                name="passwordConfirm"
+                type="password"
+                placeholder="비밀번호를 다시 입력해주세요"
+                minlength="8"
+                required
+                class="input-field"
+              >
+            </div>
+          </div>
+
+          <!-- 이용약관 동의 체크박스 -->
+          <label class="flex items-start gap-3 cursor-pointer" for="agree-terms">
+            <input
+              id="agree-terms"
+              name="agree"
+              type="checkbox"
+              required
+              class="mt-0.5 h-4 w-4 rounded border-[#ddc0b8] bg-[#f0ede9] text-[#9d3d1c] focus:ring-[#9d3d1c]/20 cursor-pointer"
+            >
+            <span class="text-sm text-[#56423c] font-medium leading-tight select-none">
               이용약관 및 개인정보 수집에 동의합니다.
-            </label>
+            </span>
+          </label>
 
-            <button type="submit" class="auth-submit">회원가입 완료</button>
-          </form>
+          <!-- 제출 버튼 -->
+          <button
+            type="submit"
+            class="w-full py-3.5 px-6 bg-gradient-to-r from-[#9d3d1c] to-[#bd5532] text-white font-bold text-base rounded-xl active:scale-95 transition-all shadow-lg hover:shadow-xl"
+          >
+            회원가입 완료
+          </button>
+        </form>
 
-          <p class="auth-help">
+        <!-- 로그인 링크 -->
+        <div class="mt-8 text-center">
+          <a href="login.html" class="text-sm font-semibold text-[#74593d] hover:text-[#9d3d1c] transition-colors inline-flex items-center gap-1">
             이미 계정이 있나요?
-            <a href="login.html">로그인 하러 가기</a>
-          </p>
-        </section>
-      </main>
+            <span class="text-[#9d3d1c] underline decoration-[#9d3d1c]/30 underline-offset-4">로그인 하러 가기</span>
+          </a>
+        </div>
+
+        <!-- 모바일 저작권 -->
+        <div class="mt-12 pt-8 border-t border-[#ddc0b8]/20 lg:hidden text-center text-xs text-[#56423c]/60">
+          © 2026 YAMY. Your Assistant for Making Yummy.
+        </div>
+
+      </div>
     </div>
-  </body>
+  </main>
+
+  <!-- Footer (데스크탑) -->
+  <footer class="hidden lg:block w-full border-t border-[#ddc0b8]/20 bg-[#f6f3ee] text-sm">
+    <div class="flex flex-col md:flex-row justify-between items-center px-10 py-6 w-full">
+      <p class="text-[#74593d] mb-4 md:mb-0">© 2026 YAMY. Your Assistant for Making Yummy.</p>
+      <div class="flex gap-8">
+        <a href="#" class="text-[#74593d] hover:text-[#9d3d1c] transition-colors opacity-80 hover:opacity-100">Privacy Policy</a>
+        <a href="#" class="text-[#74593d] hover:text-[#9d3d1c] transition-colors opacity-80 hover:opacity-100">Terms</a>
+        <a href="#" class="text-[#74593d] hover:text-[#9d3d1c] transition-colors opacity-80 hover:opacity-100">Contact</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
 </html>
