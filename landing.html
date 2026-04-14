@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>YAMY - 누구나 셰프가 되는 즐거움</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+          "on-surface-variant": "#56423c",
+          "secondary-container": "#fed9b5",
+          "surface": "#fcf9f4",
+          "inverse-surface": "#31302d",
+          "error-container": "#ffdad6",
+          "primary-container": "#bd5532",
+          "on-secondary-fixed": "#2a1803",
+          "surface-container": "#f0ede9",
+          "tertiary-container": "#aa6149",
+          "on-background": "#1c1c19",
+          "primary": "#9d3d1c",
+          "on-primary-fixed-variant": "#802908",
+          "primary-fixed": "#ffdbd0",
+          "error": "#ba1a1a",
+          "on-tertiary-container": "#fffbff",
+          "on-tertiary": "#ffffff",
+          "secondary-fixed-dim": "#e3c09d",
+          "inverse-primary": "#ffb59e",
+          "on-tertiary-fixed": "#3a0b00",
+          "surface-bright": "#fcf9f4",
+          "secondary": "#74593d",
+          "surface-container-highest": "#e5e2dd",
+          "tertiary": "#8d4933",
+          "surface-container-high": "#ebe8e3",
+          "surface-tint": "#a0401f",
+          "primary-fixed-dim": "#ffb59e",
+          "on-tertiary-fixed-variant": "#723520",
+          "tertiary-fixed": "#ffdbd0",
+          "on-error": "#ffffff",
+          "surface-variant": "#e5e2dd",
+          "surface-container-lowest": "#ffffff",
+          "tertiary-fixed-dim": "#ffb59e",
+          "on-error-container": "#93000a",
+          "outline": "#8a726b",
+          "background": "#fcf9f4",
+          "on-secondary": "#ffffff",
+          "surface-container-low": "#f6f3ee",
+          "on-primary-container": "#fffbff",
+          "on-secondary-container": "#785e41",
+          "on-secondary-fixed-variant": "#5a4227",
+          "inverse-on-surface": "#f3f0eb",
+          "on-primary": "#ffffff",
+          "outline-variant": "#ddc0b8",
+          "secondary-fixed": "#ffddbb",
+          "surface-dim": "#dcdad5",
+          "on-surface": "#1c1c19",
+          "on-primary-fixed": "#3a0b00"
+        },
+        "borderRadius": {
+          "DEFAULT": "0.25rem",
+          "lg": "0.5rem",
+          "xl": "0.75rem",
+          "full": "9999px"
+        },
+        "fontFamily": {
+          "headline": ["Epilogue"],
+          "body": ["Plus Jakarta Sans"],
+          "label": ["Plus Jakarta Sans"]
+        }
+      },
+    },
+  }
+</script>
+<style>
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+  body { font-family: 'Plus Jakarta Sans', sans-serif; }
+  h1, h2, h3 { font-family: 'Epilogue', sans-serif; }
+
+  /* 유동적 스케일링: 모바일 크기를 최솟값으로, 화면이 커질수록 비례해서 커짐 */
+  .fluid-h1    { font-size: clamp(1.75rem, 5vw, 4.5rem);   line-height: 1.1; }
+  .fluid-h2    { font-size: clamp(1.5rem,  3.5vw, 3rem);   }
+  .fluid-h3    { font-size: clamp(1.1rem,  2.5vw, 1.875rem); }
+  .fluid-h4    { font-size: clamp(0.875rem, 1.8vw, 1.25rem); }
+  .fluid-body  { font-size: clamp(0.875rem, 1.4vw, 1.125rem); }
+  .fluid-sm    { font-size: clamp(0.75rem,  1.1vw, 0.875rem); }
+
+  .fluid-section { padding-top: clamp(3rem, 6vw, 6rem); padding-bottom: clamp(3rem, 6vw, 6rem); }
+  .fluid-px      { padding-left: clamp(1rem, 4vw, 1.5rem); padding-right: clamp(1rem, 4vw, 1.5rem); }
+  .fluid-card    { padding: clamp(1.25rem, 3vw, 3rem); }
+
+  .fluid-photo {
+    width:  clamp(7rem, 18vw, 12rem);
+    height: clamp(7rem, 18vw, 12rem);
+  }
+  .fluid-hero-img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; object-position: center top; max-height: 420px; }
+
+  .fluid-btn {
+    padding: clamp(0.625rem, 1.2vw, 1rem) clamp(1.25rem, 2.5vw, 2rem);
+    font-size: clamp(0.875rem, 1.4vw, 1.125rem);
+  }
+  .fluid-gap   { gap: clamp(0.75rem, 2vw, 1.5rem); }
+  .fluid-mb    { margin-bottom: clamp(1.5rem, 3vw, 2.5rem); }
+  .fluid-mb-sm { margin-bottom: clamp(0.75rem, 1.5vw, 1rem); }
+</style>
+</head>
+<body class="bg-surface text-on-surface">
+
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-[#fcf9f4]/80 dark:bg-stone-900/80 backdrop-blur-md">
+  <div class="flex justify-between items-center max-w-7xl mx-auto fluid-px h-16 sm:h-20">
+    <div class="fluid-h4 font-bold text-[#9d3d1c] dark:text-[#bd5532] tracking-tighter" style="font-size: clamp(1.1rem, 2vw, 1.5rem);">YAMY</div>
+    <div class="hidden md:flex gap-8 items-center">
+      <a class="font-['Epilogue'] font-medium text-sm tracking-tight text-[#9d3d1c] font-bold border-b-2 border-[#9d3d1c] pb-1" href="#"></a>
+      <a class="font-['Epilogue'] font-medium text-sm tracking-tight text-[#74593d] dark:text-stone-400 hover:text-[#9d3d1c] dark:hover:text-[#bd5532] transition-colors duration-300" href="#"></a>
+      <a class="font-['Epilogue'] font-medium text-sm tracking-tight text-[#74593d] dark:text-stone-400 hover:text-[#9d3d1c] dark:hover:text-[#bd5532] transition-colors duration-300" href="#"></a>
+      <a class="font-['Epilogue'] font-medium text-sm tracking-tight text-[#74593d] dark:text-stone-400 hover:text-[#9d3d1c] dark:hover:text-[#bd5532] transition-colors duration-300" href="#"></a>
+    </div>
+    <div class="flex items-center gap-2 sm:gap-4">
+      <button class="hidden sm:block font-['Epilogue'] font-medium text-sm tracking-tight text-[#74593d] hover:text-[#9d3d1c] transition-colors">로그인</button>
+      <button class="bg-gradient-to-r from-primary to-primary-container text-on-primary px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl font-medium text-sm shadow-lg shadow-primary/10 active:scale-95 transition-transform duration-150">시작하기</button>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <!-- Hero Section -->
+  <section class="relative fluid-section fluid-px overflow-hidden" style="padding-top: clamp(5rem, 10vw, 8rem);">
+    <div class="max-w-7xl mx-auto grid lg:grid-cols-2 fluid-gap items-center">
+      <!-- Text Content -->
+      <div class="z-10 text-center lg:text-left">
+        <span class="inline-block px-4 py-1.5 fluid-mb-sm rounded-full bg-secondary-container text-on-secondary-container font-bold tracking-widest uppercase" style="font-size: clamp(0.65rem, 1vw, 0.75rem);">Introducing YAMY</span>
+        <h1 class="fluid-h1 font-extrabold text-on-surface tracking-tighter fluid-mb">
+          실패없는 요리,<br>
+          가장 쉬운&nbsp;<span class="inline">레시피</span><br>
+          <span class="text-primary italic">YAMY</span>
+        </h1>
+        <p class="fluid-body text-secondary max-w-lg fluid-mb leading-relaxed mx-auto lg:mx-0">
+          내가 사랑하는 레시피만 쏙쏙 골라 담고,<br>나만의 비법을 세상과 공유해 보세요.<br>요리 초보도 셰프로 만드는 스마트한 주방 어시스턴트가 찾아옵니다.
+        </p>
+        <div class="flex flex-wrap fluid-gap justify-center lg:justify-start">
+          <button class="fluid-btn bg-primary text-on-primary rounded-xl font-bold hover:shadow-xl transition-all">시작하기</button>
+          <button class="fluid-btn bg-surface-container text-secondary rounded-xl font-bold hover:bg-surface-container-high transition-all">레시피 작성하기</button>
+        </div>
+      </div>
+      <!-- Image -->
+      <div class="relative mt-8 lg:mt-0">
+        <div class="absolute -top-10 -right-10 w-64 h-64 bg-primary-fixed opacity-20 rounded-full blur-3xl"></div>
+        <div class="rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden shadow-2xl lg:rotate-2 transition-transform hover:rotate-0 duration-700">
+          <img
+            alt="Happy cooking"
+            class="fluid-hero-img w-full"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1m40v495qLdbpUBccm7Byk8VOu0BjaWhybz4UJ9y140mqvndro4tP6w-mk2X4QKxeWH_Iplox4E0AZy2nPlJCg3C4mgSf6sblW2t_QRn2kCyDC3kgRiehI0OBZ7Xdh61D3liuVmtX8DV2BjM5MmhBeNBHnkJxZvOP2sl6Dr8EolBYA6uln1913u2K17xDZRcXXqW6Hll89EQfDnAXKmlOEXcNTLzt11s1NzKsKZxVto_N736lOI4G2mGhB-BjOsmFCRppsztjxk4"
+          >
+        </div>
+        <!-- Glassmorphic Overlay Card -->
+        <div class="hidden sm:block absolute -bottom-6 -left-6 md:left-[-5%] p-5 bg-surface/60 backdrop-blur-xl rounded-2xl shadow-xl max-w-xs border border-white/20">
+          <div class="flex items-center gap-4 mb-3">
+            <div class="p-2 bg-primary/10 rounded-lg">
+              <span class="material-symbols-outlined text-primary">timer</span>
+            </div>
+            <span class="font-bold text-on-surface">실시간 요리 가이드</span>
+          </div>
+          <p class="text-sm text-secondary leading-snug">"이제 소금을 한 꼬집 넣어주세요. 타이머 3분 시작할게요."</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section: Bento Grid -->
+  <section class="fluid-section bg-surface-container-low">
+    <div class="max-w-7xl mx-auto fluid-px">
+      <div class="text-center fluid-mb">
+        <h2 class="fluid-h2 font-bold text-on-surface fluid-mb-sm">당신의 한 끼를 바꾸는 기술</h2>
+        <p class="fluid-body text-secondary max-w-2xl mx-auto">더 이상 요리책 앞에서 당황하지 마세요. YAMY가 제안하는 스마트한 주방 라이프.</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-12 fluid-gap">
+        <!-- Large Feature: Real-time Guide -->
+        <div class="md:col-span-8 bg-surface-container-lowest rounded-[1.5rem] sm:rounded-[2rem] fluid-card relative overflow-hidden group md:min-h-[400px]">
+          <div class="relative z-10">
+            <div class="w-12 h-12 bg-primary-container/10 flex items-center justify-center rounded-xl fluid-mb-sm">
+              <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">mic</span>
+            </div>
+            <h3 class="fluid-h3 font-bold fluid-mb-sm">실시간 요리 가이드</h3>
+            <p class="fluid-body text-secondary max-w-md fluid-mb">실시간 조리 단계를 안내해 요리 초보도 쉽게!<br>음성 명령으로 손을 대지 않고도 다음 단계로 넘어갈 수 있습니다.</p>
+            <ul class="space-y-3 fluid-mb">
+              <li class="flex items-center gap-2 fluid-sm font-medium text-on-surface-variant">
+                <span class="material-symbols-outlined text-sm">check_circle</span> 맞춤형 타이머 자동 설정
+              </li>
+              <li class="flex items-center gap-2 fluid-sm font-medium text-on-surface-variant">
+                <span class="material-symbols-outlined text-sm">check_circle</span> 핸즈프리 음성 명령 제어
+              </li>
+            </ul>
+          </div>
+          <img
+            alt="Tablet cooking"
+            class="hidden md:block absolute right-0 bottom-0 w-2/3 h-2/3 object-cover rounded-tl-[3rem] transition-transform duration-500 group-hover:scale-105"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZpTorghYmjQQQk3Ggu2j3dDVY1EH_0JjlfM5Zx6xmU9dYuUrWZvtQyrrbbQlQCQUrl3dO6DyuNJq2OS-p7R0sF6vgrwADod13l5kjWVOAdY49s6W-QSv0tz52s3MfujTssVA50UkaTRHL0r9ShNJj7ZvD96vAei-eWpGYH5ouB3EqlFpL-EZB2vCUQdrQuTWxfE-cP5kWjt9g3bFfWKf2J1tX_nh_zZdQecGWYCeV5sxuwS-6_RkC0LT7N-e8Tv3YCKzJEAx8nFM"
+          >
+          <!-- 모바일에서만 보이는 이미지 -->
+          <img
+            alt="Tablet cooking"
+            class="md:hidden w-full h-44 object-cover rounded-xl mt-4"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZpTorghYmjQQQk3Ggu2j3dDVY1EH_0JjlfM5Zx6xmU9dYuUrWZvtQyrrbbQlQCQUrl3dO6DyuNJq2OS-p7R0sF6vgrwADod13l5kjWVOAdY49s6W-QSv0tz52s3MfujTssVA50UkaTRHL0r9ShNJj7ZvD96vAei-eWpGYH5ouB3EqlFpL-EZB2vCUQdrQuTWxfE-cP5kWjt9g3bFfWKf2J1tX_nh_zZdQecGWYCeV5sxuwS-6_RkC0LT7N-e8Tv3YCKzJEAx8nFM"
+          >
+        </div>
+        <!-- Vertical Feature: Recipe Search -->
+        <div class="md:col-span-4 bg-tertiary text-on-tertiary rounded-[1.5rem] sm:rounded-[2rem] fluid-card flex flex-col justify-between group md:min-h-[400px]">
+          <div>
+            <div class="w-12 h-12 bg-white/10 flex items-center justify-center rounded-xl fluid-mb-sm">
+              <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">search</span>
+            </div>
+            <h3 class="fluid-h3 font-bold fluid-mb-sm">맞춤 레시피 검색</h3>
+            <p class="fluid-sm text-on-tertiary/80">내 냉장고 상황과 입맛에 딱 맞는 레시피를 찾아보세요. 남은 식재료만 입력하면 끝!</p>
+          </div>
+          <div class="mt-6 overflow-hidden rounded-xl">
+            <img
+              alt="Recipe search"
+              class="w-full object-cover group-hover:scale-110 transition-transform duration-500"
+              style="height: clamp(8rem, 15vw, 10rem);"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBl02ya2I-WeF_ejTgsp_XDMSq2clDkeimnaTlEXrBKCcnXXg53KDWgwatwkHy53Ah37AgSEu7aw5u2zIWCA2KDZTiF3YSLFdXqdLPs3EsWPZS4t-XW1EuDqTiClzgT_m51bbVd-G8bVfIZugoE3wp_2saJyuy-MkgGKudI_Xj4DeCOdZ4WNfS-Z8YVXmGHzHI3umwizoR9GiyitsPv5QMBdPk4vh50QORpPkWvF93RD9UH6uAekSA65HexHHt_kMc6Umg82juLn2o"
+            >
+          </div>
+        </div>
+        <!-- Small Feature: Share -->
+        <div class="md:col-span-4 bg-surface-container-lowest rounded-[1.5rem] sm:rounded-[2rem] fluid-card group">
+          <div class="w-12 h-12 bg-secondary-container/20 flex items-center justify-center rounded-xl fluid-mb-sm">
+            <span class="material-symbols-outlined text-secondary">share</span>
+          </div>
+          <h3 class="fluid-h4 font-bold fluid-mb-sm">나만의 레시피 공유</h3>
+          <p class="fluid-sm text-secondary">직접 만든 레시피를 등록하고 사람들과 공유하는 즐거움을 느껴보세요.</p>
+        </div>
+        <!-- Small Feature: Bookmark -->
+        <div class="md:col-span-4 bg-secondary text-on-secondary rounded-[1.5rem] sm:rounded-[2rem] fluid-card group">
+          <div class="w-12 h-12 bg-white/10 flex items-center justify-center rounded-xl fluid-mb-sm">
+            <span class="material-symbols-outlined">bookmark_heart</span>
+          </div>
+          <h3 class="fluid-h4 font-bold fluid-mb-sm">레시피 북마크</h3>
+          <p class="fluid-sm text-on-secondary/80">마음에 드는 레시피만 쏙쏙 골라 나만의 소중한 요리책을 만드세요.</p>
+        </div>
+        <!-- Small Feature: Shopping -->
+        <div class="md:col-span-4 bg-surface-container-lowest rounded-[1.5rem] sm:rounded-[2rem] fluid-card border border-outline-variant/15 group">
+          <div class="w-12 h-12 bg-primary-container/10 flex items-center justify-center rounded-xl fluid-mb-sm">
+            <span class="material-symbols-outlined text-primary">shopping_cart</span>
+          </div>
+          <h3 class="fluid-h4 font-bold fluid-mb-sm">간편 식재료 구매</h3>
+          <p class="fluid-sm text-secondary">부족한 재료도 앱 내에서 바로 구매할 수 있도록 최저가를 찾아드립니다.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Team Section -->
+  <section class="fluid-section fluid-px max-w-7xl mx-auto">
+    <div class="text-center fluid-mb">
+      <h2 class="fluid-h2 font-bold text-on-surface fluid-mb-sm">YAMY를 만드는 사람들</h2>
+      <p class="fluid-body text-secondary">"요리를 잘 몰라도 요리가 즐거워지는 마법, 기술로 그 답을 찾는 팀 YAMY입니다."</p>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-4 fluid-gap">
+      <!-- Team Member 1 -->
+      <div class="text-center group">
+        <div class="fluid-photo relative fluid-mb-sm mx-auto">
+          <div class="absolute inset-0 bg-primary-container rounded-full rotate-6 group-hover:rotate-0 transition-transform duration-500"></div>
+          <img alt="Team member" class="absolute inset-0 w-full h-full object-cover rounded-full border-4 border-surface shadow-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBi3K4iKDKEq6Ng6eJM45kadfLjU3GlI1KY8BZqLaPGUNA_MulN3M6Jo31tYheMuCe390YTuTxt82cRySDTcuEf0iwRMJo4BPvFk2VZxpvgBzkDU8MwpeRvFBtZgAiFA7ftObmvtrFQYuaWfDsZtPlP2zr4s09kjmXqrIUByZQPKoYQOWK5UppvjpryesSrRjckYtSdOcKVQ-ClvwMe07zO2HbJ6orA8JrkQAM38kyr34wbuHDjbN_Wmvdg5-XyHwNg8KipR5kSM1I">
+        </div>
+        <h4 class="fluid-h4 font-bold text-on-surface">최현준</h4>
+        <p class="fluid-sm text-primary font-medium">Team Leader</p>
+        <p class="fluid-sm text-secondary font-medium mt-1">Frontend · AI</p>
+      </div>
+      <!-- Team Member 2 -->
+      <div class="text-center group">
+        <div class="fluid-photo relative fluid-mb-sm mx-auto">
+          <div class="absolute inset-0 bg-secondary-container rounded-full -rotate-6 group-hover:rotate-0 transition-transform duration-500"></div>
+          <img alt="Team member" class="absolute inset-0 w-full h-full object-cover rounded-full border-4 border-surface shadow-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDXxM7oDJ_jbplF_qb5S-O-YDEoQpQBPjX3V0T_tjBPvltMzQjKCYlJmbuU3_uqDZApohl8wF-uM_uBugKmauek4s9A61vAgIuIFaG2dTbeUG29me7GC7zw0M79EAHlRJXqASDW5hJ-BPgxTscnYq0A_856omiTc6Z1eks2ScNakUjZX16EvcYYYnevtrPu4q5UdHoeSLB1bmQ9owDqV6xXqZimx84oBq0BuwkvNhr8pL1Bx3PPw1k7NLDttPj3-QQ2yc5OCNJNxiY">
+        </div>
+        <h4 class="fluid-h4 font-bold text-on-surface">한정우</h4>
+        <p class="fluid-sm text-primary font-medium">Backend</p>
+        <p class="fluid-sm text-secondary font-medium mt-1">Database</p>
+      </div>
+      <!-- Team Member 3 -->
+      <div class="text-center group">
+        <div class="fluid-photo relative fluid-mb-sm mx-auto">
+          <div class="absolute inset-0 bg-outline-variant rounded-full rotate-3 group-hover:rotate-0 transition-transform duration-500"></div>
+          <img alt="Team member" class="absolute inset-0 w-full h-full object-cover rounded-full border-4 border-surface shadow-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuATNYYPzEPY6o2zXOldJk55zhwtL_aBuiOa59bPYtc-3QFdoMVRH5XBhwAW82e6LFPwIKHrBm3p8hQJe2xhcBCZ35EJd2cZaQBNlj6Rw_Ak-CgBDMDsIZdHIiYi48cAlX_629f1tPv1e2Xp-MXrUliiG-kq876kCmIwg31N9LoGyvY0_AAssA6TNetO6we80mXWgQTcoeQnhMA9QSvnSR6WIGzI9XEvVKwlyj9nlNN2wYeboLIPXeffQaEt8HEM-j2D4--UNAL1bXo">
+        </div>
+        <h4 class="fluid-h4 font-bold text-on-surface">최나현</h4>
+        <p class="fluid-sm text-primary font-medium">Frontend</p>
+        <p class="fluid-sm text-secondary font-medium mt-1">UI/UX Design</p>
+      </div>
+      <!-- Team Member 4 -->
+      <div class="text-center group">
+        <div class="fluid-photo relative fluid-mb-sm mx-auto">
+          <div class="absolute inset-0 bg-tertiary-container rounded-full -rotate-3 group-hover:rotate-0 transition-transform duration-500"></div>
+          <img alt="Team member" class="absolute inset-0 w-full h-full object-cover rounded-full border-4 border-surface shadow-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJyYO6Jx8NDlTFLJy1NlpgUEyZhRrMY-wuo3y96FAkzTi1nBwjZKj4_WqOqzdk-fSNXiXOPRil9guXkS0omCbWik33QeD09QPN7eTnldG-Oh2CalkDX2caXWYzcZzoLOGtr1KHw2wdp4ka3OwKFO146VvQGS7n_6QZJ0XielDiLivz5W0ZUUkGp5pbDK8UwkftdQJew8Z4HjlZXbSmmN7BiUpUx1N8vO1WIvBV8QgpcMik3as2WDduwVH0yAz1MAoDw2p7OtXG86c">
+        </div>
+        <h4 class="fluid-h4 font-bold text-on-surface">최현우</h4>
+        <p class="fluid-sm text-primary font-medium">Experience Designer</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="fluid-section fluid-px">
+    <div class="max-w-5xl mx-auto bg-primary rounded-[2rem] sm:rounded-[3rem] fluid-card text-center relative overflow-hidden shadow-2xl">
+      <div class="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
+        <div class="absolute -top-20 -left-20 w-80 h-80 bg-white rounded-full blur-3xl"></div>
+        <div class="absolute -bottom-20 -right-20 w-80 h-80 bg-primary-container rounded-full blur-3xl"></div>
+      </div>
+      <h2 class="fluid-h2 font-bold text-on-primary fluid-mb-sm relative z-10">지금 맛있는 여정을 시작해 보세요!</h2>
+      <p class="fluid-body text-on-primary/80 fluid-mb relative z-10 max-w-2xl mx-auto">전 세계 수천 명의 요리사가 당신과 소통하고 싶어 합니다. 지금 바로 함께 하세요.</p>
+      <form class="relative z-10 max-w-md mx-auto flex flex-col sm:flex-row fluid-gap">
+        <div class="flex-grow">
+          <input
+            class="fluid-body w-full px-5 py-3 rounded-xl border-none bg-surface-container-lowest/20 backdrop-blur-md text-on-primary placeholder:text-on-primary/50 focus:ring-2 focus:ring-white transition-all outline-none"
+            placeholder="이메일 주소를 입력하세요"
+            type="email"
+          >
+        </div>
+        <button class="fluid-btn bg-white text-primary rounded-xl font-bold hover:bg-opacity-90 transition-all shadow-lg active:scale-95 whitespace-nowrap" type="submit">지금 가입하기</button>
+      </form>
+    </div>
+  </section>
+</main>
+
+<!-- Footer -->
+<footer class="w-full py-10 sm:py-12 px-4 sm:px-6 bg-[#fcf9f4] dark:bg-stone-950">
+  <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6 sm:gap-8 text-center md:text-left">
+    <div class="flex flex-col items-center md:items-start gap-3 sm:gap-4">
+      <div class="text-lg font-bold text-[#9d3d1c]">YAMY</div>
+      <p class="font-['Plus_Jakarta_Sans'] text-xs leading-relaxed text-[#74593d] dark:text-stone-400">© 2026 YAMY. Your Assistant for Making Yummy.</p>
+    </div>
+    <div class="flex gap-5 sm:gap-8">
+      <a class="font-['Plus_Jakarta_Sans'] text-xs text-[#74593d] hover:text-[#9d3d1c] transition-colors opacity-80 hover:opacity-100" href="#">이용약관</a>
+      <a class="font-['Plus_Jakarta_Sans'] text-xs text-[#9d3d1c] underline transition-colors opacity-80 hover:opacity-100" href="#">개인정보처리방침</a>
+      <a class="font-['Plus_Jakarta_Sans'] text-xs text-[#74593d] hover:text-[#9d3d1c] transition-colors opacity-80 hover:opacity-100" href="#">문의하기</a>
+    </div>
+    <div class="flex gap-4">
+      <a class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center hover:bg-primary/10 transition-colors" href="#">
+        <span class="material-symbols-outlined text-sm text-secondary">public</span>
+      </a>
+      <a class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center hover:bg-primary/10 transition-colors" href="#">
+        <span class="material-symbols-outlined text-sm text-secondary">share</span>
+      </a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
