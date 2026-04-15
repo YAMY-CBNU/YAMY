@@ -1,194 +1,231 @@
 <!DOCTYPE html>
-
-<html lang="ko"><head>
+<html lang="ko">
+<head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>YAMY - 저장된 레시피</title>
+<title>YAMY - 내 레시피</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Be_Vietnam_Pro:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Be_Vietnam_Pro:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            "colors": {
-                    "surface": "#F7F3F0",
-                    "primary": "#C05B40",
-                    "on-primary": "#ffffff",
-                    "on-surface": "#2D2926",
-                    "on-surface-variant": "#6D645E",
-                    "outline-variant": "#D9D0C7",
-                    "surface-container": "#EFEAE6",
-                    "surface-container-high": "#E6DFD9",
-                    "surface-container-lowest": "#ffffff",
-                    "tertiary": "#D99E32",
-                    "tertiary-container": "#FCE9C8",
-                    "on-tertiary-container": "#7A5200",
-                    "secondary-container": "#C5D8CC",
-                    "on-secondary-container": "#1E3D2B"
-            },
-            "borderRadius": {
-                    "DEFAULT": "0.5rem",
-                    "lg": "0.75rem",
-                    "xl": "1.25rem",
-                    "full": "9999px"
-            },
-            "fontFamily": {
-                    "headline": ["Plus Jakarta Sans"],
-                    "body": ["Be Vietnam Pro"],
-                    "label": ["Be Vietnam Pro"]
-            }
-          },
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "surface": "#F7F3F0", "primary": "#C05B40", "on-primary": "#ffffff",
+          "on-surface": "#2D2926", "on-surface-variant": "#6D645E",
+          "outline-variant": "#D9D0C7", "surface-container": "#EFEAE6",
+          "surface-container-high": "#E6DFD9", "surface-container-lowest": "#ffffff",
+          "tertiary": "#D99E32", "tertiary-container": "#FCE9C8",
+          "on-tertiary-container": "#7A5200", "error": "#ba1a1a"
         },
+        borderRadius: { DEFAULT: "0.5rem", lg: "0.75rem", xl: "1.25rem", full: "9999px" },
+        fontFamily: { headline: ["Plus Jakarta Sans"], body: ["Be Vietnam Pro"] }
       }
-    </script>
+    }
+  }
+</script>
 <style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-        body { font-family: 'Be Vietnam Pro', sans-serif; }
-        h1, h2, h3 { font-family: 'Plus Jakarta Sans', sans-serif; }
-    </style>
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+  body { font-family: 'Be Vietnam Pro', sans-serif; }
+  h1, h2, h3 { font-family: 'Plus Jakarta Sans', sans-serif; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+  .tab-btn { color: #6D645E; border-bottom: 2px solid transparent; }
+  .tab-btn.active { color: #C05B40; border-bottom-color: #C05B40; }
+</style>
 </head>
 <body class="bg-surface text-on-surface min-h-screen flex flex-col">
-<!-- TopNavBar -->
+
 <nav class="fixed top-0 w-full z-50 bg-[#F7F3F0]/90 backdrop-blur-xl border-b border-outline-variant/30">
-<div class="flex justify-between items-center px-8 h-16 w-full max-w-screen-xl mx-auto">
-<div class="text-xl font-extrabold tracking-tighter text-primary font-['Plus_Jakarta_Sans']">
-            YAMY
-        </div>
-<div class="hidden md:flex gap-6 items-center font-['Plus_Jakarta_Sans'] font-semibold tracking-tight text-sm">
-<a class="text-on-surface hover:text-primary transition-colors" href="#">Discover</a>
-<a class="text-on-surface hover:text-primary transition-colors" href="#">Browse</a>
-<a class="text-primary border-b-2 border-primary pb-0.5" href="#">Collections</a>
-<a class="text-on-surface hover:text-primary transition-colors" href="#">Pantry</a>
-<a class="text-on-surface hover:text-primary transition-colors" href="#">Journal</a>
-</div>
-<div class="flex items-center gap-4">
-<div class="relative hidden lg:block">
-<input class="bg-surface-container-high border-none rounded-full px-4 py-2 text-xs focus:ring-2 focus:ring-primary w-52 transition-all" placeholder="Search saved recipes..." type="text"/>
-</div>
-<button class="p-1.5 rounded-full hover:bg-surface-container-high transition-all">
-<span class="material-symbols-outlined text-primary text-xl">account_circle</span>
-</button>
-</div>
-</div>
+  <div class="flex justify-between items-center px-8 h-16 w-full max-w-screen-xl mx-auto">
+    <div class="text-xl font-extrabold tracking-tighter text-primary font-['Plus_Jakarta_Sans']">YAMY</div>
+    <div class="hidden md:flex gap-6 items-center font-['Plus_Jakarta_Sans'] font-semibold tracking-tight text-sm">
+      <a class="text-on-surface hover:text-primary transition-colors" href="index.html">탐색하기</a>
+      <a class="text-on-surface hover:text-primary transition-colors" href="my-picks.html">저장됨</a>
+      <a class="text-primary border-b-2 border-primary pb-0.5" href="#">내 레시피</a>
+      <a class="text-on-surface hover:text-primary transition-colors" href="recipe-editor.html">만들기</a>
+    </div>
+    <div class="flex items-center gap-4">
+      <div class="relative hidden lg:block">
+        <input class="bg-surface-container-high border-none rounded-full px-4 py-2 text-xs focus:ring-2 focus:ring-primary w-52 transition-all" placeholder="레시피 검색..." type="text"/>
+      </div>
+      <button class="p-1.5 rounded-full hover:bg-surface-container-high transition-all">
+        <span class="material-symbols-outlined text-primary text-xl">account_circle</span>
+      </button>
+    </div>
+  </div>
 </nav>
+
 <main class="mt-16 flex-grow">
-<!-- Hero Section -->
-<section class="px-6 py-8 md:py-10 max-w-screen-xl mx-auto">
-<div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
-<div>
-<span class="text-primary font-bold tracking-widest text-xs uppercase mb-2 block">PERSONAL COLLECTION</span>
-<h1 class="text-4xl md:text-5xl font-extrabold tracking-tighter leading-none text-on-surface mb-3">
-                    저장된 레시피
-                </h1>
-<p class="text-on-surface-variant max-w-sm font-medium text-sm leading-relaxed">
-                    당신이 선별한 미식의 기록들. 다시 요리하고 싶은 순간을 위해 보관된 레시피 컬렉션입니다.
-                </p>
-</div>
-<!-- Search & Filters -->
-<div class="flex flex-col gap-2 w-full md:w-auto">
-<div class="relative">
-<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-base">search</span>
-<input class="w-full md:w-60 pl-9 pr-4 py-2 rounded-lg bg-surface-container-lowest border-none shadow-sm focus:ring-2 focus:ring-primary/20 text-on-surface transition-all text-xs" placeholder="레시피 검색..." type="text"/>
-</div>
-</div>
-</div>
-<!-- Filter Chips -->
-<div class="flex flex-wrap gap-1.5 mb-6">
-<button class="px-3.5 py-1 rounded-full bg-primary text-on-primary font-bold text-xs transition-all shadow-md shadow-primary/20">전체보기</button>
-<button class="px-3.5 py-1 rounded-full bg-surface-container-lowest text-on-surface-variant border border-outline-variant/30 hover:bg-surface-container-high transition-all font-semibold text-xs">한식</button>
-<button class="px-3.5 py-1 rounded-full bg-surface-container-lowest text-on-surface-variant border border-outline-variant/30 hover:bg-surface-container-high transition-all font-semibold text-xs">일식</button>
-<button class="px-3.5 py-1 rounded-full bg-surface-container-lowest text-on-surface-variant border border-outline-variant/30 hover:bg-surface-container-high transition-all font-semibold text-xs">비건</button>
-<button class="px-3.5 py-1 rounded-full bg-surface-container-lowest text-on-surface-variant border border-outline-variant/30 hover:bg-surface-container-high transition-all font-semibold text-xs">디저트</button>
-<button class="px-3.5 py-1 rounded-full bg-surface-container-lowest text-on-surface-variant border border-outline-variant/30 hover:bg-surface-container-high transition-all font-semibold text-xs">파스타</button>
-</div>
-<!-- Grid -->
-<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-6">
-<!-- Card 1 -->
-<article class="group">
-<div class="relative overflow-hidden rounded-lg bg-surface-container-lowest aspect-[4/3] mb-2 shadow-sm">
-<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDftifdMKuq8od0L6Om7Xq2fhj42NvIFlSsp2Lrm1UUoz_mhxmuIyUix4glG2cyl_QEWT_mqPH_p1sRNZmQkF-qkQtfA23kLyBZqLdXTkFcZWvGYpFhkanISec6hPjzDf9sD12MuN5tDLg3e0G0FsgB4AHfX50W2gJh1kdtf-y_yMXOqmc2N5MH4j1KPGXwJdGiCxEr2ipOn_SXrD_92R67d6e-RQ0aKFIsvF6ujvIRvOjys6awgsuXX708Y484Y7Oy5g7m1lxz6mU"/>
-<div class="absolute top-2 left-2 bg-tertiary-container text-on-tertiary-container px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-widest">CLASSIC</div>
-<button class="absolute top-2 right-2 bg-surface-container-lowest/90 backdrop-blur-md p-1 rounded-full text-primary shadow-sm">
-<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
-</button>
-</div>
-<h3 class="text-sm font-bold tracking-tight mb-1 group-hover:text-primary transition-colors">트러플 머쉬룸 화덕 피자</h3>
-<div class="flex items-center gap-3 text-on-surface-variant text-[11px] font-medium">
-<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">schedule</span> 45분</span>
-<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm text-tertiary" style="font-variation-settings: 'FILL' 1;">star</span> 4.8</span>
-</div>
-</article>
-<!-- Card 2 -->
-<article class="group">
-<div class="relative overflow-hidden rounded-lg bg-surface-container-lowest aspect-[4/3] mb-2 shadow-sm">
-<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQ85Ub4ZfW7sVhQRyVI1uA5bKRTbYYxCFT-hNREwwWCEOy0LxdfrVmqv_NCXiu_dIOwtvdIY2z6tcpA6zfluMETbONGp3yoRUqbN_Nd0xG918DhOygYEM-oezIMestv8h_K_7O__xI7tz7-GDBW1L4E0O1eT5tge3pye1cnxx1WrIBeskXiRbmdVHICo-vK48Lab6WFYdytIjhWiBbjzWRs_DCnjSfBNMun7Y3RPwT1eL5DDKJXIRK3rVIaViiunbvnP7iobF2F3g"/>
-<div class="absolute top-2 left-2 bg-tertiary-container text-on-tertiary-container px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-widest">PREMIUM</div>
-<button class="absolute top-2 right-2 bg-surface-container-lowest/90 backdrop-blur-md p-1 rounded-full text-primary shadow-sm">
-<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
-</button>
-</div>
-<h3 class="text-sm font-bold tracking-tight mb-1 group-hover:text-primary transition-colors">제주산 딱새우 봉골레 파스타</h3>
-<div class="flex items-center gap-3 text-on-surface-variant text-[11px] font-medium">
-<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">schedule</span> 20분</span>
-<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm text-tertiary" style="font-variation-settings: 'FILL' 1;">star</span> 5.0</span>
-</div>
-</article>
-<!-- Card 3 -->
-<article class="group">
-<div class="relative overflow-hidden rounded-lg bg-surface-container-lowest aspect-[4/3] mb-2 shadow-sm">
-<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBaRnSLUC19HfBY6xAiAV3lLafpsVywbgjZuoLYbDHMbsSuwCoqH0DXo4AuBroJSHCRdg-FX4cIKHtFCtu7vxq5Mka8vZBW7KZb_Y1IxIuRYyUBxb2p9exfGKaOl9JItZcxj2kdzHqauJL-QUK7w8gzjyVSMDvCVZbcZl3OhZEnEQZ_IL2EJrK8AAXMRFx7xVnAgt1VqvHu8T0FuttvgeUgjpIULWip8cgY9GED-eoqwnACRR7pwC0fZowK3SBMU1ncT15ENSC53Oc"/>
-<div class="absolute top-2 left-2 bg-tertiary-container text-on-tertiary-container px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-widest">SWEET</div>
-<button class="absolute top-2 right-2 bg-surface-container-lowest/90 backdrop-blur-md p-1 rounded-full text-primary shadow-sm">
-<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
-</button>
-</div>
-<h3 class="text-sm font-bold tracking-tight mb-1 group-hover:text-primary transition-colors">라즈베리 마스카포네 타르트</h3>
-<div class="flex items-center gap-3 text-on-surface-variant text-[11px] font-medium">
-<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">schedule</span> 60분</span>
-<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm text-tertiary" style="font-variation-settings: 'FILL' 1;">star</span> 4.7</span>
-</div>
-</article>
-<!-- Card 4 -->
-<article class="group">
-<div class="relative overflow-hidden rounded-lg bg-surface-container-lowest aspect-[4/3] mb-2 shadow-sm">
-<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCEH841nOnqR4aGNnzAjF328CTw1kzZCGmt23h1NGBL-5UpVRRxTnEqH2_pn8JQ_amedPBk0b7StfDypW3h39Kg0da6IKbJ_NZbIG2gNY3VvS7Eqgx-pVyyZJyYJcWFiuJbYQTS0VvwCBcd93rnQao6-QMI4qQR14ioWvKtLhsrz_sswLm2rJGl5VWEBIKJIwnaxB9QQh1G-mSDo_ltnFGIGrDWCXiCIIHFju5PUkeDjkefSdntDe5kDMegvPk01BzDgsTARbGKfvM"/>
-<div class="absolute top-2 left-2 bg-secondary-container text-on-secondary-container px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-widest">VEGAN</div>
-<button class="absolute top-2 right-2 bg-surface-container-lowest/90 backdrop-blur-md p-1 rounded-full text-primary shadow-sm">
-<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
-</button>
-</div>
-<h3 class="text-sm font-bold tracking-tight mb-1 group-hover:text-primary transition-colors">제철 뿌리채소 로스트 샐러드</h3>
-<div class="flex items-center gap-3 text-on-surface-variant text-[11px] font-medium">
-<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">schedule</span> 15분</span>
-<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm text-tertiary" style="font-variation-settings: 'FILL' 1;">star</span> 4.9</span>
-</div>
-</article>
-<!-- Add New Action -->
-<div class="flex flex-col items-center justify-center border-2 border-dashed border-outline-variant/50 rounded-lg aspect-[4/3] p-4 text-center bg-surface-container/30 hover:bg-surface-container/50 transition-all cursor-pointer">
-<span class="material-symbols-outlined text-primary/30 text-3xl mb-2">add_circle</span>
-<p class="text-on-surface-variant font-bold text-xs mb-1.5">새로운 영감을 찾아보세요</p>
-<button class="text-primary font-extrabold text-xs hover:underline decoration-2 underline-offset-4">탐색하러 가기</button>
-</div>
-</div>
-</section>
+  <section class="px-6 py-8 md:py-10 max-w-screen-xl mx-auto">
+
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
+      <div>
+        <span class="text-primary font-bold tracking-widest text-xs uppercase mb-2 block">MY RECIPES</span>
+        <h1 class="text-4xl md:text-5xl font-extrabold tracking-tighter leading-none text-on-surface mb-3">내 레시피</h1>
+        <p class="text-on-surface-variant max-w-sm font-medium text-sm leading-relaxed">
+          내가 직접 만든 레시피들을 관리하고, 임시저장된 레시피를 이어서 작성해 보세요.
+        </p>
+      </div>
+      <a href="recipe-editor.html" class="flex items-center gap-2 px-5 py-2.5 bg-primary text-on-primary font-bold text-sm rounded-full shadow-md hover:scale-105 active:scale-95 transition-all whitespace-nowrap self-start md:self-auto">
+        <span class="material-symbols-outlined text-base" style="font-variation-settings:'FILL' 1;">add_circle</span>새 레시피 만들기
+      </a>
+    </div>
+
+    <div class="flex gap-6 mb-5">
+      <div class="flex items-center gap-2 text-sm">
+        <span class="material-symbols-outlined text-primary text-base">menu_book</span>
+        <span class="font-semibold text-on-surface">공개된 레시피</span>
+        <span class="bg-primary/10 text-primary font-bold text-xs px-2 py-0.5 rounded-full">3</span>
+      </div>
+      <div class="flex items-center gap-2 text-sm">
+        <span class="material-symbols-outlined text-on-surface-variant text-base">edit_note</span>
+        <span class="font-semibold text-on-surface">임시저장</span>
+        <span class="bg-surface-container text-on-surface-variant font-bold text-xs px-2 py-0.5 rounded-full">2</span>
+      </div>
+    </div>
+
+    <div class="flex border-b border-outline-variant/40 mb-6">
+      <button class="tab-btn active pb-2.5 px-1 mr-6 text-sm font-bold transition-colors" onclick="switchTab('published', this)">공개된 레시피</button>
+      <button class="tab-btn pb-2.5 px-1 mr-6 text-sm font-bold hover:text-on-surface transition-colors" onclick="switchTab('draft', this)">임시저장</button>
+    </div>
+
+    <!-- Published -->
+    <div id="tab-published" class="tab-panel active">
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-6">
+
+        <article class="group">
+          <div class="relative overflow-hidden rounded-lg aspect-[4/3] mb-2 shadow-sm bg-surface-container-lowest">
+            <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://cdnweb01.wikitree.co.kr/webdata/editor/202504/16/img_20250416102835_b3807a44.webp" alt="라면"/>
+            <div class="absolute top-2 left-2 bg-primary/90 text-on-primary px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-widest">공개</div>
+            <div class="absolute inset-0 bg-on-surface/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+              <button class="bg-surface-container-lowest p-2 rounded-full text-on-surface hover:text-primary shadow-md transition-colors"><span class="material-symbols-outlined text-base">edit</span></button>
+              <button class="bg-surface-container-lowest p-2 rounded-full text-on-surface hover:text-error shadow-md transition-colors"><span class="material-symbols-outlined text-base">delete</span></button>
+            </div>
+          </div>
+          <h3 class="text-sm font-bold tracking-tight mb-1 group-hover:text-primary transition-colors">기본 라면 끓이기</h3>
+          <div class="flex items-center gap-3 text-on-surface-variant text-[11px] font-medium">
+            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">schedule</span> 5분</span>
+            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm text-tertiary" style="font-variation-settings:'FILL' 1;">star</span> 4.9</span>
+            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">visibility</span> 2.4k</span>
+          </div>
+        </article>
+
+        <article class="group">
+          <div class="relative overflow-hidden rounded-lg aspect-[4/3] mb-2 shadow-sm bg-surface-container-lowest">
+            <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDftifdMKuq8od0L6Om7Xq2fhj42NvIFlSsp2Lrm1UUoz_mhxmuIyUix4glG2cyl_QEWT_mqPH_p1sRNZmQkF-qkQtfA23kLyBZqLdXTkFcZWvGYpFhkanISec6hPjzDf9sD12MuN5tDLg3e0G0FsgB4AHfX50W2gJh1kdtf-y_yMXOqmc2N5MH4j1KPGXwJdGiCxEr2ipOn_SXrD_92R67d6e-RQ0aKFIsvF6ujvIRvOjys6awgsuXX708Y484Y7Oy5g7m1lxz6mU" alt="피자"/>
+            <div class="absolute top-2 left-2 bg-primary/90 text-on-primary px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-widest">공개</div>
+            <div class="absolute inset-0 bg-on-surface/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+              <button class="bg-surface-container-lowest p-2 rounded-full text-on-surface hover:text-primary shadow-md transition-colors"><span class="material-symbols-outlined text-base">edit</span></button>
+              <button class="bg-surface-container-lowest p-2 rounded-full text-on-surface hover:text-error shadow-md transition-colors"><span class="material-symbols-outlined text-base">delete</span></button>
+            </div>
+          </div>
+          <h3 class="text-sm font-bold tracking-tight mb-1 group-hover:text-primary transition-colors">트러플 머쉬룸 화덕 피자</h3>
+          <div class="flex items-center gap-3 text-on-surface-variant text-[11px] font-medium">
+            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">schedule</span> 45분</span>
+            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm text-tertiary" style="font-variation-settings:'FILL' 1;">star</span> 4.8</span>
+            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">visibility</span> 1.1k</span>
+          </div>
+        </article>
+
+        <article class="group">
+          <div class="relative overflow-hidden rounded-lg aspect-[4/3] mb-2 shadow-sm bg-surface-container-lowest">
+            <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQ85Ub4ZfW7sVhQRyVI1uA5bKRTbYYxCFT-hNREwwWCEOy0LxdfrVmqv_NCXiu_dIOwtvdIY2z6tcpA6zfluMETbONGp3yoRUqbN_Nd0xG918DhOygYEM-oezIMestv8h_K_7O__xI7tz7-GDBW1L4E0O1eT5tge3pye1cnxx1WrIBeskXiRbmdVHICo-vK48Lab6WFYdytIjhWiBbjzWRs_DCnjSfBNMun7Y3RPwT1eL5DDKJXIRK3rVIaViiunbvnP7iobF2F3g" alt="파스타"/>
+            <div class="absolute top-2 left-2 bg-primary/90 text-on-primary px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-widest">공개</div>
+            <div class="absolute inset-0 bg-on-surface/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+              <button class="bg-surface-container-lowest p-2 rounded-full text-on-surface hover:text-primary shadow-md transition-colors"><span class="material-symbols-outlined text-base">edit</span></button>
+              <button class="bg-surface-container-lowest p-2 rounded-full text-on-surface hover:text-error shadow-md transition-colors"><span class="material-symbols-outlined text-base">delete</span></button>
+            </div>
+          </div>
+          <h3 class="text-sm font-bold tracking-tight mb-1 group-hover:text-primary transition-colors">제주산 딱새우 봉골레 파스타</h3>
+          <div class="flex items-center gap-3 text-on-surface-variant text-[11px] font-medium">
+            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">schedule</span> 20분</span>
+            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm text-tertiary" style="font-variation-settings:'FILL' 1;">star</span> 5.0</span>
+            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">visibility</span> 890</span>
+          </div>
+        </article>
+
+        <a href="recipe-editor.html" class="flex flex-col items-center justify-center border-2 border-dashed border-outline-variant/50 rounded-lg aspect-[4/3] p-4 text-center bg-surface-container/30 hover:bg-surface-container/60 hover:border-primary/40 transition-all cursor-pointer group">
+          <span class="material-symbols-outlined text-primary/40 group-hover:text-primary/70 text-3xl mb-2 transition-colors" style="font-variation-settings:'FILL' 1;">add_circle</span>
+          <p class="text-on-surface-variant font-bold text-xs mb-1">새 레시피 작성하기</p>
+          <span class="text-primary font-extrabold text-xs group-hover:underline decoration-2 underline-offset-4">시작하기</span>
+        </a>
+
+      </div>
+    </div>
+
+    <!-- Draft -->
+    <div id="tab-draft" class="tab-panel">
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-6">
+
+        <article class="group">
+          <div class="relative overflow-hidden rounded-lg aspect-[4/3] mb-2 shadow-sm bg-surface-container-lowest">
+            <div class="w-full h-full bg-surface-container flex items-center justify-center">
+              <span class="material-symbols-outlined text-on-surface-variant/30 text-4xl">image</span>
+            </div>
+            <div class="absolute top-2 left-2 bg-surface-container-high text-on-surface-variant px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-widest">임시저장</div>
+            <div class="absolute inset-0 bg-on-surface/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+              <a href="recipe-editor.html" class="bg-surface-container-lowest px-3 py-1.5 rounded-full text-primary font-bold text-xs shadow-md hover:scale-105 transition-transform">이어 작성하기</a>
+              <button class="bg-surface-container-lowest p-2 rounded-full text-on-surface hover:text-error shadow-md transition-colors"><span class="material-symbols-outlined text-base">delete</span></button>
+            </div>
+          </div>
+          <h3 class="text-sm font-bold tracking-tight mb-1 text-on-surface-variant">제목 없음</h3>
+          <div class="flex items-center gap-1.5 text-on-surface-variant text-[11px] font-medium">
+            <span class="material-symbols-outlined text-sm">history</span><span>오늘 오전 10:42 저장됨</span>
+          </div>
+        </article>
+
+        <article class="group">
+          <div class="relative overflow-hidden rounded-lg aspect-[4/3] mb-2 shadow-sm bg-surface-container-lowest">
+            <img class="w-full h-full object-cover opacity-60 transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBaRnSLUC19HfBY6xAiAV3lLafpsVywbgjZuoLYbDHMbsSuwCoqH0DXo4AuBroJSHCRdg-FX4cIKHtFCtu7vxq5Mka8vZBW7KZb_Y1IxIuRYyUBxb2p9exfGKaOl9JItZcxj2kdzHqauJL-QUK7w8gzjyVSMDvCVZbcZl3OhZEnEQZ_IL2EJrK8AAXMRFx7xVnAgt1VqvHu8T0FuttvgeUgjpIULWip8cgY9GED-eoqwnACRR7pwC0fZowK3SBMU1ncT15ENSC53Oc" alt="타르트"/>
+            <div class="absolute top-2 left-2 bg-surface-container-high text-on-surface-variant px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-widest">임시저장</div>
+            <div class="absolute inset-0 bg-on-surface/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+              <a href="recipe-editor.html" class="bg-surface-container-lowest px-3 py-1.5 rounded-full text-primary font-bold text-xs shadow-md hover:scale-105 transition-transform">이어 작성하기</a>
+              <button class="bg-surface-container-lowest p-2 rounded-full text-on-surface hover:text-error shadow-md transition-colors"><span class="material-symbols-outlined text-base">delete</span></button>
+            </div>
+          </div>
+          <h3 class="text-sm font-bold tracking-tight mb-1 text-on-surface-variant">라즈베리 마스카포네 타르트</h3>
+          <div class="flex items-center gap-1.5 text-on-surface-variant text-[11px] font-medium">
+            <span class="material-symbols-outlined text-sm">history</span><span>어제 오후 3:15 저장됨</span>
+          </div>
+        </article>
+
+        <a href="recipe-editor.html" class="flex flex-col items-center justify-center border-2 border-dashed border-outline-variant/50 rounded-lg aspect-[4/3] p-4 text-center bg-surface-container/30 hover:bg-surface-container/60 hover:border-primary/40 transition-all cursor-pointer group">
+          <span class="material-symbols-outlined text-primary/40 group-hover:text-primary/70 text-3xl mb-2 transition-colors" style="font-variation-settings:'FILL' 1;">add_circle</span>
+          <p class="text-on-surface-variant font-bold text-xs mb-1">새 레시피 작성하기</p>
+          <span class="text-primary font-extrabold text-xs group-hover:underline decoration-2 underline-offset-4">시작하기</span>
+        </a>
+
+      </div>
+    </div>
+
+  </section>
 </main>
-<!-- Footer -->
+
 <footer class="w-full py-8 mt-auto bg-surface-container-high border-t border-outline-variant/30">
-<div class="flex flex-col md:flex-row justify-between items-center px-8 w-full max-w-screen-xl mx-auto">
-<div class="mb-5 md:mb-0 text-center md:text-left">
-<div class="font-['Plus_Jakarta_Sans'] font-extrabold text-primary text-lg mb-1">YAMY</div>
-<p class="font-['Be_Vietnam_Pro'] text-xs text-on-surface-variant">© 2024 YAMY. A Modern Gastronomer's Guide.</p>
-</div>
-<div class="flex flex-wrap justify-center gap-6 font-['Be_Vietnam_Pro'] font-semibold text-sm">
-<a class="text-on-surface-variant hover:text-primary transition-all duration-300" href="#">About</a>
-<a class="text-on-surface-variant hover:text-primary transition-all duration-300" href="#">Privacy Policy</a>
-<a class="text-on-surface-variant hover:text-primary transition-all duration-300" href="#">Kitchen Essentials</a>
-<a class="text-on-surface-variant hover:text-primary transition-all duration-300" href="#">Contact</a>
-</div>
-</div>
+  <div class="flex flex-col md:flex-row justify-between items-center px-8 w-full max-w-screen-xl mx-auto">
+    <div class="mb-5 md:mb-0 text-center md:text-left">
+      <div class="font-['Plus_Jakarta_Sans'] font-extrabold text-primary text-lg mb-1">YAMY</div>
+      <p class="font-['Be_Vietnam_Pro'] text-xs text-on-surface-variant">2024 YAMY. A Modern Gastronomer's Guide.</p>
+    </div>
+    <div class="flex flex-wrap justify-center gap-6 font-['Be_Vietnam_Pro'] font-semibold text-sm">
+      <a class="text-on-surface-variant hover:text-primary transition-all duration-300" href="#">About</a>
+      <a class="text-on-surface-variant hover:text-primary transition-all duration-300" href="#">Privacy Policy</a>
+      <a class="text-on-surface-variant hover:text-primary transition-all duration-300" href="#">Kitchen Essentials</a>
+      <a class="text-on-surface-variant hover:text-primary transition-all duration-300" href="#">Contact</a>
+    </div>
+  </div>
 </footer>
-</body></html>
+
+<script>
+  function switchTab(tab, btn) {
+    document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+    document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+    document.getElementById('tab-' + tab).classList.add('active');
+    btn.classList.add('active');
+  }
+</script>
+</body>
+</html>
