@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;600;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-lowest": "#ffffff",
+                    "primary-fixed-dim": "#ffb4a1",
+                    "outline-variant": "#dcc0ba",
+                    "inverse-primary": "#ffb4a1",
+                    "on-primary-fixed": "#3c0800",
+                    "secondary-container": "#fdb259",
+                    "on-primary": "#ffffff",
+                    "outline": "#89726c",
+                    "error-container": "#ffdad6",
+                    "inverse-on-surface": "#f2f1ec",
+                    "secondary-fixed": "#ffddbb",
+                    "tertiary-container": "#00837b",
+                    "surface-bright": "#fbf9f4",
+                    "tertiary-fixed-dim": "#71d7ce",
+                    "on-tertiary-container": "#f3fffc",
+                    "on-tertiary-fixed-variant": "#00504b",
+                    "on-primary-fixed-variant": "#7f2b14",
+                    "primary": "#9b3f27",
+                    "surface-container-highest": "#e4e2dd",
+                    "on-primary-container": "#fffbff",
+                    "primary-fixed": "#ffdbd1",
+                    "on-surface-variant": "#56423d",
+                    "surface-container": "#f0eee9",
+                    "secondary": "#885200",
+                    "tertiary-fixed": "#8ef4ea",
+                    "background": "#fbf9f4",
+                    "surface-dim": "#dbdad5",
+                    "on-surface": "#1b1c19",
+                    "on-secondary-fixed-variant": "#673d00",
+                    "secondary-fixed-dim": "#ffb867",
+                    "on-background": "#1b1c19",
+                    "surface-variant": "#e4e2dd",
+                    "on-secondary-container": "#724400",
+                    "surface-tint": "#9e4229",
+                    "primary-container": "#ba573c",
+                    "inverse-surface": "#30312e",
+                    "surface-container-high": "#eae8e3",
+                    "on-tertiary": "#ffffff",
+                    "on-secondary": "#ffffff",
+                    "on-tertiary-fixed": "#00201e",
+                    "tertiary": "#006761",
+                    "error": "#ba1a1a",
+                    "on-error-container": "#93000a",
+                    "on-secondary-fixed": "#2b1700",
+                    "on-error": "#ffffff",
+                    "surface-container-low": "#f5f3ee",
+                    "surface": "#fbf9f4"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Epilogue"],
+                    "body": ["Plus Jakarta Sans"],
+                    "label": ["Plus Jakarta Sans"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .editorial-shadow {
+            box-shadow: 0 12px 32px rgba(86, 66, 61, 0.08);
+        }
+        body {
+            background-color: #fbf9f4;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        h1, h2, h3, .brand-font {
+            font-family: 'Epilogue', sans-serif;
+        }
+    </style>
+</head>
+<body class="text-on-surface selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- TopNavBar -->
+<nav class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 py-4 bg-[#F0EEE9]/80 backdrop-blur-md transition-all">
+<div class="flex items-center gap-8">
+<span class="text-2xl font-bold text-[#C05B40] tracking-tight brand-font">YAMY</span>
+<div class="hidden md:flex gap-6 items-center">
+<a class="text-stone-600 font-medium hover:text-[#BA573C] transition-colors" href="#">목록</a>
+<a class="text-stone-600 font-medium hover:text-[#BA573C] transition-colors" href="#">내 레시피</a>
+<a class="text-stone-600 font-medium hover:text-[#BA573C] transition-colors" href="#">저장됨</a>
+<a class="text-stone-600 font-medium hover:text-[#BA573C] transition-colors" href="#">레시피 작성</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-[#C05B40] flex items-center justify-center p-2 rounded-full hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined" data-icon="star">star</span>
+</button>
+<div class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden border-2 border-[#C05B40]">
+<img class="w-full h-full object-cover" data-alt="professional headshot of a smiling woman with a soft natural background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuABKsdU0mXsENnrPtfayW0mDWGlF42xMcwv_Spm7lTSKSY1H4Y2dgMYfeTtDo-u-FquT4sUzwToJ_Z6a7NrvdxI8DUVTdZmfbM7zRA64kWJjPvBCC1GL2DIanW4ftyqpz3HNUskpup3Qk1_HdoLTalYX9bjdMBe4xC7bjsOjRKNAlmxsaFinltUQ9WbyLVweEDqHz7AxT1L0uNx5gCaSqAz_OrwJFWAESCfPuk5konxQ37Uo3rQr5vfX5GQ8C8jxIVPikPmgXASDLs"/>
+</div>
+</div>
+</nav>
+<main class="pt-24 pb-32 px-6 max-w-6xl mx-auto">
+<!-- Profile Edit Section -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-20">
+<!-- Left: Sidebar / Instructions (Editorial Style) -->
+<div class="lg:col-span-4 space-y-4">
+<h1 class="text-4xl font-bold tracking-tight text-primary">프로필 설정</h1>
+<p class="text-on-surface-variant leading-relaxed body-lg">
+                    당신의 요리 여정을 기록하는 개인 공간입니다. 닉네임과 비밀번호를 관리하여 더욱 안전하게 YAMY를 즐겨보세요.
+                </p>
+<div class="pt-8 border-t border-outline-variant/20">
+<div class="flex items-center gap-3 text-secondary font-semibold">
+<span class="material-symbols-outlined" data-icon="verified">verified</span>
+<span>프리미엄 큐레이터</span>
+</div>
+</div>
+</div>
+<!-- Right: Form -->
+<div class="lg:col-span-8 bg-surface-container-low rounded-3xl p-8 md:p-12 editorial-shadow">
+<form class="space-y-8">
+<!-- Image Upload -->
+<div class="flex flex-col md:flex-row items-center gap-8 pb-8 border-b border-outline-variant/10">
+<div class="relative group">
+<div class="w-32 h-32 rounded-3xl overflow-hidden ring-4 ring-white shadow-lg">
+<img class="w-full h-full object-cover" data-alt="close up profile portrait of a woman in a warm lit interior" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBm8KwLGPG8tTqKlYkcrKLYI5skbHJOgOk6VidPlLIAbOw-n7CPb5EJ4XkZQtqUIukhJsEh4NYDtHfUxxxYT_-kWuhCl0FRTi4SgPYwrwgNewSjpKNma6e6pCod7R5vYDtx_HINi3dwZB40Gb29K5jgVWdsGcxGETTsHKs2LIyDhSy1Oxk9_LECY1RzwOYWH5psheHVyc8TeAh1VEQoYu3YsO6FeTpbXBj61Q_dAQvVHb4XbJJgGeaF0E_HYisMtwgukPrAqkP6ndA"/>
+</div>
+<button class="absolute -bottom-2 -right-2 bg-primary text-on-primary p-2 rounded-xl shadow-lg hover:scale-105 transition-transform" type="button">
+<span class="material-symbols-outlined text-sm" data-icon="photo_camera">photo_camera</span>
+</button>
+</div>
+<div class="text-center md:text-left space-y-1">
+<h3 class="text-lg font-bold">프로필 이미지</h3>
+<p class="text-sm text-on-surface-variant">JPG, PNG (최대 5MB)</p>
+<button class="text-primary text-sm font-bold mt-2 hover:underline" type="button">이미지 제거</button>
+</div>
+</div>
+<!-- Input Fields Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="text-sm font-bold text-on-surface-variant ml-1">닉네임</label>
+<input class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-fixed focus:bg-primary-fixed transition-all text-on-surface" type="text" value="미식가 큐레이터"/>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-bold text-on-surface-variant ml-1">이메일</label>
+<input class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-fixed focus:bg-primary-fixed transition-all text-on-surface" type="email" value="curator@yamy.com"/>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-bold text-on-surface-variant ml-1">비밀번호</label>
+<input class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-fixed focus:bg-primary-fixed transition-all text-on-surface" placeholder="••••••••" type="password"/>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-bold text-on-surface-variant ml-1">비밀번호 확인</label>
+<input class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-fixed focus:bg-primary-fixed transition-all text-on-surface" placeholder="••••••••" type="password"/>
+</div>
+</div>
+<div class="pt-4 flex justify-end">
+<button class="bg-gradient-to-br from-primary to-primary-container text-on-primary px-8 py-3 rounded-xl font-bold hover:scale-[1.02] active:scale-95 transition-all editorial-shadow" type="submit">
+                            정보 저장하기
+                        </button>
+</div>
+</form>
+</div>
+</section>
+<!-- Recently Viewed Recipes -->
+<section class="space-y-8">
+<div class="flex justify-between items-end">
+<div class="space-y-2">
+<span class="text-secondary font-bold text-sm tracking-widest uppercase">Your History</span>
+<h2 class="text-3xl font-bold tracking-tight">최근 본 레시피</h2>
+</div>
+<a class="text-primary font-bold flex items-center gap-1 hover:gap-2 transition-all" href="#">
+                    전체보기 <span class="material-symbols-outlined">chevron_right</span>
+</a>
+</div>
+<!-- Horizontal Scroll Rail -->
+<div class="flex gap-6 overflow-x-auto pb-8 scrollbar-hide -mx-6 px-6">
+<!-- Recipe Card 1 -->
+<div class="min-w-[280px] md:min-w-[320px] group cursor-pointer">
+<div class="relative h-[200px] rounded-2xl overflow-hidden mb-4 shadow-sm group-hover:shadow-xl transition-all">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="vibrant healthy salad bowl with avocado, eggs and fresh greens on a minimalist background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-d0zqGToH5ziycJ8xyxQ3uGixjK0ufhS3zkL72b1_3-2RTWUVfcICM6y2KsnnN-bHPuwrctrfOl_d6Oce6ICCOe3pbRiPgpEr-f1GUp1tRfrj-9Y_pRf-3nTCEsE7vfelPxW30gPUj0lgSsOuUpXE6oDUY-3a-OqtzoZMGUzHbahHK4oSm3Zgg_Nqxe5UyVUZnsfte491WI8fAqC7AcYK9Qv7edFXn-ktmu73Gy1KgUObG_fPQ8ok_VYQyQ_efbmejOfcRBV0pAA"/>
+<div class="absolute top-3 right-3 bg-white/90 backdrop-blur p-1.5 rounded-full text-secondary shadow-sm">
+<span class="material-symbols-outlined text-[20px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+<div class="space-y-1">
+<h3 class="text-lg font-bold group-hover:text-primary transition-colors">신선한 아보카도 샐러드</h3>
+<p class="text-sm text-on-surface-variant flex items-center gap-2">
+<span>15분 소요</span> • <span>초급</span>
+</p>
+</div>
+</div>
+<!-- Recipe Card 2 -->
+<div class="min-w-[280px] md:min-w-[320px] group cursor-pointer">
+<div class="relative h-[200px] rounded-2xl overflow-hidden mb-4 shadow-sm group-hover:shadow-xl transition-all">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="rustic tomato soup with basil garnish in a ceramic bowl with artisan bread on the side" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUtZQvtvOgRUYrJPzIYaHH8yenRiI4j-FEest9yQVtAQywJtRoGcsrMZjJxcx9EOUWsEw_AcWd3LNYeGBU5lsdPsdXObSUoTTRzPuxhYuM25wXIy3AHGcdyYG9o0hjQmiyqP7qmsvEvXD-ZMQjdRTinzlZ-TDiEReOsZIzqcQwnapGh41xNS-Oge0uzOrswt8Nd-79hj8gKcYycRJpaMeyjs_NYbstW71TuAN4uDkCVEvv8m5aNaLhv84wzteKSFv1gnyGwMGnZA8"/>
+<div class="absolute top-3 right-3 bg-white/90 backdrop-blur p-1.5 rounded-full text-secondary/40 shadow-sm hover:text-secondary transition-colors">
+<span class="material-symbols-outlined text-[20px]" data-icon="star">star</span>
+</div>
+</div>
+<div class="space-y-1">
+<h3 class="text-lg font-bold group-hover:text-primary transition-colors">구운 토마토 바질 수프</h3>
+<p class="text-sm text-on-surface-variant flex items-center gap-2">
+<span>45분 소요</span> • <span>중급</span>
+</p>
+</div>
+</div>
+<!-- Recipe Card 3 -->
+<div class="min-w-[280px] md:min-w-[320px] group cursor-pointer">
+<div class="relative h-[200px] rounded-2xl overflow-hidden mb-4 shadow-sm group-hover:shadow-xl transition-all">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="mediterranean Buddha bowl with chickpeas, quinoa and roasted vegetables" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxPDHM2pgA7zd4fkU1EOMNvcL_6TdCAPmYA3ThrGVLcnKqGtL5DcQ0QzxJlz-peNWRb1Lb9LLmRQma0MOUo8JExFWyQ0geRotsXFKs-z3gF2A6ayhXt7FjwbHbqE10Lq6SYkbNV5zHY7y0Y3Y456acrabSeocFTJnvLPPX_RBj1vvpaSIwQdCSrgvgO0WL8pnwWANnm9kPNxBEAiJz1MljuTqoi1qhPRZTep5RaSkZ1low7SyS4q_Wk-ewrLt27hmPXHzz38xTWJU"/>
+<div class="absolute top-3 right-3 bg-white/90 backdrop-blur p-1.5 rounded-full text-secondary shadow-sm">
+<span class="material-symbols-outlined text-[20px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+<div class="space-y-1">
+<h3 class="text-lg font-bold group-hover:text-primary transition-colors">지중해식 곡물 볼</h3>
+<p class="text-sm text-on-surface-variant flex items-center gap-2">
+<span>25분 소요</span> • <span>초급</span>
+</p>
+</div>
+</div>
+<!-- Recipe Card 4 -->
+<div class="min-w-[280px] md:min-w-[320px] group cursor-pointer">
+<div class="relative h-[200px] rounded-2xl overflow-hidden mb-4 shadow-sm group-hover:shadow-xl transition-all">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="pasta pesto with pine nuts and cherry tomatoes in a minimalist white plate" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5lq8ryzzXS2g_pNZl8rdAbZo1TxhzGQw7BhFmxEj9NWR8fww0gMwQFzBAuVQMvaVzotuGIBlyHdMqvMkFcLU38HNAymMrJ6InuDClNVYtR6WkaOzB6KU7OjU5yp4pR7-cr0B2kTWtTTXiOFUY04zoH8z3t47-dKQyUXRJToFqEXYtALu4zC0y4afpHb90Bf60GsEAIQLrFaZnnHhR2-MlEYezoJvFfryycjuWk_QXbTgwZEAqcbyyG-EJo_InDZ1nn3N_O-gDi_I"/>
+<div class="absolute top-3 right-3 bg-white/90 backdrop-blur p-1.5 rounded-full text-secondary/40 shadow-sm hover:text-secondary transition-colors">
+<span class="material-symbols-outlined text-[20px]" data-icon="star">star</span>
+</div>
+</div>
+<div class="space-y-1">
+<h3 class="text-lg font-bold group-hover:text-primary transition-colors">홈메이드 페스토 파스타</h3>
+<p class="text-sm text-on-surface-variant flex items-center gap-2">
+<span>20분 소요</span> • <span>초급</span>
+</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar (Mobile only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-2 bg-[#F0EEE9]/80 backdrop-blur-md rounded-t-3xl shadow-[0_-12px_32px_rgba(86,66,61,0.08)]">
+<a class="flex flex-col items-center justify-center text-stone-500 p-2 hover:bg-[#F0EEE9] transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="text-[10px] font-bold mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-stone-500 p-2 hover:bg-[#F0EEE9] transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="restaurant">restaurant</span>
+<span class="text-[10px] font-bold mt-1">Cook</span>
+</a>
+<a class="flex flex-col items-center justify-center text-stone-500 p-2 hover:bg-[#F0EEE9] transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="bookmark">bookmark</span>
+<span class="text-[10px] font-bold mt-1">Saved</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-[#FFDBD1] text-[#C05B40] rounded-2xl p-2 w-16" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="text-[10px] font-bold mt-1">Profile</span>
+</a>
+</nav>
+</body></html>
