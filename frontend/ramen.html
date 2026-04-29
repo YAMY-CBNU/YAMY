@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>라면 끓이기 - YAMY</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;800&family=Plus+Jakarta+Sans:ital,wght@0,400;0,700;0,800;1,400;1,700;1,800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary":                "#C05B40",
+            "on-primary":             "#FFFFFF",
+            "primary-container":      "#FFDBD1",
+            "on-primary-container":   "#3A0C00",
+            "secondary":              "#D9933D",
+            "on-secondary":           "#FFFFFF",
+            "secondary-container":    "#FFDDB3",
+            "on-secondary-container": "#2C1600",
+            "tertiary":               "#008880",
+            "on-tertiary":            "#FFFFFF",
+            "tertiary-container":     "#9EF2E8",
+            "on-tertiary-container":  "#00201F",
+            "surface":                "#F9F7F2",
+            "surface-container":      "#F2EBE3",
+            "surface-container-high": "#F0E9E0",
+            "surface-container-highest": "#E5DCD2",
+            "surface-container-lowest":  "#FFFFFF",
+            "on-surface":             "#2D2926",
+            "on-surface-variant":     "#4F4842",
+            "outline":                "#81766E",
+            "outline-variant":        "#C9C5B4",
+          },
+          fontFamily: {
+            "headline": ["Epilogue", "Plus Jakarta Sans"],
+            "body":     ["Plus Jakarta Sans"],
+            "label":    ["Plus Jakarta Sans"],
+          }
+        },
+      },
+    }
+  </script>
+  <style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    body { background-color: #F9F7F2; font-family: 'Plus Jakarta Sans', sans-serif; }
+
+    /* 타이머 완료 애니메이션 */
+    .timer-finished {
+      animation: timerPulse 0.5s infinite alternate;
+    }
+    @keyframes timerPulse {
+      from { background-color: #F2EBE3; }
+      to   { background-color: #FFDBD1; }
+    }
+
+    /* 단계 인디케이터 */
+    .indicator-dot {
+      width: 10px; height: 10px;
+      border-radius: 9999px;
+      background-color: #C9C5B4;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .indicator-dot.active {
+      background-color: #C05B40;
+      transform: scale(1.3);
+    }
+    .indicator-dot:hover { background-color: #D9933D; }
+
+    /* 알림 토스트 */
+    .notification {
+      position: fixed;
+      top: 6rem;
+      right: 1.5rem;
+      background: linear-gradient(135deg, #C05B40, #D9933D);
+      color: #fff;
+      padding: 1rem 1.5rem;
+      border-radius: 0.75rem;
+      box-shadow: 0 8px 24px rgba(192, 91, 64, 0.35);
+      transform: translateX(calc(100% + 2rem));
+      transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+      z-index: 9999;
+      font-weight: 700;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .notification.show { transform: translateX(0); }
+
+    /* 재료 체크 완료 스타일 */
+    #ingredient-form label:has(input:checked) {
+      background-color: #F2EBE3;
+      text-decoration: line-through;
+      color: #81766E;
+    }
+
+    /* 타이머 프로그레스바 */
+    #timer-progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #C05B40, #D9933D);
+      border-radius: 9999px;
+      transition: width 1s linear;
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface font-body">
+
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl flex justify-between items-center px-12 h-20 border-b border-outline-variant/30">
+  <div class="flex items-center gap-10">
+    <a href="index.html" class="text-2xl font-extrabold text-primary font-headline tracking-tighter">YAMY</a>
+    <div class="hidden md:flex items-center gap-7 font-headline tracking-tight">
+      <a class="text-on-surface-variant hover:text-primary transition-colors text-sm" href="index.html">탐색</a>
+      <a class="text-on-surface-variant hover:text-primary transition-colors text-sm" href="#">내 레시피</a>
+      <a class="text-on-surface-variant hover:text-primary transition-colors text-sm" href="#">저장됨</a>
+      <a class="text-on-surface-variant hover:text-primary transition-colors text-sm" href="#">레시피 작성</a>
+    </div>
+  </div>
+  <div class="flex items-center gap-4">
+    <a href="login.html" class="text-on-surface-variant font-semibold text-sm hover:text-primary transition-colors hidden sm:block">로그인</a>
+    <a href="signup.html" class="bg-primary text-on-primary px-6 py-2.5 rounded-full font-headline font-bold text-sm hover:opacity-90 transition-all shadow-sm">회원가입</a>
+  </div>
+</nav>
+
+<main class="pt-20 pb-28 max-w-5xl mx-auto px-6">
+
+  <!-- 브레드크럼 -->
+  <div class="flex items-center gap-2 text-xs text-on-surface-variant font-semibold py-6">
+    <a href="index.html" class="hover:text-primary transition-colors">홈</a>
+    <span class="material-symbols-outlined text-base">chevron_right</span>
+    <span class="text-primary">라면 끓이기</span>
+  </div>
+
+  <!-- 레시피 헤더 -->
+  <section class="mb-10">
+    <div class="flex flex-wrap gap-2 mb-4">
+      <span class="bg-primary text-on-primary px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">인기 메뉴</span>
+      <span class="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">한식</span>
+      <span class="bg-tertiary-container text-on-tertiary-container px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">간편식</span>
+    </div>
+    <h1 class="text-4xl font-headline font-extrabold text-on-surface tracking-tight mb-4">라면 끓이기</h1>
+    <p class="text-on-surface-variant text-base leading-relaxed mb-6 max-w-2xl">
+      누구나 쉽게 따라할 수 있는 기본 라면 레시피입니다. 몇 가지 간단한 재료만 있으면 집에서도 맛있는 라면을 즐길 수 있어요!
+    </p>
+    <div class="flex flex-wrap gap-4">
+      <div class="flex items-center gap-2 bg-surface-container px-4 py-2.5 rounded-xl text-sm font-semibold text-on-surface-variant">
+        <span class="material-symbols-outlined text-base text-secondary">schedule</span>
+        소요 시간: 약 5분
+      </div>
+      <div class="flex items-center gap-2 bg-surface-container px-4 py-2.5 rounded-xl text-sm font-semibold text-on-surface-variant">
+        <span class="material-symbols-outlined text-base text-primary">signal_cellular_alt</span>
+        난이도: ★☆☆ 초급
+      </div>
+      <div class="flex items-center gap-2 bg-surface-container px-4 py-2.5 rounded-xl text-sm font-semibold text-on-surface-variant">
+        <span class="material-symbols-outlined text-base text-tertiary">group</span>
+        1인분
+      </div>
+    </div>
+  </section>
+
+  <!-- 재료 + 완성 이미지 -->
+  <section class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+
+    <!-- 재료 체크리스트 -->
+    <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/20 p-7">
+      <div class="flex items-center gap-2 mb-5">
+        <div class="w-9 h-9 bg-secondary-container/40 rounded-xl flex items-center justify-center">
+          <span class="material-symbols-outlined text-secondary text-xl">checklist</span>
+        </div>
+        <h2 class="font-headline font-bold text-lg text-on-surface">재료 체크리스트</h2>
+      </div>
+      <form id="ingredient-form" class="space-y-2">
+        <label class="flex items-center gap-3 p-3 bg-surface-container rounded-xl cursor-pointer hover:bg-surface-container-high transition-colors group">
+          <input type="checkbox" value="라면 1봉지" class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary/30 cursor-pointer"/>
+          <span class="text-sm font-medium text-on-surface group-hover:text-primary transition-colors">🍜 라면 1봉지</span>
+        </label>
+        <label class="flex items-center gap-3 p-3 bg-surface-container rounded-xl cursor-pointer hover:bg-surface-container-high transition-colors group">
+          <input type="checkbox" value="물 550ml" class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary/30 cursor-pointer"/>
+          <span class="text-sm font-medium text-on-surface group-hover:text-primary transition-colors">💧 물 550ml</span>
+        </label>
+        <label class="flex items-center gap-3 p-3 bg-surface-container rounded-xl cursor-pointer hover:bg-surface-container-high transition-colors group">
+          <input type="checkbox" value="계란 1개" class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary/30 cursor-pointer"/>
+          <span class="text-sm font-medium text-on-surface group-hover:text-primary transition-colors">🥚 계란 1개</span>
+        </label>
+        <label class="flex items-center gap-3 p-3 bg-surface-container rounded-xl cursor-pointer hover:bg-surface-container-high transition-colors group">
+          <input type="checkbox" value="대파 조금" class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary/30 cursor-pointer"/>
+          <span class="text-sm font-medium text-on-surface group-hover:text-primary transition-colors">🧅 대파 조금</span>
+        </label>
+        <label class="flex items-center gap-3 p-3 bg-surface-container rounded-xl cursor-pointer hover:bg-surface-container-high transition-colors group">
+          <input type="checkbox" value="김치 (선택)" class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary/30 cursor-pointer"/>
+          <span class="text-sm font-medium text-on-surface group-hover:text-primary transition-colors">🥬 김치 <span class="text-on-surface-variant font-normal">(선택)</span></span>
+        </label>
+        <label class="flex items-center gap-3 p-3 bg-surface-container rounded-xl cursor-pointer hover:bg-surface-container-high transition-colors group">
+          <input type="checkbox" value="치즈 (선택)" class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary/30 cursor-pointer"/>
+          <span class="text-sm font-medium text-on-surface group-hover:text-primary transition-colors">🧀 치즈 <span class="text-on-surface-variant font-normal">(선택)</span></span>
+        </label>
+      </form>
+    </div>
+
+    <!-- 완성 예시 이미지 -->
+    <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/20 p-7">
+      <div class="flex items-center gap-2 mb-5">
+        <div class="w-9 h-9 bg-primary-container/30 rounded-xl flex items-center justify-center">
+          <span class="material-symbols-outlined text-primary text-xl">restaurant</span>
+        </div>
+        <h2 class="font-headline font-bold text-lg text-on-surface">완성 예시</h2>
+      </div>
+      <div class="rounded-xl overflow-hidden">
+        <img
+          src="https://cdnweb01.wikitree.co.kr/webdata/editor/202504/16/img_20250416102835_b3807a44.webp"
+          alt="맛있는 라면 완성 이미지"
+          class="w-full h-52 object-cover hover:scale-105 transition-transform duration-500"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- 미준비 재료 알림 -->
+  <div class="bg-secondary-container/30 border border-secondary/20 rounded-2xl px-6 py-4 mb-10 flex items-start gap-3">
+    <span class="material-symbols-outlined text-secondary mt-0.5">info</span>
+    <div class="text-sm">
+      <span class="font-bold text-on-surface">아직 준비되지 않은 재료: </span>
+      <span id="missing-ingredients" class="text-on-surface-variant"></span>
+    </div>
+  </div>
+
+  <!-- 조리 과정 -->
+  <section class="bg-surface-container-lowest rounded-2xl border border-outline-variant/20 p-8 mb-8">
+    <div class="flex items-center gap-3 mb-8 pb-6 border-b border-outline-variant/20">
+      <div class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
+        <span class="material-symbols-outlined text-primary">menu_book</span>
+      </div>
+      <h2 class="font-headline font-bold text-2xl text-on-surface tracking-tight">조리 과정</h2>
+    </div>
+
+    <!-- 스텝 컨테이너 -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center min-h-[320px] mb-8">
+
+      <!-- 스텝 내용 -->
+      <div>
+        <div class="flex items-center gap-4 mb-5">
+          <div id="step-number" class="w-11 h-11 rounded-full bg-primary text-on-primary font-headline font-extrabold text-xl flex items-center justify-center shadow-md shadow-primary/20">1</div>
+          <h3 id="step-title" class="font-headline font-bold text-2xl text-on-surface"></h3>
+        </div>
+        <p id="step-description" class="text-on-surface-variant leading-relaxed text-base mb-6"></p>
+
+        <!-- 타이머 -->
+        <div id="timer-container" class="bg-surface-container rounded-2xl px-5 py-4 border border-outline-variant/30 transition-colors">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2">
+              <span id="timer-label" class="text-lg">⏰</span>
+              <span id="timer-display" class="font-headline font-extrabold text-3xl text-on-surface tracking-tight">00:00</span>
+            </div>
+            <div class="flex gap-2">
+              <button id="start-timer" type="button" class="flex items-center gap-1.5 bg-primary text-on-primary px-4 py-2 rounded-xl text-sm font-bold hover:opacity-90 active:scale-95 transition-all shadow-sm">
+                <span class="material-symbols-outlined text-base">play_arrow</span> 시작
+              </button>
+              <button id="pause-timer" type="button" style="display:none" class="flex items-center gap-1.5 bg-secondary text-on-secondary px-4 py-2 rounded-xl text-sm font-bold hover:opacity-90 active:scale-95 transition-all shadow-sm">
+                <span class="material-symbols-outlined text-base">pause</span> 일시정지
+              </button>
+              <button id="reset-timer" type="button" class="flex items-center gap-1.5 bg-surface-container-highest text-on-surface-variant px-4 py-2 rounded-xl text-sm font-bold hover:bg-outline-variant/30 active:scale-95 transition-all">
+                <span class="material-symbols-outlined text-base">replay</span> 초기화
+              </button>
+            </div>
+          </div>
+          <!-- 프로그레스 바 -->
+          <div class="w-full h-2 bg-outline-variant/30 rounded-full overflow-hidden">
+            <div id="timer-progress-bar" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 스텝 이미지 -->
+      <div class="rounded-2xl overflow-hidden shadow-lg">
+        <img
+          id="step-image"
+          src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=400&h=300&fit=crop"
+          alt="물 끓이기"
+          class="w-full h-64 object-cover hover:scale-105 transition-transform duration-500"
+        />
+      </div>
+    </div>
+
+    <!-- 스텝 네비게이션 -->
+    <div class="flex justify-between items-center pt-6 border-t border-outline-variant/20">
+      <button id="prev-btn" type="button" disabled
+        class="flex items-center gap-2 bg-primary text-on-primary px-6 py-3 rounded-full font-headline font-bold text-sm hover:opacity-90 active:scale-95 transition-all shadow-md disabled:bg-outline-variant/40 disabled:text-on-surface-variant disabled:shadow-none disabled:cursor-not-allowed">
+        <span class="material-symbols-outlined text-base">arrow_back</span> 이전
+      </button>
+
+      <div class="flex items-center gap-3">
+        <span id="step-counter" class="text-sm font-bold text-primary font-headline">1 / 4</span>
+        <div class="flex gap-2 items-center">
+          <div class="indicator-dot active" data-step="1"></div>
+          <div class="indicator-dot" data-step="2"></div>
+          <div class="indicator-dot" data-step="3"></div>
+          <div class="indicator-dot" data-step="4"></div>
+        </div>
+      </div>
+
+      <button id="next-btn" type="button"
+        class="flex items-center gap-2 bg-primary text-on-primary px-6 py-3 rounded-full font-headline font-bold text-sm hover:opacity-90 active:scale-95 transition-all shadow-md disabled:bg-outline-variant/40 disabled:text-on-surface-variant disabled:shadow-none disabled:cursor-not-allowed">
+        다음 <span class="material-symbols-outlined text-base">arrow_forward</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- 요리 팁 -->
+  <section class="bg-tertiary-container/30 border border-tertiary/20 rounded-2xl p-8 mb-6">
+    <div class="flex items-center gap-3 mb-6">
+      <div class="w-10 h-10 bg-tertiary/10 rounded-xl flex items-center justify-center">
+        <span class="material-symbols-outlined text-tertiary">tips_and_updates</span>
+      </div>
+      <h2 class="font-headline font-bold text-xl text-on-surface tracking-tight">요리 팁</h2>
+    </div>
+    <ul class="space-y-3">
+      <li class="flex items-start gap-3 text-sm text-on-surface-variant leading-relaxed">
+        <span class="material-symbols-outlined text-tertiary text-base mt-0.5 flex-shrink-0">check_circle</span>
+        물의 양을 정확히 맞추면 더 맛있는 라면을 만들 수 있어요
+      </li>
+      <li class="flex items-start gap-3 text-sm text-on-surface-variant leading-relaxed">
+        <span class="material-symbols-outlined text-tertiary text-base mt-0.5 flex-shrink-0">check_circle</span>
+        계란은 완전히 익히지 말고 반숙 상태로 두면 더 부드러워요
+      </li>
+      <li class="flex items-start gap-3 text-sm text-on-surface-variant leading-relaxed">
+        <span class="material-symbols-outlined text-tertiary text-base mt-0.5 flex-shrink-0">check_circle</span>
+        김치를 넣으면 칼칼하고 시원한 맛을 즐길 수 있어요
+      </li>
+      <li class="flex items-start gap-3 text-sm text-on-surface-variant leading-relaxed">
+        <span class="material-symbols-outlined text-tertiary text-base mt-0.5 flex-shrink-0">check_circle</span>
+        면을 너무 오래 끓이면 퍼지니 주의하세요
+      </li>
+      <li class="flex items-start gap-3 text-sm text-on-surface-variant leading-relaxed">
+        <span class="material-symbols-outlined text-tertiary text-base mt-0.5 flex-shrink-0">check_circle</span>
+        치즈는 마지막에 넣어 살짝만 녹여주세요
+      </li>
+    </ul>
+  </section>
+
+</main>
+
+<!-- Footer -->
+<footer class="bg-surface-container w-full py-16 px-8 flex flex-col items-center gap-8 border-t border-outline-variant/30">
+  <a href="index.html" class="text-2xl font-extrabold text-primary font-headline tracking-tighter">YAMY</a>
+  <div class="flex gap-10 text-sm font-semibold">
+    <a class="text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">이용약관</a>
+    <a class="text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">개인정보 처리방침</a>
+    <a class="text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">문의하기</a>
+  </div>
+  <div class="flex gap-6">
+    <span class="material-symbols-outlined text-primary cursor-pointer text-2xl hover:scale-110 transition-transform">public</span>
+    <span class="material-symbols-outlined text-primary cursor-pointer text-2xl hover:scale-110 transition-transform">restaurant</span>
+    <span class="material-symbols-outlined text-primary cursor-pointer text-2xl hover:scale-110 transition-transform">local_cafe</span>
+  </div>
+  <p class="text-on-surface-variant/60 text-xs text-center leading-relaxed">© 2026 YAMY. 맛있는 요리의 시작!</p>
+</footer>
+
+<!-- 타이머 완료 알림 -->
+<div class="notification" id="notification">
+  <span class="material-symbols-outlined text-xl">alarm</span>
+  시간이 다 되었습니다!
+</div>
+
+</body>
+</html>

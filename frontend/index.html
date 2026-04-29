@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;800&amp;family=Plus+Jakarta+Sans:ital,wght@0,400;0,700;0,800;1,400;1,700;1,800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-dim": "#005555",
+                    "on-background": "#2D2926",
+                    "surface-container": "#F2EBE3",
+                    "tertiary-fixed": "#008880",
+                    "on-primary": "#FFFFFF",
+                    "primary-fixed-dim": "#C05B40",
+                    "on-primary-fixed-variant": "#4A2318",
+                    "surface-variant": "#EBE3D9",
+                    "surface-container-highest": "#E5DCD2",
+                    "surface": "#F9F7F2",
+                    "on-secondary": "#FFFFFF",
+                    "on-error-container": "#410002",
+                    "tertiary": "#008880",
+                    "surface-container-high": "#F0E9E0",
+                    "surface-dim": "#EBE3D9",
+                    "secondary-fixed": "#D9933D",
+                    "surface-container-low": "#F5F0E9",
+                    "primary-container": "#C05B40",
+                    "on-primary-fixed": "#000000",
+                    "surface-tint": "#C05B40",
+                    "on-error": "#FFFFFF",
+                    "tertiary-container": "#008880",
+                    "on-secondary-fixed-variant": "#4E3210",
+                    "background": "#F9F7F2",
+                    "error": "#B3261E",
+                    "primary": "#C05B40",
+                    "secondary-container": "#D9933D",
+                    "error-container": "#F9DEDC",
+                    "outline-variant": "#C9C5B4",
+                    "secondary-fixed-dim": "#D9933D",
+                    "on-surface": "#2D2926",
+                    "on-tertiary": "#FFFFFF",
+                    "secondary": "#D9933D",
+                    "on-tertiary-fixed": "#00201F",
+                    "primary-dim": "#A04A33",
+                    "secondary-dim": "#B77C33",
+                    "on-tertiary-fixed-variant": "#004F4C",
+                    "inverse-primary": "#FFB4A1",
+                    "on-primary-container": "#FFFFFF",
+                    "inverse-surface": "#322F2D",
+                    "on-tertiary-container": "#FFFFFF",
+                    "on-secondary-container": "#FFFFFF",
+                    "surface-bright": "#F9F7F2",
+                    "tertiary-fixed-dim": "#008880",
+                    "inverse-on-surface": "#F7F0E8",
+                    "error-dim": "#F2B8B5",
+                    "on-secondary-fixed": "#291800",
+                    "on-surface-variant": "#4F4842",
+                    "primary-fixed": "#FFDBD1",
+                    "surface-container-lowest": "#FFFFFF",
+                    "outline": "#81766E"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "1rem",
+                    "2xl": "1.5rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Epilogue", "Plus Jakarta Sans"],
+                    "body": ["Plus Jakarta Sans"],
+                    "label": ["Plus Jakarta Sans"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .artisanal-gradient {
+            background: linear-gradient(135deg, #C05B40 0%, #D9933D 100%);
+        }
+        body {
+            background-color: #F9F7F2;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl flex justify-between items-center px-12 h-24 max-w-full mx-auto border-b border-outline-variant/30">
+<div class="flex items-center gap-12">
+<span class="text-3xl font-extrabold text-primary font-headline tracking-tighter">YAMY</span>
+<div class="hidden md:flex items-center gap-8 font-headline tracking-tight">
+<a class="text-primary border-b-2 border-primary pb-1 font-bold" href="#">탐색</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">내 레시피</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">저장됨</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">레시피 작성</a>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="bg-surface-container border border-outline-variant/50 rounded-full pl-11 pr-6 py-2.5 text-sm focus:ring-2 focus:ring-primary w-72 transition-all outline-none" placeholder="요리 영감 검색..." type="text"/>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-all text-2xl">account_circle</button>
+<button class="bg-primary text-on-primary px-8 py-2.5 rounded-full font-headline font-bold text-sm hover:opacity-90 duration-150 transition-all shadow-sm">로그인</button>
+</div>
+</nav>
+<main class="pt-32 pb-32 overflow-x-hidden max-w-7xl mx-auto">
+<!-- Hero Section -->
+<section class="px-8 mb-24">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-8 h-[550px]">
+<div class="md:col-span-8 relative rounded-2xl overflow-hidden group shadow-lg">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="Gourmet roasted lamb chops" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJVuqypwNHV4hx8MiUWKljawG_lBCbP-ihQi_kH_LWEPFfC5bHgjkqOMI3xSEB-TwkYTXaKDhguZhyrVeVhvcLPQOYUrRKAiV7Jtz4vPOdRM_Q9YOn8YaKynJ0TRICOiSjBaAjllYujyjZ0sGPmBrKcUxKxaimd2yY_rDLqocOTaYilHPWtstfdO2j2aGHg2q12FlKcmDcv0OaHTn4fZnT3pHqNgJqLEj8cYD-GwqcBE_nGyxYa2CRz6-R0Egh9oj5PYIqfYrXLL8"/>
+<div class="absolute inset-0 bg-gradient-to-t from-on-background/90 via-on-background/20 to-transparent flex flex-col justify-end p-12">
+<span class="bg-secondary text-on-secondary px-5 py-1.5 rounded-full text-[10px] font-bold w-fit mb-6 font-headline uppercase tracking-widest">에디터의 선택</span>
+<h1 class="text-white text-5xl md:text-6xl font-headline font-extrabold tracking-tighter mb-6 leading-none">슬로우 로스트 지중해식 양고기</h1>
+<p class="text-white/90 max-w-xl font-body leading-relaxed text-lg">허브를 듬뿍 넣은 시그니처 슬로우 로스팅 기법으로 입안에서 살살 녹는 양고기 요리의 비결을 확인해보세요.</p>
+</div>
+</div>
+<div class="md:col-span-4 grid grid-rows-2 gap-8">
+<div class="bg-surface-variant rounded-2xl p-10 flex flex-col justify-center relative overflow-hidden group hover:shadow-md transition-shadow">
+<div class="z-10">
+<h3 class="font-headline text-3xl font-bold text-on-background mb-3">장인 베이킹</h3>
+<p class="text-on-surface-variant text-base leading-relaxed">완벽한 사워도우 크럼의 비밀을 풀어보세요.</p>
+<button class="mt-6 text-primary font-bold text-sm flex items-center gap-2 group-hover:translate-x-1 transition-transform">테크닉 탐색하기 <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
+</div>
+<span class="material-symbols-outlined absolute -right-6 -bottom-6 text-[12rem] text-primary opacity-10 rotate-12">bakery_dining</span>
+</div>
+<div class="bg-tertiary rounded-2xl p-10 text-on-tertiary flex flex-col justify-center relative group hover:shadow-md transition-shadow">
+<h3 class="font-headline text-3xl font-bold mb-3">여름 수확</h3>
+<p class="text-on-tertiary/90 text-base leading-relaxed">테라스 디너 파티를 위한 신선한 제철 레시피.</p>
+<div class="mt-8 flex items-center gap-4">
+<div class="flex -space-x-3">
+<div class="w-10 h-10 rounded-full border-2 border-white bg-stone-300 overflow-hidden"><img data-alt="Chef" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCNlv6ddOFZjj_ePev33rUslaPw79BhercO7FReTE9tfnAFOwaKpZ-yzGnsxzR7HOK8wLjBGO43EtrgxWmCnFmB1_bpWZ8qsCYFSTootvRR6E9fOaJ0jXfMXSaUDh-zm88UvLouCPmTfbyhRZd0W_tbu55eGKK_mKSpY2MKDAZVl-pE1U5Cny_np65cbEatcSVTGDq1uifu0iVb6xPSAkFlj2uzELFsdpsHqhHoqZ1jQAno3VZgGuW1QDIDvgSSjadgWJLLhZq-FqA"/></div>
+<div class="w-10 h-10 rounded-full border-2 border-white bg-stone-300 overflow-hidden"><img data-alt="Blogger" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDJVygo2fPlFlqd7_Lrqwv4sU-mgoUgOC_lranZlxqf3VsK5PsQ-_Z-lmPCATFOjv1DQbfdQiQ6XmVXMsExbq4lQwNBqLsfbcN9OAxznh4IwdipNMJaAbh0FZrBmNVg6fDdbvRCHWcIEqxoeakiK1fR9-FaHU4XOirtB01QlLmjsAitfcXv3_5VcaSZY4VuDlKquVAQmQcuP3sBUd-t79ZSuNyOqNAmiFdYPZ02Nb6OTTZ0Jr74bTYi4BlmT5Bes4KmPO6-J2kRBo"/></div>
+<div class="flex items-center justify-center w-10 h-10 rounded-full border-2 border-white bg-primary text-[10px] font-bold text-white">+1.2만</div>
+</div>
+<span class="text-xs font-bold uppercase tracking-widest text-on-tertiary/80">함께하는 미식가들</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Popular Now Carousel -->
+<section class="mb-24">
+<div class="px-8 flex justify-between items-end mb-10">
+<div>
+<span class="text-primary font-headline font-bold text-sm uppercase tracking-[0.3em] mb-2 block">트렌딩</span>
+<h2 class="text-4xl font-headline font-extrabold text-on-surface tracking-tight">지금 인기 있는 레시피</h2>
+</div>
+<button class="text-on-surface-variant font-headline font-bold text-sm hover:text-primary transition-colors flex items-center gap-2 group">전체 보기 <span class="material-symbols-outlined text-xl group-hover:translate-x-1 transition-transform">chevron_right</span></button>
+</div>
+<div class="flex overflow-x-auto gap-8 px-8 hide-scrollbar pb-8 snap-x">
+<!-- Recipe Card 1: 라면 -->
+<a href="ramen.html" class="min-w-[340px] max-w-[340px] bg-surface-container-lowest rounded-2xl p-0 snap-start border border-outline-variant/20 hover:shadow-xl transition-all hover:-translate-y-1 block">
+<div class="relative h-72 overflow-hidden rounded-t-2xl">
+<img class="w-full h-full object-cover" alt="라면 끓이기" src="https://cdnweb01.wikitree.co.kr/webdata/editor/202504/16/img_20250416102835_b3807a44.webp"/>
+<span class="absolute top-5 left-5 bg-primary text-on-primary px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm">인기 메뉴</span>
+<button class="absolute top-5 right-5 bg-white/90 backdrop-blur-md p-2.5 rounded-full text-on-surface hover:text-primary hover:scale-110 transition-all shadow-md" onclick="event.preventDefault()">
+<span class="material-symbols-outlined text-xl">star</span>
+</button>
+</div>
+<div class="p-8">
+<h3 class="font-headline font-bold text-2xl text-on-surface mb-3 leading-tight">기본 라면 끓이기</h3>
+<div class="flex items-center justify-between mt-6">
+<div class="flex items-center gap-1.5 text-secondary">
+<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-sm font-bold text-on-surface">4.9</span>
+<span class="text-on-surface-variant text-xs font-normal ml-1">(2.4k)</span>
+</div>
+<span class="text-on-surface-variant text-xs font-semibold flex items-center gap-1.5 bg-surface-container-high px-3 py-1.5 rounded-lg">
+<span class="material-symbols-outlined text-base">schedule</span> 5분
+                        </span>
+</div>
+</div>
+</a>
+<!-- Recipe Card 2 -->
+<div class="min-w-[340px] max-w-[340px] bg-surface-container-lowest rounded-2xl p-0 snap-start border border-outline-variant/20 hover:shadow-xl transition-all hover:-translate-y-1">
+<div class="relative h-72 overflow-hidden rounded-t-2xl">
+<img class="w-full h-full object-cover" data-alt="Cheeseburger" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqC_AXlOEbnuZ_vnKxrp4toJRpic2vjKEKwGvYipulmbrqIE-nFHTNaPGc4F30bTDayJ8xyZnO2jBwkiv4Rgh7cqSiPRFCImte60byFTrAL_cS89KP-d19V929UHzproZ3zGHN6OiYVIw4GDsBIG12Vulf4h396AnpTVlbMnsarQszwl-GCJhazjqpcYkxh6Hwr0Riiy-W-0FwElqfx3mNntIWsJ-voVDVmfk-t1qEfsebDVV3y1sbfvuoOwq1RFaO3npC2XBMSO8"/>
+<span class="absolute top-5 left-5 bg-primary text-on-primary px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm">인기 메뉴</span>
+<button class="absolute top-5 right-5 bg-white/90 backdrop-blur-md p-2.5 rounded-full text-on-surface hover:text-primary hover:scale-110 transition-all shadow-md">
+<span class="material-symbols-outlined text-xl">star</span>
+</button>
+</div>
+<div class="p-8">
+<h3 class="font-headline font-bold text-2xl text-on-surface mb-3 leading-tight">얼티밋 비스트로 버거</h3>
+<div class="flex items-center justify-between mt-6">
+<div class="flex items-center gap-1.5 text-secondary">
+<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-sm font-bold text-on-surface">4.8</span>
+<span class="text-on-surface-variant text-xs font-normal ml-1">(850)</span>
+</div>
+<span class="text-on-surface-variant text-xs font-semibold flex items-center gap-1.5 bg-surface-container-high px-3 py-1.5 rounded-lg">
+<span class="material-symbols-outlined text-base">schedule</span> 35분
+                        </span>
+</div>
+</div>
+</div>
+<!-- Recipe Card 3 -->
+<div class="min-w-[340px] max-w-[340px] bg-surface-container-lowest rounded-2xl p-0 snap-start border border-outline-variant/20 hover:shadow-xl transition-all hover:-translate-y-1">
+<div class="relative h-72 overflow-hidden rounded-t-2xl">
+<img class="w-full h-full object-cover" data-alt="Salmon bowl" src="https://lh3.googleusercontent.com/aida-public/AB6AXuATFXYBd5t71zZ6iPaSrZZUbrqnBG6Pe3qdY2sOJOtNeVZdg2XYdjkpNKA2_er-dg5C2TXvW9ILB32GTSFUGhtDLC23cm18tlK71Y1L0bYq4l0mb_hteK3UDC84EvPZJTJxl1vLbJ8_LzCh-sWqTkwvOBx59KvBHPzYwXcZ-HhxNH3R17Eqn2IH8MEF3MkP6kTJGCs_ahHlpXonSQLVM5k6GHw9GJzKnTL-sVuoEcXOaQK6CjH51M-0PNyyjpBNH_Hn1yNqcSAWSE4"/>
+<span class="absolute top-5 left-5 bg-secondary text-on-secondary px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm">건강식</span>
+<button class="absolute top-5 right-5 bg-white/90 backdrop-blur-md p-2.5 rounded-full text-on-surface hover:text-primary hover:scale-110 transition-all shadow-md">
+<span class="material-symbols-outlined text-xl">star</span>
+</button>
+</div>
+<div class="p-8">
+<h3 class="font-headline font-bold text-2xl text-on-surface mb-3 leading-tight">와일드 새먼 &amp; 퀴노아 볼</h3>
+<div class="flex items-center justify-between mt-6">
+<div class="flex items-center gap-1.5 text-secondary">
+<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-sm font-bold text-on-surface">4.9</span>
+<span class="text-on-surface-variant text-xs font-normal ml-1">(2.1k)</span>
+</div>
+<span class="text-on-surface-variant text-xs font-semibold flex items-center gap-1.5 bg-surface-container-high px-3 py-1.5 rounded-lg">
+<span class="material-symbols-outlined text-base">schedule</span> 25분
+                        </span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Quick Meals Section -->
+<section class="mb-24 bg-surface-variant py-24 -mx-8 px-16 rounded-[3rem]">
+<div class="mb-12">
+<span class="text-primary font-headline font-bold text-sm uppercase tracking-[0.3em] mb-2 block">효율성</span>
+<h2 class="text-4xl font-headline font-extrabold text-on-surface tracking-tight">15분 퀵 밀</h2>
+</div>
+<div class="flex overflow-x-auto gap-10 hide-scrollbar snap-x">
+<!-- Slim Card 1 -->
+<div class="min-w-[480px] flex gap-8 bg-surface-container-lowest p-6 rounded-2xl snap-start border border-outline-variant/10 shadow-sm hover:shadow-md transition-shadow">
+<div class="w-40 h-40 rounded-xl overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="Rainbow salad" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0dway5B4jPvHW_HERmAM71-eARgYNNjs57Qa30wV-iTki6DQ7dJuR0HptK1CpypyFKXBHLvIFvXYSClqrsTfPLDvEPEuh0MNA7itqrwJTEPBq0KWbuxOz3ACAVAbwVAKdTdkh49nTGMbM2LP-GsRUayhwWL7S4OIktW2TPL7Tyk3ngW29oFjY0XE4msiVPb73NZkhUUoIfl3IBNIxqSaoDwjlUhd5FNE1K7CsiG_XKWffUxaTGbzI4Jz_5xY1CSRd4GrNISM9r60"/>
+</div>
+<div class="flex flex-col justify-center">
+<span class="text-secondary text-xs font-bold uppercase tracking-widest mb-2">12분 소요</span>
+<h4 class="font-headline font-bold text-2xl text-on-surface mb-2">가든 파워 샐러드</h4>
+<p class="text-on-surface-variant text-sm mb-5 leading-relaxed">신선한 채소, 아보카도 &amp; 시트러스의 상큼한 조화.</p>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-1.5 text-secondary text-sm font-bold">
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">star</span>
+                            4.6
+                        </div>
+<button class="text-primary font-bold text-sm hover:underline">상세 보기</button>
+</div>
+</div>
+</div>
+<!-- Slim Card 2 -->
+<div class="min-w-[480px] flex gap-8 bg-surface-container-lowest p-6 rounded-2xl snap-start border border-outline-variant/10 shadow-sm hover:shadow-md transition-shadow">
+<div class="w-40 h-40 rounded-xl overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="Avocado toast" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA6iDuyvOcna5moXLJ7ZpG7yfKHp0taRpcpQRTlLaF45Q9gFW_mV6ByUSEF-LAI-SP5ByhSf__T9N_tOrZDM8pTzjJ3SuBTMw9gJ9QoXeTJPXPdHWJc9_OvnjzuR4w_Rbh6pjzfM_PjuC1ek1rTbYkgIJec-z-AdaId4F-j7PoUBrRrLg643RkfELF-qbQvyIWuL8ss1N4w9m1rV2aEbuWTfq8WrnyZUMLEcMVVvLzQH5w4ZGhwg5Skir9FM_05mOElhGr-ifITWno"/>
+</div>
+<div class="flex flex-col justify-center">
+<span class="text-secondary text-xs font-bold uppercase tracking-widest mb-2">8분 소요</span>
+<h4 class="font-headline font-bold text-2xl text-on-surface mb-2">수란 사워도우 토스트</h4>
+<p class="text-on-surface-variant text-sm mb-5 leading-relaxed">바삭한 사워도우와 부드러운 수란의 만남.</p>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-1.5 text-secondary text-sm font-bold">
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">star</span>
+                            4.9
+                        </div>
+<button class="text-primary font-bold text-sm hover:underline">상세 보기</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Recommended for You -->
+<section class="mb-24">
+<div class="px-8 flex justify-between items-end mb-10">
+<div>
+<span class="text-primary font-headline font-bold text-sm uppercase tracking-[0.3em] mb-2 block">맞춤 추천</span>
+<h2 class="text-4xl font-headline font-extrabold text-on-surface tracking-tight">당신을 위한 추천</h2>
+</div>
+<button class="text-on-surface-variant font-headline font-bold text-sm hover:text-primary transition-colors flex items-center gap-2 group">더 보기 <span class="material-symbols-outlined text-xl group-hover:translate-x-1 transition-transform">chevron_right</span></button>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 px-8">
+<!-- Card 1 -->
+<div class="group bg-surface-container-lowest rounded-2xl overflow-hidden hover:shadow-lg transition-all border border-outline-variant/10">
+<div class="aspect-square overflow-hidden relative">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="Kebabs" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAwgwrTSKNoAcHlaQfil8lgjOSKY25PYSVW9n7p7HGfmdnlfTlFwPWh950QLe9KCEulfH1Xl-4HIeS0uLtkUoZv5ARGBjKr-yg3OjJOAHsSZoE27pawgh5aOLRBdfJPHryDSx6oH03w_MoLAB4tVzpz5xKpXWfOhngsT533xXk4XYdtpSPcZ18-bbh0_PqoJLktk7X-am0UNZo8eVORquwBTl5cb0AXoqeUNESv9I3bazmSTyAgh1TiOtk7h1OXp3ccHEfUL1uJggU"/>
+<button class="absolute top-4 right-4 bg-white/80 backdrop-blur-sm p-2 rounded-full text-on-surface hover:text-primary transition-all shadow-sm">
+<span class="material-symbols-outlined text-lg">star</span>
+</button>
+</div>
+<div class="p-8">
+<div class="flex justify-between items-start mb-3">
+<h3 class="font-headline font-bold text-xl text-on-surface">레몬 허브 케밥</h3>
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="text-on-surface-variant text-sm mb-6 leading-relaxed">"지중해식 양고기"를 좋아하셔서 추천합니다</p>
+<div class="flex gap-3">
+<span class="bg-surface-container-high px-3 py-1.5 rounded-lg text-[10px] text-on-surface font-bold uppercase tracking-wider">저탄수화물</span>
+<span class="bg-surface-container-high px-3 py-1.5 rounded-lg text-[10px] text-on-surface font-bold uppercase tracking-wider">고단백</span>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="group bg-surface-container-lowest rounded-2xl overflow-hidden hover:shadow-lg transition-all border border-outline-variant/10">
+<div class="aspect-square overflow-hidden relative">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="Donuts" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDrh7KAR_qTPMrvmnQlSR8YvWhheu58-q1Aih6vBvhhB5qyKsw9RHzlpMKHWCVc2IMrymuFOiVqQEJNvSqUwdH-vDz-Lvrs-e3nsOJqvR1dsbd-oVAGPhrLbdfsxuQc8gEAkZgUI_y-HEN4syVsl9Cta_hYtdV4X2MHrFB1j9CMzsiHUH3V0v_4_FnoUtlm2Rv2K-hWSixYxkkmz2nGTMk445Ti1Zdxry4vv84NKpPUYhrjeRyJsWW-OGrtSGodIex0sHUHxXoFLM"/>
+<button class="absolute top-4 right-4 bg-white/80 backdrop-blur-sm p-2 rounded-full text-on-surface hover:text-primary transition-all shadow-sm">
+<span class="material-symbols-outlined text-lg">star</span>
+</button>
+</div>
+<div class="p-8">
+<div class="flex justify-between items-start mb-3">
+<h3 class="font-headline font-bold text-xl text-on-surface">다크 초콜릿 가나슈</h3>
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="text-on-surface-variant text-sm mb-6 leading-relaxed">달콤한 주말 베이킹 영감</p>
+<div class="flex gap-3">
+<span class="bg-surface-container-high px-3 py-1.5 rounded-lg text-[10px] text-on-surface font-bold uppercase tracking-wider">디저트</span>
+<span class="bg-surface-container-high px-3 py-1.5 rounded-lg text-[10px] text-on-surface font-bold uppercase tracking-wider">고급</span>
+</div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="group bg-surface-container-lowest rounded-2xl overflow-hidden hover:shadow-lg transition-all border border-outline-variant/10">
+<div class="aspect-square overflow-hidden relative">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="Buddha bowl" src="https://lh3.googleusercontent.com/aida-public/AB6AXuANJ-JQS5aFDj6vhjHRxkCVEKkkODfZbbAqZG8oiTvHu2ICnxcNC1iysHo_CwriNHvgsDcouDFVKV0F0egFR1iWeV7vS75Rkxv9HgDTY9yBtJJ1IbWliZLd3ZaoOuyB-PL6wHV6WRn2mOvdoUgswBVDvxkza2ON-D8w6fcB0skvSpoeZ7kHXxk8rL4GGyhBazt2semKjdpNXt8FAnG-LV9ee152e47fBEyaIvWh5hRnucTN0iNW1WF-QMEsuCG-4BxIpFQKP3Q1jTs"/>
+<button class="absolute top-4 right-4 bg-white/80 backdrop-blur-sm p-2 rounded-full text-on-surface hover:text-primary transition-all shadow-sm">
+<span class="material-symbols-outlined text-lg">star</span>
+</button>
+</div>
+<div class="p-8">
+<div class="flex justify-between items-start mb-3">
+<h3 class="font-headline font-bold text-xl text-on-surface">오메가-3 파워 볼</h3>
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="text-on-surface-variant text-sm mb-6 leading-relaxed">건강한 에너지를 채워주는 영양 식단</p>
+<div class="flex gap-3">
+<span class="bg-surface-container-high px-3 py-1.5 rounded-lg text-[10px] text-on-surface font-bold uppercase tracking-wider">건강식</span>
+<span class="bg-surface-container-high px-3 py-1.5 rounded-lg text-[10px] text-on-surface font-bold uppercase tracking-wider">점심</span>
+</div>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="group bg-surface-container-lowest rounded-2xl overflow-hidden hover:shadow-lg transition-all border border-outline-variant/10">
+<div class="aspect-square overflow-hidden relative">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="Dumplings" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDSyyrZSXvTbSZbt_jzgzM2bJef4Kttw--cqu5vNE86ylOcJSaQZBwX24j-ZqLkAh1NKZ8XTMtyAO6qXu0Jep8qrX38zbkGFLAxXfWsqcvqm3h83KcbV0ueX56z1svT3WZnV-aPFHib72IJHe5YEs2sK8WRF0QWVjc-f5FI003xBcyJcNHUK4jFq-RpSKn36ixI4nGAtCAV5yNHZDRjipzEkCGKWoplolf_QkArVC-yy-KkDpkzknTlOk_8ooWBCM1k9_d3Iy60KLU"/>
+<button class="absolute top-4 right-4 bg-white/80 backdrop-blur-sm p-2 rounded-full text-on-surface hover:text-primary transition-all shadow-sm">
+<span class="material-symbols-outlined text-lg">star</span>
+</button>
+</div>
+<div class="p-8">
+<div class="flex justify-between items-start mb-3">
+<h3 class="font-headline font-bold text-xl text-on-surface">매콤 사천식 만두</h3>
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="text-on-surface-variant text-sm mb-6 leading-relaxed">"타이 커리" 검색 결과 기반 추천</p>
+<div class="flex gap-3">
+<span class="bg-surface-container-high px-3 py-1.5 rounded-lg text-[10px] text-on-surface font-bold uppercase tracking-wider">아시안</span>
+<span class="bg-surface-container-high px-3 py-1.5 rounded-lg text-[10px] text-on-surface font-bold uppercase tracking-wider">매콤함</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-variant w-full py-20 px-8 flex flex-col items-center gap-10 border-t border-outline-variant/30">
+<span class="text-3xl font-extrabold text-primary font-headline">YAMY</span>
+<div class="flex gap-12 text-sm font-label font-semibold">
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">회사 소개</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">이용약관</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">개인정보 처리방침</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">문의하기</a>
+</div>
+<div class="flex gap-8 mb-4">
+<span class="material-symbols-outlined text-primary cursor-pointer text-2xl hover:scale-110 transition-transform">public</span>
+<span class="material-symbols-outlined text-primary cursor-pointer text-2xl hover:scale-110 transition-transform">restaurant</span>
+<span class="material-symbols-outlined text-primary cursor-pointer text-2xl hover:scale-110 transition-transform">local_cafe</span>
+</div>
+<p class="text-on-surface-variant/60 text-xs font-label text-center max-w-md leading-relaxed">© 2024 YAMY. 현대 미식가를 위해 세심하게 큐레이션된 레시피와 스토리를 제공합니다.</p>
+</footer>
+<!-- Floating Action Button -->
+<button class="fixed bottom-10 right-10 bg-primary text-on-primary p-5 rounded-full shadow-2xl flex items-center justify-center group hover:scale-105 transition-all z-40">
+<span class="material-symbols-outlined text-3xl">add</span>
+<span class="max-w-0 overflow-hidden group-hover:max-w-xs group-hover:ml-3 transition-all duration-500 whitespace-nowrap font-headline font-bold text-sm">레시피 작성</span>
+</button>
+</body></html>
