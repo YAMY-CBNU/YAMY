@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>라면 끓이기 - YAMY</title>
+    <link rel="stylesheet" href="./assets/css/common.css" />
+    <link rel="stylesheet" href="./assets/css/recipe-detail.css" />
+    <script src="./assets/js/ramen.js" defer></script>
+  </head>
+  <body>
+    <div class="container">
+      <div id="header">
+        <div class="header-auth">
+          <a href="login.html" class="auth-link login">로그인</a>
+          <a href="signup.html" class="auth-link signup">회원가입</a>
+        </div>
+        <a href="index.html" class="title-link"><h1>YAMY 🍳</h1></a>
+        <p>맛있는 요리의 시작, 간단한 레시피로 누구나 요리 마스터!</p>
+      </div>
+
+      <div id="recipe-info" class="section">
+        <span class="recipe-title">라면 끓이기</span> |
+        <span class="recipe-difficulty">난이도: ★☆☆</span> |
+        <span class="recipe-time">소요 시간: 약 5분</span> |
+        <span style="color: #9c27b0">👥 1인분</span>
+      </div>
+
+      <div id="main">
+        <div id="nav" class="section">
+          <h3>메뉴</h3>
+          <ul>
+            <li><a href="#ingredients">📋 재료 준비</a></li>
+            <li><a href="#steps">👨‍🍳 조리 과정</a></li>
+            <li><a href="#tips">🔥 요리 팁</a></li>
+            <li><a href="index.html">🏠 홈으로</a></li>
+          </ul>
+        </div>
+
+        <div id="content">
+          <div id="explain" class="section">
+            <h3>🍜 간단하고 맛있는 라면 끓이기</h3>
+            <p>
+              누구나 쉽게 따라할 수 있는 기본 라면 레시피입니다. 몇 가지 간단한
+              재료만 있으면 집에서도 맛있는 라면을 즐길 수 있어요!
+            </p>
+          </div>
+
+          <div id="ingredients" class="section-row">
+            <div class="ingredients section">
+              <h3>📋 재료 체크리스트</h3>
+              <div class="ingredients-scroll">
+                <form id="ingredient-form">
+                  <label
+                    ><input type="checkbox" value="라면 1봉지" /> 🍜 라면
+                    1봉지</label
+                  >
+                  <label
+                    ><input type="checkbox" value="물 550ml" /> 💧 물
+                    550ml</label
+                  >
+                  <label
+                    ><input type="checkbox" value="계란 1개" /> 🥚 계란
+                    1개</label
+                  >
+                  <label
+                    ><input type="checkbox" value="대파 조금" /> 🧅 대파
+                    조금</label
+                  >
+                  <label
+                    ><input type="checkbox" value="김치 (선택)" /> 🥬
+                    김치(선택)</label
+                  >
+                  <label
+                    ><input type="checkbox" value="치즈 (선택)" /> 🧀
+                    치즈(선택)</label
+                  >
+                </form>
+              </div>
+            </div>
+
+            <div class="recipe-image section">
+              <h3>🎯 완성 예시</h3>
+              <img
+                src="https://cdnweb01.wikitree.co.kr/webdata/editor/202504/16/img_20250416102835_b3807a44.webp"
+                alt="맛있는 라면 완성 이미지"
+              />
+            </div>
+          </div>
+
+          <div class="missing-info section" id="missing-info">
+            <div class="shopping-links-wrap" id="shopping-links-wrap" hidden>
+              <p class="shopping-links-title">🛒 부족한 재료 바로 찾기</p>
+              <div class="shopping-links-list" id="shopping-links-list"></div>
+            </div>
+          </div>
+
+          <div id="steps" class="cooking-steps">
+            <h3>👨‍🍳 조리 과정</h3>
+
+            <div class="step-container">
+              <div class="step-content">
+                <div class="step-number" id="step-number">1</div>
+                <div class="step-title" id="step-title">물 끓이기</div>
+                <div class="step-description" id="step-description">
+                  냄비에 물 550ml를 넣고 센 불에서 끓입니다. 물이 팔팔 끓기
+                  시작하면 다음 단계로 넘어가세요.
+                </div>
+
+                <div class="timer-container" id="timer-container">
+                  <div class="timer-label" id="timer-label">⏰</div>
+                  <div class="timer-display" id="timer-display">00:00</div>
+                  <div class="timer-progress">
+                    <div
+                      class="timer-progress-bar"
+                      id="timer-progress-bar"
+                      style="width: 0%"
+                    ></div>
+                  </div>
+                  <div class="timer-controls">
+                    <button class="timer-btn start" id="start-timer" type="button">
+                      ▶️
+                    </button>
+                    <button
+                      class="timer-btn pause"
+                      id="pause-timer"
+                      type="button"
+                      style="display: none"
+                    >
+                      ⏸️
+                    </button>
+                    <button class="timer-btn reset" id="reset-timer" type="button">
+                      🔄
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="step-image">
+                <img
+                  id="step-image"
+                  src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=400&h=300&fit=crop"
+                  alt="물 끓이기"
+                />
+              </div>
+            </div>
+
+            <div class="step-navigation">
+              <button class="nav-button" id="prev-btn" type="button" disabled>
+                ← 이전
+              </button>
+
+              <div class="step-indicator">
+                <span class="step-counter" id="step-counter">1 / 4</span>
+                <div class="indicator-dot active" data-step="1"></div>
+                <div class="indicator-dot" data-step="2"></div>
+                <div class="indicator-dot" data-step="3"></div>
+                <div class="indicator-dot" data-step="4"></div>
+              </div>
+
+              <button class="nav-button" id="next-btn" type="button">다음 →</button>
+            </div>
+          </div>
+
+          <div id="tips" class="tips">
+            <h4>🔥 요리 팁</h4>
+            <ul>
+              <li>물의 양을 정확히 맞추면 더 맛있는 라면을 만들 수 있어요</li>
+              <li>계란은 완전히 익히지 말고 반숙 상태로 두면 더 부드러워요</li>
+              <li>김치를 넣으면 칼칼하고 시원한 맛을 즐길 수 있어요</li>
+              <li>면을 너무 오래 끓이면 퍼지니 주의하세요</li>
+              <li>치즈는 마지막에 넣어 살짝만 녹여주세요</li>
+            </ul>
+          </div>
+        </div>
+
+        <div id="ad" class="section">
+          <div class="ad-banner">🔥 HOT 레시피</div>
+          <p style="font-size: 0.9em; color: #666">
+            더 많은 요리 레시피를<br />
+            확인해보세요!
+          </p>
+          <div
+            style="
+              margin-top: 20px;
+              padding: 15px;
+              background: #e1f5fe;
+              border-radius: 8px;
+            "
+          >
+            <strong style="color: #0277bd">추천 레시피</strong><br />
+            <small style="color: #555"
+              >• 김치찌개<br />• 계란볶음밥<br />• 토스트</small
+            >
+          </div>
+        </div>
+      </div>
+
+      <div id="footer" class="section">
+        <p>&copy; 2026 YAMY. 맛있는 요리의 시작! 🍳</p>
+        <div class="social-links">
+          <a href="#">Instagram</a> | <a href="#">YouTube</a> |
+          <a href="#">Blog</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="notification" id="notification">⏰ 시간이 다 되었습니다!</div>
+  </body>
+</html>
