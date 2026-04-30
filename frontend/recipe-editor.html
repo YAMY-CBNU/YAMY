@@ -97,10 +97,10 @@
 <div class="flex items-center gap-10">
 <a href="index.html" class="text-2xl font-extrabold text-primary font-headline tracking-tighter">YAMY</a>
 <div class="hidden md:flex items-center gap-7 font-headline tracking-tight text-sm">
-<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">탐색하기</a>
-<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">내 레시피</a>
-<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">저장됨</a>
-<a class="text-primary border-b-2 border-primary pb-0.5 font-bold" href="#">만들기</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="index.html">탐색하기</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="my-recipe.html">내 레시피</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="my-picks.html">저장됨</a>
+<a class="text-primary border-b-2 border-primary pb-0.5 font-bold" href="recipe-editor.html">만들기</a>
 </div>
 </div>
 <div class="flex items-center gap-4">
@@ -108,9 +108,9 @@
 <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant text-xl">search</span>
 <input class="bg-surface-container border border-outline-variant/50 rounded-full pl-11 pr-5 py-2.5 text-sm focus:ring-2 focus:ring-primary/30 w-64 outline-none transition-all" placeholder="요리 영감 검색하기..." type="text"/>
 </div>
-<button class="text-on-surface-variant hover:text-primary transition-colors">
+<a href="profile.html" class="text-on-surface-variant hover:text-primary transition-colors">
 <span class="material-symbols-outlined text-2xl">account_circle</span>
-</button>
+</a>
 </div>
 </nav>
 <main class="max-w-2xl mx-auto px-5 pt-20 text-sm">
@@ -292,19 +292,19 @@
 </main>
 <!-- BottomNavBar (Mobile Only) -->
 <nav class="md:hidden fixed bottom-0 left-0 w-full h-20 bg-stone-50/90 dark:bg-stone-900/90 backdrop-blur-xl flex justify-around items-center px-4 pb-2 z-50 rounded-t-[2rem] shadow-2xl">
-<a class="flex flex-col items-center justify-center text-stone-500 dark:text-stone-400 px-5 py-2 active:scale-90 transition-all hover:text-orange-700" href="#">
+<a class="flex flex-col items-center justify-center text-stone-500 dark:text-stone-400 px-5 py-2 active:scale-90 transition-all hover:text-orange-700" href="index.html">
 <span class="material-symbols-outlined" data-icon="explore">explore</span>
 <span class="font-['Plus_Jakarta_Sans'] text-[11px] font-bold uppercase tracking-wider">Browse</span>
 </a>
-<a class="flex flex-col items-center justify-center text-stone-500 dark:text-stone-400 px-5 py-2 active:scale-90 transition-all hover:text-orange-700" href="#">
+<a class="flex flex-col items-center justify-center text-stone-500 dark:text-stone-400 px-5 py-2 active:scale-90 transition-all hover:text-orange-700" href="my-recipe.html">
 <span class="material-symbols-outlined" data-icon="menu_book">menu_book</span>
 <span class="font-['Plus_Jakarta_Sans'] text-[11px] font-bold uppercase tracking-wider">My Recipes</span>
 </a>
-<a class="flex flex-col items-center justify-center text-stone-500 dark:text-stone-400 px-5 py-2 active:scale-90 transition-all hover:text-orange-700" href="#">
+<a class="flex flex-col items-center justify-center text-stone-500 dark:text-stone-400 px-5 py-2 active:scale-90 transition-all hover:text-orange-700" href="my-picks.html">
 <span class="material-symbols-outlined" data-icon="star">star</span>
 <span class="font-['Plus_Jakarta_Sans'] text-[11px] font-bold uppercase tracking-wider">Saved</span>
 </a>
-<a class="flex flex-col items-center justify-center bg-orange-100 dark:bg-orange-900/30 text-orange-900 dark:text-orange-100 rounded-3xl px-5 py-2 active:scale-90 transition-all" href="#">
+<a class="flex flex-col items-center justify-center bg-orange-100 dark:bg-orange-900/30 text-orange-900 dark:text-orange-100 rounded-3xl px-5 py-2 active:scale-90 transition-all" href="recipe-editor.html">
 <span class="material-symbols-outlined" data-icon="add_circle" style="font-variation-settings: 'FILL' 1;">add_circle</span>
 <span class="font-['Plus_Jakarta_Sans'] text-[11px] font-bold uppercase tracking-wider">Create</span>
 </a>
