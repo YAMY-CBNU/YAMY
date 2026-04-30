@@ -115,16 +115,16 @@
 <!-- TopNavBar -->
 <nav class="fixed top-0 w-full z-50 bg-[#fcf9f4]/80 dark:bg-stone-900/80 backdrop-blur-md">
   <div class="flex justify-between items-center max-w-7xl mx-auto fluid-px h-16 sm:h-20">
-    <div class="fluid-h4 font-bold text-[#9d3d1c] dark:text-[#bd5532] tracking-tighter" style="font-size: clamp(1.1rem, 2vw, 1.5rem);">YAMY</div>
+    <a href="landing.html" class="fluid-h4 font-bold text-[#9d3d1c] dark:text-[#bd5532] tracking-tighter" style="font-size: clamp(1.1rem, 2vw, 1.5rem);">YAMY</a>
     <div class="hidden md:flex gap-8 items-center">
-      <a class="font-['Epilogue'] font-medium text-sm tracking-tight text-[#9d3d1c] font-bold border-b-2 border-[#9d3d1c] pb-1" href="#"></a>
-      <a class="font-['Epilogue'] font-medium text-sm tracking-tight text-[#74593d] dark:text-stone-400 hover:text-[#9d3d1c] dark:hover:text-[#bd5532] transition-colors duration-300" href="#"></a>
-      <a class="font-['Epilogue'] font-medium text-sm tracking-tight text-[#74593d] dark:text-stone-400 hover:text-[#9d3d1c] dark:hover:text-[#bd5532] transition-colors duration-300" href="#"></a>
-      <a class="font-['Epilogue'] font-medium text-sm tracking-tight text-[#74593d] dark:text-stone-400 hover:text-[#9d3d1c] dark:hover:text-[#bd5532] transition-colors duration-300" href="#"></a>
+      <a class="font-['Epilogue'] font-medium text-sm tracking-tight text-[#9d3d1c] font-bold border-b-2 border-[#9d3d1c] pb-1" href="landing.html">소개</a>
+      <a class="font-['Epilogue'] font-medium text-sm tracking-tight text-[#74593d] dark:text-stone-400 hover:text-[#9d3d1c] dark:hover:text-[#bd5532] transition-colors duration-300" href="index.html">탐색</a>
+      <a class="font-['Epilogue'] font-medium text-sm tracking-tight text-[#74593d] dark:text-stone-400 hover:text-[#9d3d1c] dark:hover:text-[#bd5532] transition-colors duration-300" href="my-picks.html">저장됨</a>
+      <a class="font-['Epilogue'] font-medium text-sm tracking-tight text-[#74593d] dark:text-stone-400 hover:text-[#9d3d1c] dark:hover:text-[#bd5532] transition-colors duration-300" href="recipe-editor.html">레시피 작성</a>
     </div>
     <div class="flex items-center gap-2 sm:gap-4">
-      <button class="hidden sm:block font-['Epilogue'] font-medium text-sm tracking-tight text-[#74593d] hover:text-[#9d3d1c] transition-colors">로그인</button>
-      <button class="bg-gradient-to-r from-primary to-primary-container text-on-primary px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl font-medium text-sm shadow-lg shadow-primary/10 active:scale-95 transition-transform duration-150">시작하기</button>
+      <a href="login.html" class="hidden sm:block font-['Epilogue'] font-medium text-sm tracking-tight text-[#74593d] hover:text-[#9d3d1c] transition-colors">로그인</a>
+      <a href="index.html" class="bg-gradient-to-r from-primary to-primary-container text-on-primary px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl font-medium text-sm shadow-lg shadow-primary/10 active:scale-95 transition-transform duration-150">시작하기</a>
     </div>
   </div>
 </nav>
@@ -145,8 +145,8 @@
           내가 사랑하는 레시피만 쏙쏙 골라 담고,<br>나만의 비법을 세상과 공유해 보세요.<br>요리 초보도 셰프로 만드는 스마트한 주방 어시스턴트가 찾아옵니다.
         </p>
         <div class="flex flex-wrap fluid-gap justify-center lg:justify-start">
-          <button class="fluid-btn bg-primary text-on-primary rounded-xl font-bold hover:shadow-xl transition-all">시작하기</button>
-          <button class="fluid-btn bg-surface-container text-secondary rounded-xl font-bold hover:bg-surface-container-high transition-all">레시피 작성하기</button>
+          <a href="index.html" class="fluid-btn bg-primary text-on-primary rounded-xl font-bold hover:shadow-xl transition-all">시작하기</a>
+          <a href="recipe-editor.html" class="fluid-btn bg-surface-container text-secondary rounded-xl font-bold hover:bg-surface-container-high transition-all">레시피 작성하기</a>
         </div>
       </div>
       <!-- Image -->
@@ -314,7 +314,7 @@
       </div>
       <h2 class="fluid-h2 font-bold text-on-primary fluid-mb-sm relative z-10">지금 맛있는 여정을 시작해 보세요!</h2>
       <p class="fluid-body text-on-primary/80 fluid-mb relative z-10 max-w-2xl mx-auto">전 세계 수천 명의 요리사가 당신과 소통하고 싶어 합니다. 지금 바로 함께 하세요.</p>
-      <form class="relative z-10 max-w-md mx-auto flex flex-col sm:flex-row fluid-gap">
+      <form class="relative z-10 max-w-md mx-auto flex flex-col sm:flex-row fluid-gap" action="signup.html" method="get">
         <div class="flex-grow">
           <input
             class="fluid-body w-full px-5 py-3 rounded-xl border-none bg-surface-container-lowest/20 backdrop-blur-md text-on-primary placeholder:text-on-primary/50 focus:ring-2 focus:ring-white transition-all outline-none"
