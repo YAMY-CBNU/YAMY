@@ -92,6 +92,21 @@ async function findByEmail(email) {
   return users.find((user) => user.email === email) || null;
 }
 
+async function findByUsername(username) {
+  const mode = await getMode();
+
+  if (mode === 'mysql') {
+    const [rows] = await mysqlPool.query(
+      'SELECT user_id, username, email, password_hash, profile_image_url, created_at, updated_at FROM `USER` WHERE username = ? LIMIT 1',
+      [username]
+    );
+    return rows[0] || null;
+  }
+
+  const users = await readUsers();
+  return users.find((user) => user.username === username) || null;
+}
+
 async function findById(userId) {
   const mode = await getMode();
 
@@ -105,6 +120,43 @@ async function findById(userId) {
 
   const users = await readUsers();
   return users.find((user) => Number(user.user_id) === Number(userId)) || null;
+}
+
+async function updateUser(userId, { username, passwordHash }) {
+  const mode = await getMode();
+
+  if (mode === 'mysql') {
+    if (passwordHash) {
+      await mysqlPool.query(
+        'UPDATE `USER` SET username = ?, password_hash = ? WHERE user_id = ?',
+        [username, passwordHash, userId]
+      );
+    } else {
+      await mysqlPool.query(
+        'UPDATE `USER` SET username = ? WHERE user_id = ?',
+        [username, userId]
+      );
+    }
+
+    return findById(userId);
+  }
+
+  const users = await readUsers();
+  const userIndex = users.findIndex((user) => Number(user.user_id) === Number(userId));
+
+  if (userIndex === -1) {
+    return null;
+  }
+
+  users[userIndex] = {
+    ...users[userIndex],
+    username,
+    password_hash: passwordHash || users[userIndex].password_hash,
+    updated_at: new Date().toISOString(),
+  };
+
+  await writeUsers(users);
+  return users[userIndex];
 }
 
 async function createUser({ username, email, passwordHash }) {
@@ -149,7 +201,9 @@ module.exports = {
   getMode,
   findByEmailOrUsername,
   findByEmail,
+  findByUsername,
   findById,
   createUser,
+  updateUser,
   createPasswordHash,
 };
