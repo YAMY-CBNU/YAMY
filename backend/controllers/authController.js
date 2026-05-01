@@ -144,3 +144,56 @@ exports.me = async (req, res) => {
     return res.status(401).json({ message: '유효하지 않은 토큰입니다.' });
   }
 };
+
+exports.updateMe = async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization || '';
+    const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null;
+
+    if (!token) {
+      return res.status(401).json({ message: '인증 토큰이 필요합니다.' });
+    }
+
+    const payload = jwt.verify(token, JWT_SECRET);
+    const currentUser = await store.findById(payload.userId);
+
+    if (!currentUser) {
+      return res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
+    }
+
+    const username = normalize(req.body.username ?? req.body.name);
+    const password = String(req.body.password ?? '');
+
+    if (!username) {
+      return res.status(400).json({ message: '닉네임을 입력해 주세요.' });
+    }
+
+    if (username.length > 50) {
+      return res.status(400).json({ message: '닉네임은 50자 이내로 입력해 주세요.' });
+    }
+
+    if (password && !isValidPassword(password)) {
+      return res.status(400).json({ message: '비밀번호는 8자 이상이어야 합니다.' });
+    }
+
+    const existingUser = await store.findByUsername(username);
+    if (existingUser && Number(existingUser.user_id) !== Number(currentUser.user_id)) {
+      return res.status(409).json({ message: '이미 사용 중인 닉네임입니다.' });
+    }
+
+    const passwordHash = password ? await store.createPasswordHash(password) : null;
+    const updatedUser = await store.updateUser(currentUser.user_id, { username, passwordHash });
+
+    return res.status(200).json({
+      message: '프로필 정보가 저장되었습니다.',
+      user: safeUserRow(updatedUser),
+    });
+  } catch (error) {
+    if (error && error.code === 'ER_DUP_ENTRY') {
+      return res.status(409).json({ message: '이미 사용 중인 닉네임입니다.' });
+    }
+
+    console.error('Profile update error:', error);
+    return res.status(401).json({ message: '유효하지 않은 토큰입니다.' });
+  }
+};
