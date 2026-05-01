@@ -117,7 +117,7 @@
 <input class="bg-surface-container border border-outline-variant/50 rounded-full pl-11 pr-6 py-2.5 text-sm focus:ring-2 focus:ring-primary w-72 transition-all outline-none" placeholder="요리 영감 검색..." type="text"/>
 </div>
 <a href="profile.html" class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-all text-2xl">account_circle</a>
-<a href="login.html" class="bg-primary text-on-primary px-8 py-2.5 rounded-full font-headline font-bold text-sm hover:opacity-90 duration-150 transition-all shadow-sm">로그인</a>
+<a id="auth-action" href="login.html" class="bg-primary text-on-primary px-8 py-2.5 rounded-full font-headline font-bold text-sm hover:opacity-90 duration-150 transition-all shadow-sm">로그인</a>
 </div>
 </nav>
 <main class="pt-32 pb-32 overflow-x-hidden max-w-7xl mx-auto">
@@ -396,4 +396,31 @@
 <span class="material-symbols-outlined text-3xl">add</span>
 <span class="max-w-0 overflow-hidden group-hover:max-w-xs group-hover:ml-3 transition-all duration-500 whitespace-nowrap font-headline font-bold text-sm">레시피 작성</span>
 </a>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const authAction = document.getElementById('auth-action');
+    const token = localStorage.getItem('yamy_token');
+    const userJson = localStorage.getItem('yamy_user');
+
+    if (!authAction || !token || !userJson) {
+      return;
+    }
+
+    try {
+      JSON.parse(userJson);
+      authAction.textContent = '로그아웃';
+      authAction.href = '#';
+      authAction.title = '로그아웃';
+      authAction.addEventListener('click', (event) => {
+        event.preventDefault();
+        localStorage.removeItem('yamy_token');
+        localStorage.removeItem('yamy_user');
+        window.location.href = 'login.html';
+      });
+    } catch (error) {
+      localStorage.removeItem('yamy_token');
+      localStorage.removeItem('yamy_user');
+    }
+  });
+</script>
 </body></html>

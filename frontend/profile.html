@@ -108,8 +108,7 @@
 <a href="my-picks.html" class="text-[#C05B40] flex items-center justify-center p-2 rounded-full hover:bg-surface-container-high transition-all">
 <span class="material-symbols-outlined" data-icon="star">star</span>
 </a>
-<div class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden border-2 border-[#C05B40]">
-<img class="w-full h-full object-cover" data-alt="professional headshot of a smiling woman with a soft natural background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuABKsdU0mXsENnrPtfayW0mDWGlF42xMcwv_Spm7lTSKSY1H4Y2dgMYfeTtDo-u-FquT4sUzwToJ_Z6a7NrvdxI8DUVTdZmfbM7zRA64kWJjPvBCC1GL2DIanW4ftyqpz3HNUskpup3Qk1_HdoLTalYX9bjdMBe4xC7bjsOjRKNAlmxsaFinltUQ9WbyLVweEDqHz7AxT1L0uNx5gCaSqAz_OrwJFWAESCfPuk5konxQ37Uo3rQr5vfX5GQ8C8jxIVPikPmgXASDLs"/>
+<div class="w-10 h-10 rounded-full bg-white overflow-hidden border-2 border-[#C05B40]">
 </div>
 </div>
 </nav>
@@ -131,12 +130,12 @@
 </div>
 <!-- Right: Form -->
 <div class="lg:col-span-8 bg-surface-container-low rounded-3xl p-8 md:p-12 editorial-shadow">
-<form class="space-y-8">
+<div id="profile-status" class="mb-6 rounded-xl border px-4 py-3 text-sm font-semibold hidden"></div>
+<form id="profile-form" class="space-y-8">
 <!-- Image Upload -->
 <div class="flex flex-col md:flex-row items-center gap-8 pb-8 border-b border-outline-variant/10">
 <div class="relative group">
-<div class="w-32 h-32 rounded-3xl overflow-hidden ring-4 ring-white shadow-lg">
-<img class="w-full h-full object-cover" data-alt="close up profile portrait of a woman in a warm lit interior" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBm8KwLGPG8tTqKlYkcrKLYI5skbHJOgOk6VidPlLIAbOw-n7CPb5EJ4XkZQtqUIukhJsEh4NYDtHfUxxxYT_-kWuhCl0FRTi4SgPYwrwgNewSjpKNma6e6pCod7R5vYDtx_HINi3dwZB40Gb29K5jgVWdsGcxGETTsHKs2LIyDhSy1Oxk9_LECY1RzwOYWH5psheHVyc8TeAh1VEQoYu3YsO6FeTpbXBj61Q_dAQvVHb4XbJJgGeaF0E_HYisMtwgukPrAqkP6ndA"/>
+<div class="w-32 h-32 rounded-3xl overflow-hidden ring-4 ring-white shadow-lg bg-white">
 </div>
 <button class="absolute -bottom-2 -right-2 bg-primary text-on-primary p-2 rounded-xl shadow-lg hover:scale-105 transition-transform" type="button">
 <span class="material-symbols-outlined text-sm" data-icon="photo_camera">photo_camera</span>
@@ -152,19 +151,19 @@
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 <div class="space-y-2">
 <label class="text-sm font-bold text-on-surface-variant ml-1">닉네임</label>
-<input class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-fixed focus:bg-primary-fixed transition-all text-on-surface" type="text" value="미식가 큐레이터"/>
+<input id="profile-username" class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-fixed focus:bg-primary-fixed transition-all text-on-surface" type="text" required maxlength="50"/>
 </div>
 <div class="space-y-2">
 <label class="text-sm font-bold text-on-surface-variant ml-1">이메일</label>
-<input class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-fixed focus:bg-primary-fixed transition-all text-on-surface" type="email" value="curator@yamy.com"/>
+<input id="profile-email" class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3 text-on-surface/70 cursor-not-allowed" type="email" readonly/>
 </div>
 <div class="space-y-2">
 <label class="text-sm font-bold text-on-surface-variant ml-1">비밀번호</label>
-<input class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-fixed focus:bg-primary-fixed transition-all text-on-surface" placeholder="••••••••" type="password"/>
+<input id="profile-password" class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-fixed focus:bg-primary-fixed transition-all text-on-surface" placeholder="변경할 때만 입력" type="password"/>
 </div>
 <div class="space-y-2">
 <label class="text-sm font-bold text-on-surface-variant ml-1">비밀번호 확인</label>
-<input class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-fixed focus:bg-primary-fixed transition-all text-on-surface" placeholder="••••••••" type="password"/>
+<input id="profile-password-confirm" class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-fixed focus:bg-primary-fixed transition-all text-on-surface" placeholder="변경할 때만 입력" type="password"/>
 </div>
 </div>
 <div class="pt-4 flex justify-end">
@@ -270,4 +269,106 @@
 <span class="text-[10px] font-bold mt-1">Profile</span>
 </a>
 </nav>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const API_BASE = 'http://localhost:3000/api/auth';
+    const token = localStorage.getItem('yamy_token');
+    const form = document.getElementById('profile-form');
+    const usernameInput = document.getElementById('profile-username');
+    const emailInput = document.getElementById('profile-email');
+    const passwordInput = document.getElementById('profile-password');
+    const passwordConfirmInput = document.getElementById('profile-password-confirm');
+    const statusBox = document.getElementById('profile-status');
+
+    function setStatus(message, type = 'error') {
+      const colors = type === 'success'
+        ? 'border-green-200 bg-green-50 text-green-800'
+        : 'border-red-200 bg-red-50 text-red-800';
+      statusBox.className = `mb-6 rounded-xl border px-4 py-3 text-sm font-semibold ${colors}`;
+      statusBox.textContent = message;
+      statusBox.classList.remove('hidden');
+    }
+
+    function setUser(user) {
+      usernameInput.value = user.username || user.name || '';
+      emailInput.value = user.email || '';
+      localStorage.setItem('yamy_user', JSON.stringify(user));
+    }
+
+    if (!token) {
+      window.location.href = 'login.html';
+      return;
+    }
+
+    try {
+      const cachedUser = JSON.parse(localStorage.getItem('yamy_user') || 'null');
+      if (cachedUser) {
+        setUser(cachedUser);
+      }
+    } catch {
+      localStorage.removeItem('yamy_user');
+    }
+
+    fetch(`${API_BASE}/me`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then(async (response) => {
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.message || '사용자 정보를 불러오지 못했습니다.');
+        }
+        setUser(data.user);
+      })
+      .catch((error) => {
+        setStatus(error.message || '사용자 정보를 불러오지 못했습니다.');
+      });
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const username = usernameInput.value.trim();
+      const password = passwordInput.value;
+      const passwordConfirm = passwordConfirmInput.value;
+
+      if (!username) {
+        setStatus('닉네임을 입력해 주세요.');
+        return;
+      }
+
+      if (password !== passwordConfirm) {
+        setStatus('비밀번호와 비밀번호 확인이 일치하지 않습니다.');
+        return;
+      }
+
+      if (password && password.length < 8) {
+        setStatus('비밀번호는 8자 이상이어야 합니다.');
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE}/me`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ username, password }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || '프로필 저장에 실패했습니다.');
+        }
+
+        setUser(data.user);
+        passwordInput.value = '';
+        passwordConfirmInput.value = '';
+        setStatus(data.message || '프로필 정보가 저장되었습니다.', 'success');
+      } catch (error) {
+        setStatus(error.message || '프로필 저장에 실패했습니다.');
+      }
+    });
+  });
+</script>
 </body></html>
