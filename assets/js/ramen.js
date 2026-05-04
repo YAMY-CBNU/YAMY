@@ -1,4 +1,6 @@
-const cookingSteps = [
+const API_BASE = "http://localhost:3000/api/recipes";
+
+let cookingSteps = [
   {
     number: 1,
     title: "물 끓이기",
@@ -48,6 +50,13 @@ const cookingSteps = [
 ];
 
 const elements = {
+  recipeTags: document.getElementById("recipe-tags"),
+  recipeTitleMain: document.getElementById("recipe-title-main"),
+  recipeDescriptionMain: document.getElementById("recipe-description-main"),
+  recipeCookTimeChip: document.getElementById("recipe-cook-time-chip"),
+  recipeDifficultyChip: document.getElementById("recipe-difficulty-chip"),
+  recipeServingChip: document.getElementById("recipe-serving-chip"),
+  recipeFinishedImage: document.getElementById("recipe-finished-image"),
   stepNumber: document.getElementById("step-number"),
   stepTitle: document.getElementById("step-title"),
   stepDescription: document.getElementById("step-description"),
@@ -79,6 +88,110 @@ let timerInterval = null;
 let currentTime = 0;
 let totalTime = 0;
 let isTimerRunning = false;
+
+function applyRecipeData(recipe) {
+  if (elements.recipeTitleMain) {
+    elements.recipeTitleMain.textContent = recipe.title || "레시피";
+  }
+  if (elements.recipeDescriptionMain) {
+    elements.recipeDescriptionMain.textContent = recipe.description || "";
+  }
+  if (elements.recipeCookTimeChip) {
+    elements.recipeCookTimeChip.innerHTML = `<span class="material-symbols-outlined text-base text-secondary">schedule</span>소요 시간: ${recipe.cookTime || "-"}`;
+  }
+  if (elements.recipeDifficultyChip) {
+    elements.recipeDifficultyChip.innerHTML = `<span class="material-symbols-outlined text-base text-primary">signal_cellular_alt</span>난이도: ${recipe.difficulty || "-"}`;
+  }
+  if (elements.recipeServingChip) {
+    elements.recipeServingChip.innerHTML = `<span class="material-symbols-outlined text-base text-tertiary">group</span>${recipe.servingSize || "-"}`;
+  }
+  if (elements.recipeFinishedImage && recipe.thumbnailUrl) {
+    elements.recipeFinishedImage.src = recipe.thumbnailUrl;
+    elements.recipeFinishedImage.alt = recipe.title || "완성 이미지";
+  }
+  if (elements.recipeTags && recipe.categories) {
+    const tags = [
+      recipe.categories.method,
+      recipe.categories.situation,
+      recipe.categories.mainIngredient,
+      recipe.categories.type,
+    ].filter(Boolean);
+    const palettes = [
+      "bg-primary text-on-primary",
+      "bg-secondary-container text-on-secondary-container",
+      "bg-tertiary-container text-on-tertiary-container",
+      "bg-surface-container-highest text-on-surface",
+    ];
+    elements.recipeTags.innerHTML = tags
+      .map((tag, index) => `<span class="${palettes[index % palettes.length]} px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">#${tag}</span>`)
+      .join("");
+  }
+
+  if (Array.isArray(recipe.ingredients) && recipe.ingredients.length > 0) {
+    const ingredientForm = document.getElementById("ingredient-form");
+    if (ingredientForm) {
+      ingredientForm.innerHTML = recipe.ingredients.map((ingredient) => `
+        <label class="flex items-center gap-3 p-3 bg-surface-container rounded-xl cursor-pointer hover:bg-surface-container-high transition-colors group">
+          <input type="checkbox" value="${ingredient.name}${ingredient.amount ? ` ${ingredient.amount}` : ""}" class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary/30 cursor-pointer"/>
+          <span class="text-sm font-medium text-on-surface group-hover:text-primary transition-colors">${ingredient.name}${ingredient.amount ? ` <span class="text-on-surface-variant font-normal">${ingredient.amount}</span>` : ""}</span>
+        </label>
+      `).join("");
+      elements.ingredientCheckboxes = Array.from(
+        document.querySelectorAll('#ingredient-form input[type="checkbox"]')
+      );
+      elements.ingredientCheckboxes.forEach((checkbox) => {
+        checkbox.addEventListener("change", updateMissingIngredients);
+      });
+    }
+  }
+
+  if (Array.isArray(recipe.steps) && recipe.steps.length > 0) {
+    cookingSteps = recipe.steps.map((step, index) => ({
+      number: index + 1,
+      title: `${index + 1}단계`,
+      description: step.description,
+      image: step.imageUrl || recipe.thumbnailUrl || "https://cdnweb01.wikitree.co.kr/webdata/editor/202504/16/img_20250416102835_b3807a44.webp",
+      alt: `${index + 1}단계 이미지`,
+      timer: step.timerSeconds ? { duration: step.timerSeconds } : null,
+    }));
+
+    const dotsWrap = document.querySelector(".flex.gap-2.items-center");
+    if (dotsWrap) {
+      dotsWrap.innerHTML = cookingSteps
+        .map((step) => `<div class="indicator-dot${step.number === 1 ? " active" : ""}" data-step="${step.number}"></div>`)
+        .join("");
+      elements.indicatorDots = Array.from(document.querySelectorAll(".indicator-dot"));
+      elements.indicatorDots.forEach((dot, index) => {
+        dot.addEventListener("click", () => {
+          currentStep = index;
+          updateStep();
+        });
+      });
+    }
+  }
+}
+
+async function loadRecipeFromQuery() {
+  const params = new URLSearchParams(window.location.search);
+  const recipeId = params.get("id");
+
+  if (!recipeId) {
+    return;
+  }
+
+  try {
+    const response = await fetch(`${API_BASE}/${recipeId}`);
+    const data = await response.json();
+
+    if (!response.ok || !data.recipe) {
+      return;
+    }
+
+    applyRecipeData(data.recipe);
+  } catch (error) {
+    console.error("Recipe fetch error:", error);
+  }
+}
 
 function updateTimerDisplay() {
   const minutes = Math.floor(currentTime / 60);
@@ -296,5 +409,7 @@ elements.indicatorDots.forEach((dot, index) => {
   });
 });
 
-updateMissingIngredients();
-updateStep();
+loadRecipeFromQuery().finally(() => {
+  updateMissingIngredients();
+  updateStep();
+});
