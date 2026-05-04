@@ -89,6 +89,10 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
+        .drop-active {
+            box-shadow: inset 0 0 0 2px rgba(155, 63, 39, 0.22);
+            background-color: rgba(255, 219, 209, 0.35);
+        }
     </style>
 </head>
 <body class="bg-surface text-on-surface font-body min-h-screen pb-32">
@@ -162,16 +166,18 @@
 </div>
 </div>
 <div class="md:col-span-5">
-<div class="aspect-[4/3] bg-surface-container-low rounded-xl flex flex-col items-center justify-center border-2 border-dashed border-outline-variant/30 hover:bg-surface-container-high transition-colors group overflow-hidden relative">
-<div class="flex flex-col items-center group-hover:scale-105 transition-transform px-6 text-center">
+<div class="aspect-[4/3] bg-surface-container-low rounded-xl flex flex-col items-center justify-center border-2 border-dashed border-outline-variant/30 hover:bg-surface-container-high transition-colors group overflow-hidden relative cursor-pointer" id="thumbnail-dropzone">
+<img alt="대표 사진 미리보기" class="hidden absolute inset-0 w-full h-full object-cover" id="thumbnail-preview" src=""/>
+<div class="flex flex-col items-center group-hover:scale-105 transition-transform px-6 text-center" id="thumbnail-placeholder">
 <span class="material-symbols-outlined text-primary text-3xl mb-2" data-icon="add_a_photo">add_a_photo</span>
-<span class="font-label text-xs font-bold text-on-surface-variant">대표 사진 URL을 아래에 입력해 주세요</span>
+<span class="font-label text-xs font-bold text-on-surface-variant">대표 사진 업로드</span>
+<span class="mt-1 text-[10px] text-on-surface-variant/70">드래그하거나 클릭해서 추가</span>
 </div>
 <div class="absolute inset-0 opacity-10 pointer-events-none">
 <img alt="" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD7cVYwpCMlt7yBDN8hKj-dlBUgLVpqRb-OelG7bl8-CHp5pGYTF3JxSXAd8_GOyodydAJe2igzBpU3mhCA8taHYBekKz1WFK4IEV5N8CSECkiQfJG1REApUsJOdgYRe1oML8w_HjQWQmZeHxpKZ1iziHELBiGvH59rKVpgIJLtdwdMTxb_zVszLm-y_bZrV7M2KhRrlbVWa4ySjJ1AUTsl_DA8bbuoH5v6P80cuct8Fu-vF1B4oa1WIyhLG7hzdHuyTHIua-4V6Mo"/>
 </div>
 </div>
-<input class="mt-2 w-full bg-surface-container-highest border-none rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-primary-fixed transition-all" id="recipe-thumbnail-url" placeholder="https://example.com/recipe.jpg" type="url"/>
+<input accept="image/*" class="hidden" id="recipe-thumbnail-file" type="file"/>
 </div>
 </div>
 
@@ -243,25 +249,30 @@
 <div class="flex items-center gap-2 mb-3">
 <span class="bg-primary text-on-primary w-6 h-6 flex items-center justify-center rounded-full font-bold text-xs step-badge">1</span>
 <h3 class="font-headline text-sm font-semibold">조리 단계 설명</h3>
+<button class="ml-auto text-outline-variant hover:text-error remove-step" type="button"><span class="material-symbols-outlined text-base" data-icon="delete">delete</span></button>
 </div>
 <textarea class="w-full bg-surface-container-highest/50 border-none rounded-lg p-2.5 mb-3 text-xs focus:ring-2 focus:ring-primary-fixed transition-all step-description" placeholder="첫 번째 단계를 설명해 주세요." rows="2"></textarea>
 <div class="flex flex-wrap gap-2">
 <button class="flex items-center gap-1 px-3 py-1.5 bg-secondary-fixed text-on-secondary-fixed rounded-full font-bold text-xs hover:scale-105 transition-all toggle-timer-settings" type="button">
 <span class="material-symbols-outlined text-sm" data-icon="timer">timer</span><span>타이머 설정</span>
 </button>
-<button class="flex items-center gap-1 px-3 py-1.5 border border-outline-variant/30 text-on-surface-variant rounded-full font-bold text-xs hover:bg-surface-container-highest transition-all" type="button">
-<span class="material-symbols-outlined text-sm" data-icon="image">image</span><span>사진은 URL 입력 사용</span>
+<button class="flex items-center gap-1 px-3 py-1.5 border border-outline-variant/30 text-on-surface-variant rounded-full font-bold text-xs hover:bg-surface-container-highest transition-all select-step-image" type="button">
+<span class="material-symbols-outlined text-sm" data-icon="image">image</span><span>사진 추가</span>
 </button>
 </div>
 <div class="hidden mt-3 grid grid-cols-3 gap-2 timer-settings">
 <input class="bg-surface-container-highest border-none rounded-lg p-2 text-xs focus:ring-2 focus:ring-primary-fixed step-minutes" min="0" placeholder="분" type="number"/>
 <input class="bg-surface-container-highest border-none rounded-lg p-2 text-xs focus:ring-2 focus:ring-primary-fixed step-seconds" max="59" min="0" placeholder="초" type="number"/>
-<input class="bg-surface-container-highest border-none rounded-lg p-2 text-xs focus:ring-2 focus:ring-primary-fixed step-image-url" placeholder="단계 이미지 URL" type="url"/>
+<div class="col-span-3 rounded-lg border border-dashed border-outline-variant/40 bg-surface-container-highest p-2 text-[10px] text-on-surface-variant step-image-meta">사진 없음</div>
 </div>
 </div>
 <div class="md:col-span-5">
-<div class="aspect-video bg-surface-container-highest rounded-xl flex items-center justify-center group overflow-hidden">
+<div class="aspect-video bg-surface-container-highest rounded-xl flex items-center justify-center group overflow-hidden cursor-pointer relative step-image-dropzone">
+<img alt="단계 사진 미리보기" class="hidden absolute inset-0 w-full h-full object-cover step-image-preview" src=""/>
+<input accept="image/*" class="hidden step-image-file" type="file"/>
+<div class="step-image-placeholder flex items-center justify-center w-full h-full">
 <span class="material-symbols-outlined text-on-surface-variant/30 text-2xl group-hover:scale-110 transition-transform" data-icon="add_photo_alternate">add_photo_alternate</span>
+</div>
 </div>
 </div>
 </div>
@@ -273,25 +284,30 @@
 <div class="flex items-center gap-2 mb-3">
 <span class="bg-primary text-on-primary w-6 h-6 flex items-center justify-center rounded-full font-bold text-xs step-badge">2</span>
 <h3 class="font-headline text-sm font-semibold">조리 단계 설명</h3>
+<button class="ml-auto text-outline-variant hover:text-error remove-step" type="button"><span class="material-symbols-outlined text-base" data-icon="delete">delete</span></button>
 </div>
 <textarea class="w-full bg-surface-container-highest/50 border-none rounded-lg p-2.5 mb-3 text-xs focus:ring-2 focus:ring-primary-fixed transition-all step-description" placeholder="다음 단계를 입력해 주세요." rows="2"></textarea>
 <div class="flex flex-wrap gap-2">
 <button class="flex items-center gap-1 px-3 py-1.5 bg-secondary-fixed text-on-secondary-fixed rounded-full font-bold text-xs hover:scale-105 transition-all toggle-timer-settings" type="button">
 <span class="material-symbols-outlined text-sm" data-icon="timer">timer</span><span>타이머 설정</span>
 </button>
-<button class="flex items-center gap-1 px-3 py-1.5 border border-outline-variant/30 text-on-surface-variant rounded-full font-bold text-xs hover:bg-surface-container-highest transition-all" type="button">
-<span class="material-symbols-outlined text-sm" data-icon="image">image</span><span>사진은 URL 입력 사용</span>
+<button class="flex items-center gap-1 px-3 py-1.5 border border-outline-variant/30 text-on-surface-variant rounded-full font-bold text-xs hover:bg-surface-container-highest transition-all select-step-image" type="button">
+<span class="material-symbols-outlined text-sm" data-icon="image">image</span><span>사진 추가</span>
 </button>
 </div>
 <div class="hidden mt-3 grid grid-cols-3 gap-2 timer-settings">
 <input class="bg-surface-container-highest border-none rounded-lg p-2 text-xs focus:ring-2 focus:ring-primary-fixed step-minutes" min="0" placeholder="분" type="number"/>
 <input class="bg-surface-container-highest border-none rounded-lg p-2 text-xs focus:ring-2 focus:ring-primary-fixed step-seconds" max="59" min="0" placeholder="초" type="number"/>
-<input class="bg-surface-container-highest border-none rounded-lg p-2 text-xs focus:ring-2 focus:ring-primary-fixed step-image-url" placeholder="단계 이미지 URL" type="url"/>
+<div class="col-span-3 rounded-lg border border-dashed border-outline-variant/40 bg-surface-container-highest p-2 text-[10px] text-on-surface-variant step-image-meta">사진 없음</div>
 </div>
 </div>
 <div class="md:col-span-5">
-<div class="aspect-video bg-surface-container-highest rounded-xl flex items-center justify-center group overflow-hidden">
+<div class="aspect-video bg-surface-container-highest rounded-xl flex items-center justify-center group overflow-hidden cursor-pointer relative step-image-dropzone">
+<img alt="단계 사진 미리보기" class="hidden absolute inset-0 w-full h-full object-cover step-image-preview" src=""/>
+<input accept="image/*" class="hidden step-image-file" type="file"/>
+<div class="step-image-placeholder flex items-center justify-center w-full h-full">
 <span class="material-symbols-outlined text-on-surface-variant/30 text-2xl group-hover:scale-110 transition-transform" data-icon="add_photo_alternate">add_photo_alternate</span>
+</div>
 </div>
 </div>
 </div>
@@ -349,25 +365,30 @@
 <div class="flex items-center gap-2 mb-3">
 <span class="bg-primary text-on-primary w-6 h-6 flex items-center justify-center rounded-full font-bold text-xs step-badge">1</span>
 <h3 class="font-headline text-sm font-semibold">조리 단계 설명</h3>
+<button class="ml-auto text-outline-variant hover:text-error remove-step" type="button"><span class="material-symbols-outlined text-base" data-icon="delete">delete</span></button>
 </div>
 <textarea class="w-full bg-surface-container-highest/50 border-none rounded-lg p-2.5 mb-3 text-xs focus:ring-2 focus:ring-primary-fixed transition-all step-description" placeholder="단계를 설명해 주세요." rows="2"></textarea>
 <div class="flex flex-wrap gap-2">
 <button class="flex items-center gap-1 px-3 py-1.5 bg-secondary-fixed text-on-secondary-fixed rounded-full font-bold text-xs hover:scale-105 transition-all toggle-timer-settings" type="button">
 <span class="material-symbols-outlined text-sm" data-icon="timer">timer</span><span>타이머 설정</span>
 </button>
-<button class="flex items-center gap-1 px-3 py-1.5 border border-outline-variant/30 text-on-surface-variant rounded-full font-bold text-xs hover:bg-surface-container-highest transition-all" type="button">
-<span class="material-symbols-outlined text-sm" data-icon="image">image</span><span>사진은 URL 입력 사용</span>
+<button class="flex items-center gap-1 px-3 py-1.5 border border-outline-variant/30 text-on-surface-variant rounded-full font-bold text-xs hover:bg-surface-container-highest transition-all select-step-image" type="button">
+<span class="material-symbols-outlined text-sm" data-icon="image">image</span><span>사진 추가</span>
 </button>
 </div>
 <div class="hidden mt-3 grid grid-cols-3 gap-2 timer-settings">
 <input class="bg-surface-container-highest border-none rounded-lg p-2 text-xs focus:ring-2 focus:ring-primary-fixed step-minutes" min="0" placeholder="분" type="number"/>
 <input class="bg-surface-container-highest border-none rounded-lg p-2 text-xs focus:ring-2 focus:ring-primary-fixed step-seconds" max="59" min="0" placeholder="초" type="number"/>
-<input class="bg-surface-container-highest border-none rounded-lg p-2 text-xs focus:ring-2 focus:ring-primary-fixed step-image-url" placeholder="단계 이미지 URL" type="url"/>
+<div class="col-span-3 rounded-lg border border-dashed border-outline-variant/40 bg-surface-container-highest p-2 text-[10px] text-on-surface-variant step-image-meta">사진 없음</div>
 </div>
 </div>
 <div class="md:col-span-5">
-<div class="aspect-video bg-surface-container-highest rounded-xl flex items-center justify-center group overflow-hidden">
+<div class="aspect-video bg-surface-container-highest rounded-xl flex items-center justify-center group overflow-hidden cursor-pointer relative step-image-dropzone">
+<img alt="단계 사진 미리보기" class="hidden absolute inset-0 w-full h-full object-cover step-image-preview" src=""/>
+<input accept="image/*" class="hidden step-image-file" type="file"/>
+<div class="step-image-placeholder flex items-center justify-center w-full h-full">
 <span class="material-symbols-outlined text-on-surface-variant/30 text-2xl group-hover:scale-110 transition-transform" data-icon="add_photo_alternate">add_photo_alternate</span>
+</div>
 </div>
 </div>
 </div>
