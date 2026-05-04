@@ -124,74 +124,110 @@
 <div class="w-full h-1 bg-primary-container/40 rounded-full overflow-hidden">
 <div class="h-full bg-primary rounded-full" style="width: 50%"></div>
 </div>
+<div id="editor-status" class="hidden mt-4 rounded-xl border px-4 py-3 text-xs font-semibold"></div>
 </header>
 
 <!-- Recipe Identity Form -->
 <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-7">
 <div class="md:col-span-7 space-y-3">
 <div class="space-y-1">
-<label class="font-label text-[10px] font-bold text-primary uppercase tracking-widest">레시피 제목</label>
-<input class="w-full bg-surface-container-highest border-none rounded-lg p-2.5 text-sm font-headline focus:ring-2 focus:ring-primary-fixed placeholder:text-on-surface-variant/40 transition-all" placeholder="예: 할머니의 비법 된장찌개" type="text"/>
+<label class="font-label text-[10px] font-bold text-primary uppercase tracking-widest" for="recipe-title">레시피 제목</label>
+<input class="w-full bg-surface-container-highest border-none rounded-lg p-2.5 text-sm font-headline focus:ring-2 focus:ring-primary-fixed placeholder:text-on-surface-variant/40 transition-all" id="recipe-title" placeholder="예: 할머니의 비법 된장찌개" type="text"/>
 </div>
 <div class="space-y-1">
-<label class="font-label text-[10px] font-bold text-primary uppercase tracking-widest">레시피 설명</label>
-<textarea class="w-full bg-surface-container-highest border-none rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-primary-fixed placeholder:text-on-surface-variant/40 transition-all" placeholder="이 레시피의 매력과 유래를 짧게 소개해 주세요." rows="2"></textarea>
+<label class="font-label text-[10px] font-bold text-primary uppercase tracking-widest" for="recipe-description">레시피 설명</label>
+<textarea class="w-full bg-surface-container-highest border-none rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-primary-fixed placeholder:text-on-surface-variant/40 transition-all" id="recipe-description" placeholder="이 레시피의 매력과 유래를 짧게 소개해 주세요." rows="2"></textarea>
 </div>
 <div class="grid grid-cols-3 gap-2">
 <div class="space-y-1">
-<label class="font-label text-[10px] font-bold text-primary uppercase tracking-widest">조리 시간</label>
+<label class="font-label text-[10px] font-bold text-primary uppercase tracking-widest" for="recipe-cook-time">조리 시간</label>
 <div class="relative">
-<input class="w-full bg-surface-container-highest border-none rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-primary-fixed transition-all pr-7" placeholder="30분" type="text"/>
+<input class="w-full bg-surface-container-highest border-none rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-primary-fixed transition-all pr-7" id="recipe-cook-time" placeholder="30분" type="text"/>
 <span class="absolute right-2 top-1/2 -translate-y-1/2 material-symbols-outlined text-on-surface-variant/50 text-base" data-icon="schedule">schedule</span>
 </div>
 </div>
 <div class="space-y-1">
-<label class="font-label text-[10px] font-bold text-primary uppercase tracking-widest">인분 수</label>
+<label class="font-label text-[10px] font-bold text-primary uppercase tracking-widest" for="recipe-serving-size">인분 수</label>
 <div class="relative">
-<input class="w-full bg-surface-container-highest border-none rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-primary-fixed transition-all pr-7" placeholder="2인분" type="text"/>
+<input class="w-full bg-surface-container-highest border-none rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-primary-fixed transition-all pr-7" id="recipe-serving-size" placeholder="2인분" type="text"/>
 <span class="absolute right-2 top-1/2 -translate-y-1/2 material-symbols-outlined text-on-surface-variant/50 text-base" data-icon="group">group</span>
 </div>
 </div>
 <div class="space-y-1">
-<label class="font-label text-[10px] font-bold text-primary uppercase tracking-widest">난이도</label>
-<select class="w-full bg-surface-container-highest border-none rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-primary-fixed appearance-none transition-all">
-<option>쉬움</option><option>중간</option><option>어려움</option>
+<label class="font-label text-[10px] font-bold text-primary uppercase tracking-widest" for="recipe-difficulty">난이도</label>
+<select class="w-full bg-surface-container-highest border-none rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-primary-fixed appearance-none transition-all" id="recipe-difficulty">
+<option value="">선택</option><option value="초급">초급</option><option value="중급">중급</option><option value="고급">고급</option>
 </select>
 </div>
 </div>
 </div>
 <div class="md:col-span-5">
-<div class="aspect-[4/3] bg-surface-container-low rounded-xl flex flex-col items-center justify-center border-2 border-dashed border-outline-variant/30 hover:bg-surface-container-high transition-colors group cursor-pointer overflow-hidden relative">
-<div class="flex flex-col items-center group-hover:scale-105 transition-transform">
+<div class="aspect-[4/3] bg-surface-container-low rounded-xl flex flex-col items-center justify-center border-2 border-dashed border-outline-variant/30 hover:bg-surface-container-high transition-colors group overflow-hidden relative">
+<div class="flex flex-col items-center group-hover:scale-105 transition-transform px-6 text-center">
 <span class="material-symbols-outlined text-primary text-3xl mb-2" data-icon="add_a_photo">add_a_photo</span>
-<span class="font-label text-xs font-bold text-on-surface-variant">대표 사진 업로드</span>
+<span class="font-label text-xs font-bold text-on-surface-variant">대표 사진 URL을 아래에 입력해 주세요</span>
 </div>
 <div class="absolute inset-0 opacity-10 pointer-events-none">
 <img alt="" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD7cVYwpCMlt7yBDN8hKj-dlBUgLVpqRb-OelG7bl8-CHp5pGYTF3JxSXAd8_GOyodydAJe2igzBpU3mhCA8taHYBekKz1WFK4IEV5N8CSECkiQfJG1REApUsJOdgYRe1oML8w_HjQWQmZeHxpKZ1iziHELBiGvH59rKVpgIJLtdwdMTxb_zVszLm-y_bZrV7M2KhRrlbVWa4ySjJ1AUTsl_DA8bbuoH5v6P80cuct8Fu-vF1B4oa1WIyhLG7hzdHuyTHIua-4V6Mo"/>
 </div>
 </div>
+<input class="mt-2 w-full bg-surface-container-highest border-none rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-primary-fixed transition-all" id="recipe-thumbnail-url" placeholder="https://example.com/recipe.jpg" type="url"/>
 </div>
 </div>
+
+<!-- Category Section -->
+<section class="mb-7">
+<h2 class="font-headline text-base font-bold mb-3">카테고리 선택</h2>
+<div class="bg-surface-container-low rounded-xl p-4 editorial-shadow">
+<p class="text-xs text-on-surface-variant mb-4">아래 4개 카테고리를 각각 하나씩 선택하면 상세 페이지에서 태그처럼 표시됩니다.</p>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+<div class="space-y-1">
+<label class="font-label text-[10px] font-bold text-primary uppercase tracking-widest" for="category-method">요리 방법</label>
+<select class="w-full bg-surface-container-highest border-none rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-primary-fixed appearance-none transition-all" id="category-method">
+<option value="">선택</option><option value="볶기">볶기</option><option value="끓이기">끓이기</option><option value="굽기">굽기</option><option value="튀기기">튀기기</option><option value="찜">찜</option><option value="무침">무침</option>
+</select>
+</div>
+<div class="space-y-1">
+<label class="font-label text-[10px] font-bold text-primary uppercase tracking-widest" for="category-situation">상황</label>
+<select class="w-full bg-surface-container-highest border-none rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-primary-fixed appearance-none transition-all" id="category-situation">
+<option value="">선택</option><option value="일상">일상</option><option value="야식">야식</option><option value="손님접대">손님접대</option><option value="다이어트">다이어트</option><option value="도시락">도시락</option><option value="파티">파티</option>
+</select>
+</div>
+<div class="space-y-1">
+<label class="font-label text-[10px] font-bold text-primary uppercase tracking-widest" for="category-main-ingredient">주 재료</label>
+<select class="w-full bg-surface-container-highest border-none rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-primary-fixed appearance-none transition-all" id="category-main-ingredient">
+<option value="">선택</option><option value="소고기">소고기</option><option value="돼지고기">돼지고기</option><option value="닭고기">닭고기</option><option value="해산물">해산물</option><option value="채소류">채소류</option><option value="면">면</option><option value="쌀">쌀</option>
+</select>
+</div>
+<div class="space-y-1">
+<label class="font-label text-[10px] font-bold text-primary uppercase tracking-widest" for="category-type">종류</label>
+<select class="w-full bg-surface-container-highest border-none rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-primary-fixed appearance-none transition-all" id="category-type">
+<option value="">선택</option><option value="국/탕">국/탕</option><option value="반찬">반찬</option><option value="메인요리">메인요리</option><option value="면요리">면요리</option><option value="간식">간식</option><option value="디저트">디저트</option>
+</select>
+</div>
+</div>
+</div>
+</section>
 
 <!-- Ingredients Section -->
 <section class="mb-7">
 <div class="flex justify-between items-center mb-3">
 <h2 class="font-headline text-base font-bold">필요한 재료</h2>
-<button class="flex items-center gap-1 text-primary font-bold text-xs hover:gap-2 transition-all">
+<button class="flex items-center gap-1 text-primary font-bold text-xs hover:gap-2 transition-all" id="add-ingredient-button" type="button">
 <span class="material-symbols-outlined text-base" data-icon="add">add</span>
 <span>재료 추가</span>
 </button>
 </div>
-<div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-<div class="flex gap-2 items-center bg-surface-container-lowest p-2.5 rounded-lg editorial-shadow">
-<input class="flex-1 bg-transparent border-none p-0 focus:ring-0 text-xs" placeholder="재료명 (예: 감자)" type="text"/>
-<input class="w-14 bg-surface-container-high border-none rounded p-1.5 text-xs text-center focus:ring-0" placeholder="용량" type="text"/>
-<button class="text-outline-variant hover:text-error"><span class="material-symbols-outlined text-base" data-icon="close">close</span></button>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-2" id="ingredients-list">
+<div class="flex gap-2 items-center bg-surface-container-lowest p-2.5 rounded-lg editorial-shadow ingredient-row">
+<input class="flex-1 bg-transparent border-none p-0 focus:ring-0 text-xs ingredient-name" placeholder="재료명 (예: 감자)" type="text"/>
+<input class="w-14 bg-surface-container-high border-none rounded p-1.5 text-xs text-center focus:ring-0 ingredient-amount" placeholder="용량" type="text"/>
+<button class="text-outline-variant hover:text-error remove-ingredient" type="button"><span class="material-symbols-outlined text-base" data-icon="close">close</span></button>
 </div>
-<div class="flex gap-2 items-center bg-surface-container-lowest p-2.5 rounded-lg editorial-shadow">
-<input class="flex-1 bg-transparent border-none p-0 focus:ring-0 text-xs" placeholder="재료명" type="text"/>
-<input class="w-14 bg-surface-container-high border-none rounded p-1.5 text-xs text-center focus:ring-0" placeholder="용량" type="text"/>
-<button class="text-outline-variant hover:text-error"><span class="material-symbols-outlined text-base" data-icon="close">close</span></button>
+<div class="flex gap-2 items-center bg-surface-container-lowest p-2.5 rounded-lg editorial-shadow ingredient-row">
+<input class="flex-1 bg-transparent border-none p-0 focus:ring-0 text-xs ingredient-name" placeholder="재료명" type="text"/>
+<input class="w-14 bg-surface-container-high border-none rounded p-1.5 text-xs text-center focus:ring-0 ingredient-amount" placeholder="용량" type="text"/>
+<button class="text-outline-variant hover:text-error remove-ingredient" type="button"><span class="material-symbols-outlined text-base" data-icon="close">close</span></button>
 </div>
 </div>
 </section>
@@ -199,95 +235,78 @@
 <!-- Cooking Steps Section -->
 <section class="mb-7">
 <h2 class="font-headline text-base font-bold mb-3">조리 순서</h2>
-<div class="space-y-3">
-<!-- Step 1 -->
-<div class="relative bg-surface-container-low rounded-xl p-4 overflow-hidden">
-<span class="absolute -top-1 -left-1 font-headline text-[5rem] font-bold text-on-surface opacity-[0.04] leading-none pointer-events-none">1</span>
+<div class="space-y-3" id="steps-list">
+<div class="relative bg-surface-container-low rounded-xl p-4 overflow-hidden step-card">
+<span class="absolute -top-1 -left-1 font-headline text-[5rem] font-bold text-on-surface opacity-[0.04] leading-none pointer-events-none step-watermark">1</span>
 <div class="relative z-10 grid grid-cols-1 md:grid-cols-12 gap-4">
 <div class="md:col-span-7 flex flex-col">
 <div class="flex items-center gap-2 mb-3">
-<span class="bg-primary text-on-primary w-6 h-6 flex items-center justify-center rounded-full font-bold text-xs">1</span>
-<h3 class="font-headline text-sm font-semibold">재료 손질하기</h3>
+<span class="bg-primary text-on-primary w-6 h-6 flex items-center justify-center rounded-full font-bold text-xs step-badge">1</span>
+<h3 class="font-headline text-sm font-semibold">조리 단계 설명</h3>
 </div>
-<textarea class="w-full bg-surface-container-highest/50 border-none rounded-lg p-2.5 mb-3 text-xs focus:ring-2 focus:ring-primary-fixed transition-all" placeholder="첫 번째 단계를 설명해 주세요." rows="2"></textarea>
+<textarea class="w-full bg-surface-container-highest/50 border-none rounded-lg p-2.5 mb-3 text-xs focus:ring-2 focus:ring-primary-fixed transition-all step-description" placeholder="첫 번째 단계를 설명해 주세요." rows="2"></textarea>
 <div class="flex flex-wrap gap-2">
-<button class="flex items-center gap-1 px-3 py-1.5 bg-secondary-fixed text-on-secondary-fixed rounded-full font-bold text-xs hover:scale-105 transition-all">
+<button class="flex items-center gap-1 px-3 py-1.5 bg-secondary-fixed text-on-secondary-fixed rounded-full font-bold text-xs hover:scale-105 transition-all toggle-timer-settings" type="button">
 <span class="material-symbols-outlined text-sm" data-icon="timer">timer</span><span>타이머 설정</span>
 </button>
-<button class="flex items-center gap-1 px-3 py-1.5 border border-outline-variant/30 text-on-surface-variant rounded-full font-bold text-xs hover:bg-surface-container-highest transition-all">
-<span class="material-symbols-outlined text-sm" data-icon="image">image</span><span>사진 추가</span>
+<button class="flex items-center gap-1 px-3 py-1.5 border border-outline-variant/30 text-on-surface-variant rounded-full font-bold text-xs hover:bg-surface-container-highest transition-all" type="button">
+<span class="material-symbols-outlined text-sm" data-icon="image">image</span><span>사진은 URL 입력 사용</span>
 </button>
+</div>
+<div class="hidden mt-3 grid grid-cols-3 gap-2 timer-settings">
+<input class="bg-surface-container-highest border-none rounded-lg p-2 text-xs focus:ring-2 focus:ring-primary-fixed step-minutes" min="0" placeholder="분" type="number"/>
+<input class="bg-surface-container-highest border-none rounded-lg p-2 text-xs focus:ring-2 focus:ring-primary-fixed step-seconds" max="59" min="0" placeholder="초" type="number"/>
+<input class="bg-surface-container-highest border-none rounded-lg p-2 text-xs focus:ring-2 focus:ring-primary-fixed step-image-url" placeholder="단계 이미지 URL" type="url"/>
 </div>
 </div>
 <div class="md:col-span-5">
-<div class="aspect-video bg-surface-container-highest rounded-xl flex items-center justify-center group cursor-pointer overflow-hidden">
+<div class="aspect-video bg-surface-container-highest rounded-xl flex items-center justify-center group overflow-hidden">
 <span class="material-symbols-outlined text-on-surface-variant/30 text-2xl group-hover:scale-110 transition-transform" data-icon="add_photo_alternate">add_photo_alternate</span>
 </div>
 </div>
 </div>
 </div>
-<!-- Step 2 -->
-<div class="relative bg-surface-container-low rounded-xl p-4 overflow-hidden">
-<span class="absolute -top-1 -left-1 font-headline text-[5rem] font-bold text-on-surface opacity-[0.04] leading-none pointer-events-none">2</span>
+<div class="relative bg-surface-container-low rounded-xl p-4 overflow-hidden step-card">
+<span class="absolute -top-1 -left-1 font-headline text-[5rem] font-bold text-on-surface opacity-[0.04] leading-none pointer-events-none step-watermark">2</span>
 <div class="relative z-10 grid grid-cols-1 md:grid-cols-12 gap-4">
 <div class="md:col-span-7 flex flex-col">
 <div class="flex items-center gap-2 mb-3">
-<span class="bg-primary text-on-primary w-6 h-6 flex items-center justify-center rounded-full font-bold text-xs">2</span>
-<h3 class="font-headline text-sm font-semibold">끓이기 및 간 맞추기</h3>
+<span class="bg-primary text-on-primary w-6 h-6 flex items-center justify-center rounded-full font-bold text-xs step-badge">2</span>
+<h3 class="font-headline text-sm font-semibold">조리 단계 설명</h3>
 </div>
-<textarea class="w-full bg-surface-container-highest/50 border-none rounded-lg p-2.5 mb-3 text-xs focus:ring-2 focus:ring-primary-fixed transition-all" placeholder="다음 단계를 입력해 주세요." rows="2"></textarea>
+<textarea class="w-full bg-surface-container-highest/50 border-none rounded-lg p-2.5 mb-3 text-xs focus:ring-2 focus:ring-primary-fixed transition-all step-description" placeholder="다음 단계를 입력해 주세요." rows="2"></textarea>
 <div class="flex flex-wrap gap-2">
-<button class="flex items-center gap-1 px-3 py-1.5 bg-secondary-fixed text-on-secondary-fixed rounded-full font-bold text-xs hover:scale-105 transition-all">
+<button class="flex items-center gap-1 px-3 py-1.5 bg-secondary-fixed text-on-secondary-fixed rounded-full font-bold text-xs hover:scale-105 transition-all toggle-timer-settings" type="button">
 <span class="material-symbols-outlined text-sm" data-icon="timer">timer</span><span>타이머 설정</span>
 </button>
-<button class="flex items-center gap-1 px-3 py-1.5 border border-outline-variant/30 text-on-surface-variant rounded-full font-bold text-xs hover:bg-surface-container-highest transition-all">
-<span class="material-symbols-outlined text-sm" data-icon="image">image</span><span>사진 추가</span>
+<button class="flex items-center gap-1 px-3 py-1.5 border border-outline-variant/30 text-on-surface-variant rounded-full font-bold text-xs hover:bg-surface-container-highest transition-all" type="button">
+<span class="material-symbols-outlined text-sm" data-icon="image">image</span><span>사진은 URL 입력 사용</span>
 </button>
+</div>
+<div class="hidden mt-3 grid grid-cols-3 gap-2 timer-settings">
+<input class="bg-surface-container-highest border-none rounded-lg p-2 text-xs focus:ring-2 focus:ring-primary-fixed step-minutes" min="0" placeholder="분" type="number"/>
+<input class="bg-surface-container-highest border-none rounded-lg p-2 text-xs focus:ring-2 focus:ring-primary-fixed step-seconds" max="59" min="0" placeholder="초" type="number"/>
+<input class="bg-surface-container-highest border-none rounded-lg p-2 text-xs focus:ring-2 focus:ring-primary-fixed step-image-url" placeholder="단계 이미지 URL" type="url"/>
 </div>
 </div>
 <div class="md:col-span-5">
-<div class="aspect-video bg-surface-container-highest rounded-xl flex items-center justify-center group cursor-pointer overflow-hidden">
+<div class="aspect-video bg-surface-container-highest rounded-xl flex items-center justify-center group overflow-hidden">
 <span class="material-symbols-outlined text-on-surface-variant/30 text-2xl group-hover:scale-110 transition-transform" data-icon="add_photo_alternate">add_photo_alternate</span>
 </div>
 </div>
 </div>
 </div>
 </div>
-<button class="w-full mt-3 py-2.5 border-2 border-dashed border-outline-variant/40 rounded-xl text-on-surface-variant font-bold text-xs flex items-center justify-center gap-1.5 hover:bg-surface-container-low hover:border-primary/40 transition-all group">
+<button class="w-full mt-3 py-2.5 border-2 border-dashed border-outline-variant/40 rounded-xl text-on-surface-variant font-bold text-xs flex items-center justify-center gap-1.5 hover:bg-surface-container-low hover:border-primary/40 transition-all group" id="add-step-button" type="button">
 <span class="material-symbols-outlined text-primary text-base group-hover:rotate-90 transition-transform" data-icon="add_circle">add_circle</span>
 <span>조리 단계 추가하기</span>
 </button>
 </section>
 
-<!-- Tag Addition Section -->
-<section class="mb-7">
-<h2 class="font-headline text-base font-bold mb-3">태그 추가</h2>
-<div class="bg-surface-container-low rounded-xl p-4 editorial-shadow">
-<div class="flex flex-wrap gap-1.5 mb-3">
-<div class="flex items-center gap-0.5 px-2.5 py-1 bg-primary/10 text-primary rounded-full font-bold text-xs hover:bg-primary/20 cursor-default">
-<span>#집밥</span>
-<button class="flex items-center hover:scale-110"><span class="material-symbols-outlined text-xs" data-icon="close">close</span></button>
-</div>
-<div class="flex items-center gap-0.5 px-2.5 py-1 bg-primary/10 text-primary rounded-full font-bold text-xs hover:bg-primary/20 cursor-default">
-<span>#해장</span>
-<button class="flex items-center hover:scale-110"><span class="material-symbols-outlined text-xs" data-icon="close">close</span></button>
-</div>
-<div class="flex items-center gap-0.5 px-2.5 py-1 bg-primary/10 text-primary rounded-full font-bold text-xs hover:bg-primary/20 cursor-default">
-<span>#간편식</span>
-<button class="flex items-center hover:scale-110"><span class="material-symbols-outlined text-xs" data-icon="close">close</span></button>
-</div>
-</div>
-<div class="relative">
-<input class="w-full bg-surface-container-highest border-none rounded-lg p-2.5 pr-12 text-xs font-body focus:ring-2 focus:ring-primary-fixed placeholder:text-on-surface-variant/40 transition-all" placeholder="추가할 태그 입력 (예: #초보자)" type="text"/>
-<button class="absolute right-2.5 top-1/2 -translate-y-1/2 text-primary font-bold text-xs hover:scale-105 transition-transform">추가</button>
-</div>
-</div>
-</section>
-
 <!-- Final Actions -->
 <div class="flex gap-2 justify-end items-center py-5 border-t border-outline-variant/10">
-<button class="px-6 py-2 text-on-surface-variant font-bold text-xs hover:bg-surface-container-high rounded-full transition-colors">임시 저장</button>
-<button class="px-7 py-2 bg-gradient-to-br from-primary to-primary-container text-on-primary font-bold text-xs rounded-full editorial-shadow hover:scale-[1.02] active:scale-95 transition-all">레시피 공개하기</button>
+<button class="px-6 py-2 text-on-surface-variant font-bold text-xs hover:bg-surface-container-high rounded-full transition-colors" id="reset-editor-button" type="button">초기화</button>
+<button class="px-7 py-2 bg-gradient-to-br from-primary to-primary-container text-on-primary font-bold text-xs rounded-full editorial-shadow hover:scale-[1.02] active:scale-95 transition-all" id="save-recipe-button" type="button">레시피 공개하기</button>
 </div>
 </main>
 <!-- BottomNavBar (Mobile Only) -->
@@ -313,4 +332,47 @@
 <button class="fixed bottom-24 right-6 md:bottom-10 md:right-10 w-16 h-16 bg-primary text-on-primary rounded-full editorial-shadow flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-40">
 <span class="material-symbols-outlined text-3xl" data-icon="visibility">visibility</span>
 </button>
+
+<template id="ingredient-row-template">
+<div class="flex gap-2 items-center bg-surface-container-lowest p-2.5 rounded-lg editorial-shadow ingredient-row">
+<input class="flex-1 bg-transparent border-none p-0 focus:ring-0 text-xs ingredient-name" placeholder="재료명" type="text"/>
+<input class="w-14 bg-surface-container-high border-none rounded p-1.5 text-xs text-center focus:ring-0 ingredient-amount" placeholder="용량" type="text"/>
+<button class="text-outline-variant hover:text-error remove-ingredient" type="button"><span class="material-symbols-outlined text-base" data-icon="close">close</span></button>
+</div>
+</template>
+
+<template id="step-card-template">
+<div class="relative bg-surface-container-low rounded-xl p-4 overflow-hidden step-card">
+<span class="absolute -top-1 -left-1 font-headline text-[5rem] font-bold text-on-surface opacity-[0.04] leading-none pointer-events-none step-watermark">1</span>
+<div class="relative z-10 grid grid-cols-1 md:grid-cols-12 gap-4">
+<div class="md:col-span-7 flex flex-col">
+<div class="flex items-center gap-2 mb-3">
+<span class="bg-primary text-on-primary w-6 h-6 flex items-center justify-center rounded-full font-bold text-xs step-badge">1</span>
+<h3 class="font-headline text-sm font-semibold">조리 단계 설명</h3>
+</div>
+<textarea class="w-full bg-surface-container-highest/50 border-none rounded-lg p-2.5 mb-3 text-xs focus:ring-2 focus:ring-primary-fixed transition-all step-description" placeholder="단계를 설명해 주세요." rows="2"></textarea>
+<div class="flex flex-wrap gap-2">
+<button class="flex items-center gap-1 px-3 py-1.5 bg-secondary-fixed text-on-secondary-fixed rounded-full font-bold text-xs hover:scale-105 transition-all toggle-timer-settings" type="button">
+<span class="material-symbols-outlined text-sm" data-icon="timer">timer</span><span>타이머 설정</span>
+</button>
+<button class="flex items-center gap-1 px-3 py-1.5 border border-outline-variant/30 text-on-surface-variant rounded-full font-bold text-xs hover:bg-surface-container-highest transition-all" type="button">
+<span class="material-symbols-outlined text-sm" data-icon="image">image</span><span>사진은 URL 입력 사용</span>
+</button>
+</div>
+<div class="hidden mt-3 grid grid-cols-3 gap-2 timer-settings">
+<input class="bg-surface-container-highest border-none rounded-lg p-2 text-xs focus:ring-2 focus:ring-primary-fixed step-minutes" min="0" placeholder="분" type="number"/>
+<input class="bg-surface-container-highest border-none rounded-lg p-2 text-xs focus:ring-2 focus:ring-primary-fixed step-seconds" max="59" min="0" placeholder="초" type="number"/>
+<input class="bg-surface-container-highest border-none rounded-lg p-2 text-xs focus:ring-2 focus:ring-primary-fixed step-image-url" placeholder="단계 이미지 URL" type="url"/>
+</div>
+</div>
+<div class="md:col-span-5">
+<div class="aspect-video bg-surface-container-highest rounded-xl flex items-center justify-center group overflow-hidden">
+<span class="material-symbols-outlined text-on-surface-variant/30 text-2xl group-hover:scale-110 transition-transform" data-icon="add_photo_alternate">add_photo_alternate</span>
+</div>
+</div>
+</div>
+</div>
+</template>
+
+<script src="recipe-editor.js"></script>
 </body></html>
