@@ -8,7 +8,10 @@
     cookTime: document.getElementById('recipe-cook-time'),
     servingSize: document.getElementById('recipe-serving-size'),
     difficulty: document.getElementById('recipe-difficulty'),
-    thumbnailUrl: document.getElementById('recipe-thumbnail-url'),
+    thumbnailDropzone: document.getElementById('thumbnail-dropzone'),
+    thumbnailFile: document.getElementById('recipe-thumbnail-file'),
+    thumbnailPreview: document.getElementById('thumbnail-preview'),
+    thumbnailPlaceholder: document.getElementById('thumbnail-placeholder'),
     method: document.getElementById('category-method'),
     situation: document.getElementById('category-situation'),
     mainIngredient: document.getElementById('category-main-ingredient'),
@@ -35,6 +38,75 @@
 
   function hideStatus() {
     elements.status.classList.add('hidden');
+  }
+
+  function readFileAsDataUrl(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(new Error('이미지를 읽는 중 오류가 발생했습니다.'));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function setThumbnailImage(file) {
+    const dataUrl = await readFileAsDataUrl(file);
+    elements.thumbnailDropzone.dataset.imageUrl = dataUrl;
+    elements.thumbnailPreview.src = dataUrl;
+    elements.thumbnailPreview.classList.remove('hidden');
+    elements.thumbnailPlaceholder.classList.add('hidden');
+  }
+
+  async function setStepImage(card, file) {
+    const dataUrl = await readFileAsDataUrl(file);
+    card.dataset.imageUrl = dataUrl;
+    const preview = card.querySelector('.step-image-preview');
+    const placeholder = card.querySelector('.step-image-placeholder');
+    const meta = card.querySelector('.step-image-meta');
+    const timerSettings = card.querySelector('.timer-settings');
+
+    preview.src = dataUrl;
+    preview.classList.remove('hidden');
+    placeholder.classList.add('hidden');
+    if (timerSettings) {
+      timerSettings.classList.remove('hidden');
+    }
+    if (meta) {
+      meta.textContent = file.name || '사진 추가됨';
+    }
+  }
+
+  function bindDropzone(dropzone, onFile) {
+    if (!dropzone) {
+      return;
+    }
+
+    ['dragenter', 'dragover'].forEach((eventName) => {
+      dropzone.addEventListener(eventName, (event) => {
+        event.preventDefault();
+        dropzone.classList.add('drop-active');
+      });
+    });
+
+    ['dragleave', 'dragend', 'drop'].forEach((eventName) => {
+      dropzone.addEventListener(eventName, (event) => {
+        event.preventDefault();
+        dropzone.classList.remove('drop-active');
+      });
+    });
+
+    dropzone.addEventListener('drop', async (event) => {
+      const file = event.dataTransfer?.files?.[0];
+      if (!file || !file.type.startsWith('image/')) {
+        return;
+      }
+
+      try {
+        await onFile(file);
+      } catch (error) {
+        setStatus(error.message || '이미지 업로드 중 오류가 발생했습니다.');
+      }
+    });
   }
 
   function updateStepNumbers() {
@@ -69,6 +141,62 @@
       const timerSettings = card.querySelector('.timer-settings');
       timerSettings?.classList.toggle('hidden');
     });
+
+    card.querySelector('.remove-step')?.addEventListener('click', () => {
+      const stepCards = elements.stepsList.querySelectorAll('.step-card');
+      if (stepCards.length <= 1) {
+        card.querySelector('.step-description').value = '';
+        card.querySelector('.step-minutes').value = '';
+        card.querySelector('.step-seconds').value = '';
+        card.dataset.imageUrl = '';
+        const preview = card.querySelector('.step-image-preview');
+        const placeholder = card.querySelector('.step-image-placeholder');
+        const meta = card.querySelector('.step-image-meta');
+        const imageInput = card.querySelector('.step-image-file');
+        if (preview) {
+          preview.src = '';
+          preview.classList.add('hidden');
+        }
+        placeholder?.classList.remove('hidden');
+        if (meta) {
+          meta.textContent = '사진 없음';
+        }
+        if (imageInput) {
+          imageInput.value = '';
+        }
+        card.querySelector('.timer-settings')?.classList.add('hidden');
+        return;
+      }
+      card.remove();
+      updateStepNumbers();
+    });
+
+    const imageInput = card.querySelector('.step-image-file');
+    const imageButton = card.querySelector('.select-step-image');
+    const dropzone = card.querySelector('.step-image-dropzone');
+
+    imageButton?.addEventListener('click', () => {
+      imageInput?.click();
+    });
+
+    dropzone?.addEventListener('click', () => {
+      imageInput?.click();
+    });
+
+    imageInput?.addEventListener('change', async (event) => {
+      const file = event.target.files?.[0];
+      if (!file) {
+        return;
+      }
+
+      try {
+        await setStepImage(card, file);
+      } catch (error) {
+        setStatus(error.message || '이미지 업로드 중 오류가 발생했습니다.');
+      }
+    });
+
+    bindDropzone(dropzone, (file) => setStepImage(card, file));
   }
 
   function addIngredientRow() {
@@ -107,7 +235,7 @@
 
         return {
           description: card.querySelector('.step-description')?.value.trim() || '',
-          imageUrl: card.querySelector('.step-image-url')?.value.trim() || null,
+          imageUrl: card.dataset.imageUrl || null,
           timerSeconds: minutes || seconds ? (minutes * 60) + seconds : null,
         };
       })
@@ -120,7 +248,11 @@
     elements.cookTime.value = '';
     elements.servingSize.value = '';
     elements.difficulty.value = '';
-    elements.thumbnailUrl.value = '';
+    elements.thumbnailDropzone.dataset.imageUrl = '';
+    elements.thumbnailPreview.src = '';
+    elements.thumbnailPreview.classList.add('hidden');
+    elements.thumbnailPlaceholder.classList.remove('hidden');
+    elements.thumbnailFile.value = '';
     elements.method.value = '';
     elements.situation.value = '';
     elements.mainIngredient.value = '';
@@ -135,7 +267,7 @@
       cookTime: elements.cookTime.value.trim(),
       servingSize: elements.servingSize.value.trim(),
       difficulty: elements.difficulty.value.trim(),
-      thumbnailUrl: elements.thumbnailUrl.value.trim() || null,
+      thumbnailUrl: elements.thumbnailDropzone.dataset.imageUrl || null,
       categories: {
         method: elements.method.value.trim(),
         situation: elements.situation.value.trim(),
@@ -177,6 +309,26 @@
   elements.ingredientsList.querySelectorAll('.ingredient-row').forEach(bindIngredientRow);
   elements.stepsList.querySelectorAll('.step-card').forEach(bindStepCard);
   updateStepNumbers();
+
+  elements.thumbnailDropzone?.addEventListener('click', () => {
+    elements.thumbnailFile?.click();
+  });
+
+  elements.thumbnailFile?.addEventListener('change', async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    hideStatus();
+    try {
+      await setThumbnailImage(file);
+    } catch (error) {
+      setStatus(error.message || '이미지 업로드 중 오류가 발생했습니다.');
+    }
+  });
+
+  bindDropzone(elements.thumbnailDropzone, setThumbnailImage);
 
   elements.addIngredientButton?.addEventListener('click', addIngredientRow);
   elements.addStepButton?.addEventListener('click', addStepCard);
