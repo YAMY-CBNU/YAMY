@@ -262,8 +262,67 @@ async function findRecipeById(recipeId) {
   return mapRecipeRecord(recipe, recipe.ingredients || [], recipe.steps || []);
 }
 
+async function listRecipesByAuthor(authorId) {
+  const mode = await getMode();
+
+  if (mode === 'mysql') {
+    const [recipeRows] = await mysqlPool.query(
+      `SELECT
+        recipe_id,
+        author_id,
+        title,
+        description,
+        thumbnail_url,
+        difficulty,
+        serving_size,
+        cook_time,
+        cat1_method,
+        cat2_situation,
+        cat3_ingredient,
+        cat4_type,
+        is_external,
+        created_at,
+        updated_at
+      FROM RECIPE
+      WHERE author_id = ?
+      ORDER BY created_at DESC, recipe_id DESC`,
+      [authorId]
+    );
+
+    const recipes = [];
+    for (const recipe of recipeRows) {
+      const [ingredientRows] = await mysqlPool.query(
+        `SELECT ingredient_id, name, amount, section
+         FROM RECIPE_INGREDIENT
+         WHERE recipe_id = ?
+         ORDER BY ingredient_id ASC`,
+        [recipe.recipe_id]
+      );
+
+      const [stepRows] = await mysqlPool.query(
+        `SELECT step_id, step_order, description, image_url, timer_seconds, heat_level, tip
+         FROM RECIPE_STEP
+         WHERE recipe_id = ?
+         ORDER BY step_order ASC`,
+        [recipe.recipe_id]
+      );
+
+      recipes.push(mapRecipeRecord(recipe, ingredientRows, stepRows));
+    }
+
+    return recipes;
+  }
+
+  const recipes = await readRecipes();
+  return recipes
+    .filter((item) => Number(item.author_id) === Number(authorId))
+    .sort((a, b) => Number(b.recipe_id) - Number(a.recipe_id))
+    .map((recipe) => mapRecipeRecord(recipe, recipe.ingredients || [], recipe.steps || []));
+}
+
 module.exports = {
   getMode,
   createRecipe,
   findRecipeById,
+  listRecipesByAuthor,
 };
