@@ -51,7 +51,8 @@
       <div class="relative hidden lg:block">
         <input class="bg-surface-container-high border-none rounded-full px-4 py-2 text-xs focus:ring-2 focus:ring-primary w-52 transition-all" placeholder="레시피 검색..." type="text"/>
       </div>
-      <a href="profile.html" data-profile-link class="px-4 py-2 rounded-full bg-surface-container-high text-primary text-sm font-semibold hover:bg-surface-container transition-all whitespace-nowrap">프로필</a>
+      <a href="profile.html" data-profile-link class="hidden px-4 py-2 rounded-full bg-surface-container-high text-primary text-sm font-semibold hover:bg-surface-container transition-all whitespace-nowrap">프로필</a>
+      <a href="#" data-logout-button class="hidden bg-primary text-on-primary px-4 py-2 rounded-full text-sm font-semibold hover:opacity-90 transition-all whitespace-nowrap">로그아웃</a>
     </div>
   </div>
 </nav>
@@ -76,12 +77,12 @@
       <div class="flex items-center gap-2 text-sm">
         <span class="material-symbols-outlined text-primary text-base">menu_book</span>
         <span class="font-semibold text-on-surface">공개된 레시피</span>
-        <span class="bg-primary/10 text-primary font-bold text-xs px-2 py-0.5 rounded-full">3</span>
+        <span id="published-count" class="bg-primary/10 text-primary font-bold text-xs px-2 py-0.5 rounded-full">0</span>
       </div>
       <div class="flex items-center gap-2 text-sm">
         <span class="material-symbols-outlined text-on-surface-variant text-base">edit_note</span>
         <span class="font-semibold text-on-surface">임시저장</span>
-        <span class="bg-surface-container text-on-surface-variant font-bold text-xs px-2 py-0.5 rounded-full">2</span>
+        <span id="draft-count" class="bg-surface-container text-on-surface-variant font-bold text-xs px-2 py-0.5 rounded-full">0</span>
       </div>
     </div>
 
@@ -92,7 +93,7 @@
 
     <!-- Published -->
     <div id="tab-published" class="tab-panel active">
-      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-6">
+      <div id="published-recipes-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-6">
 
         <article class="group">
           <div class="relative overflow-hidden rounded-lg aspect-[4/3] mb-2 shadow-sm bg-surface-container-lowest">
@@ -156,7 +157,7 @@
 
     <!-- Draft -->
     <div id="tab-draft" class="tab-panel">
-      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-6">
+      <div id="draft-recipes-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-6">
 
         <article class="group">
           <div class="relative overflow-hidden rounded-lg aspect-[4/3] mb-2 shadow-sm bg-surface-container-lowest">
@@ -227,6 +228,7 @@
 </script>
 <script src="auth-guard.js"></script>
 <script src="profile-badge.js"></script>
+<script src="my-recipes.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     window.authGuard.redirectToLoginIfNeeded();

@@ -1,0 +1,158 @@
+(function () {
+  const API_BASE = 'http://localhost:3000/api/recipes';
+  const fallbackImage = 'https://cdnweb01.wikitree.co.kr/webdata/editor/202504/16/img_20250416102835_b3807a44.webp';
+
+  const elements = {
+    publishedGrid: document.getElementById('published-recipes-grid'),
+    publishedCount: document.getElementById('published-count'),
+    draftGrid: document.getElementById('draft-recipes-grid'),
+    draftCount: document.getElementById('draft-count'),
+  };
+
+  function escapeHtml(value) {
+    return String(value ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  function formatDate(value) {
+    if (!value) {
+      return '';
+    }
+
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) {
+      return '';
+    }
+
+    return date.toLocaleDateString('ko-KR', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
+  }
+
+  function getRecipeLink(recipe) {
+    return `recipe-detail.html?id=${encodeURIComponent(recipe.id)}`;
+  }
+
+  function createRecipeCard(recipe) {
+    const title = escapeHtml(recipe.title || '제목 없는 레시피');
+    const image = escapeHtml(recipe.thumbnailUrl || fallbackImage);
+    const cookTime = escapeHtml(recipe.cookTime || '시간 미정');
+    const difficulty = escapeHtml(recipe.difficulty || '난이도 미정');
+    const createdAt = escapeHtml(formatDate(recipe.createdAt));
+    const link = escapeHtml(getRecipeLink(recipe));
+
+    return `
+      <article class="group">
+        <a href="${link}" class="block">
+          <div class="relative overflow-hidden rounded-lg aspect-[4/3] mb-2 shadow-sm bg-surface-container-lowest">
+            <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="${image}" alt="${title}"/>
+            <div class="absolute top-2 left-2 bg-primary/90 text-on-primary px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-widest">공개</div>
+          </div>
+          <h3 class="text-sm font-bold tracking-tight mb-1 group-hover:text-primary transition-colors">${title}</h3>
+          <div class="flex flex-wrap items-center gap-3 text-on-surface-variant text-[11px] font-medium">
+            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">schedule</span>${cookTime}</span>
+            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">signal_cellular_alt</span>${difficulty}</span>
+            ${createdAt ? `<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">calendar_today</span>${createdAt}</span>` : ''}
+          </div>
+        </a>
+      </article>
+    `;
+  }
+
+  function createAddCard() {
+    return `
+      <a href="recipe-editor.html" class="flex flex-col items-center justify-center border-2 border-dashed border-outline-variant/50 rounded-lg aspect-[4/3] p-4 text-center bg-surface-container/30 hover:bg-surface-container/60 hover:border-primary/40 transition-all cursor-pointer group">
+        <span class="material-symbols-outlined text-primary/40 group-hover:text-primary/70 text-3xl mb-2 transition-colors" style="font-variation-settings:'FILL' 1;">add_circle</span>
+        <p class="text-on-surface-variant font-bold text-xs mb-1">새 레시피 작성하기</p>
+        <span class="text-primary font-extrabold text-xs group-hover:underline decoration-2 underline-offset-4">시작하기</span>
+      </a>
+    `;
+  }
+
+  function renderPublished(recipes) {
+    if (elements.publishedCount) {
+      elements.publishedCount.textContent = String(recipes.length);
+    }
+
+    if (!elements.publishedGrid) {
+      return;
+    }
+
+    if (recipes.length === 0) {
+      elements.publishedGrid.innerHTML = `
+        <div class="col-span-full rounded-lg bg-surface-container/40 border border-outline-variant/40 p-8 text-center">
+          <p class="text-on-surface font-bold text-sm mb-2">아직 공개한 레시피가 없습니다.</p>
+          <p class="text-on-surface-variant text-xs mb-5">레시피 작성 화면에서 공개하면 여기에 바로 표시됩니다.</p>
+          <a href="recipe-editor.html" class="inline-flex items-center justify-center px-5 py-2.5 bg-primary text-on-primary font-bold text-xs rounded-full">레시피 작성하기</a>
+        </div>
+      `;
+      return;
+    }
+
+    elements.publishedGrid.innerHTML = recipes.map(createRecipeCard).join('') + createAddCard();
+  }
+
+  function renderDrafts() {
+    if (elements.draftCount) {
+      elements.draftCount.textContent = '0';
+    }
+
+    if (elements.draftGrid) {
+      elements.draftGrid.innerHTML = `
+        <div class="col-span-full rounded-lg bg-surface-container/40 border border-outline-variant/40 p-8 text-center">
+          <p class="text-on-surface font-bold text-sm mb-2">임시저장된 레시피가 없습니다.</p>
+          <p class="text-on-surface-variant text-xs">현재 작성 화면은 공개 저장만 지원합니다.</p>
+        </div>
+      `;
+    }
+  }
+
+  async function loadMyRecipes() {
+    const token = localStorage.getItem('yamy_token');
+
+    if (!token) {
+      return;
+    }
+
+    if (elements.publishedGrid) {
+      elements.publishedGrid.innerHTML = `
+        <div class="col-span-full rounded-lg bg-surface-container/40 border border-outline-variant/40 p-8 text-center text-on-surface-variant text-sm font-semibold">
+          내 레시피를 불러오는 중입니다.
+        </div>
+      `;
+    }
+
+    try {
+      const response = await fetch(`${API_BASE}/mine`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || '내 레시피를 불러오지 못했습니다.');
+      }
+
+      renderPublished(Array.isArray(data.recipes) ? data.recipes : []);
+      renderDrafts();
+    } catch (error) {
+      if (elements.publishedGrid) {
+        elements.publishedGrid.innerHTML = `
+          <div class="col-span-full rounded-lg bg-red-50 border border-red-200 p-8 text-center">
+            <p class="text-red-800 font-bold text-sm mb-2">내 레시피를 불러오지 못했습니다.</p>
+            <p class="text-red-700 text-xs">${escapeHtml(error.message)}</p>
+          </div>
+        `;
+      }
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', loadMyRecipes);
+})();
