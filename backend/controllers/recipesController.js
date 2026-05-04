@@ -174,3 +174,19 @@ exports.getRecipe = async (req, res) => {
     return res.status(500).json({ message: '레시피 조회 중 오류가 발생했습니다.' });
   }
 };
+
+exports.getMyRecipes = async (req, res) => {
+  try {
+    const auth = requireAuth(req);
+    const recipes = await recipesStore.listRecipesByAuthor(auth.userId);
+
+    return res.status(200).json({ recipes });
+  } catch (error) {
+    if (error.status) {
+      return res.status(error.status).json({ message: error.message });
+    }
+
+    console.error('Get my recipes error:', error);
+    return res.status(500).json({ message: '내 레시피 조회 중 오류가 발생했습니다.' });
+  }
+};
