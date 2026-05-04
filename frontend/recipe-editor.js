@@ -302,7 +302,7 @@
 
     setStatus('레시피가 저장되었습니다.', 'success');
     window.setTimeout(() => {
-      window.location.href = `ramen.html?id=${data.recipe.id}`;
+      window.location.href = `recipe-detail.html?id=${data.recipe.id}`;
     }, 500);
   }
 
