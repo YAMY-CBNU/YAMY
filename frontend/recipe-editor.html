@@ -112,9 +112,7 @@
 <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant text-xl">search</span>
 <input class="bg-surface-container border border-outline-variant/50 rounded-full pl-11 pr-5 py-2.5 text-sm focus:ring-2 focus:ring-primary/30 w-64 outline-none transition-all" placeholder="요리 영감 검색하기..." type="text"/>
 </div>
-<a href="profile.html" class="text-on-surface-variant hover:text-primary transition-colors">
-<span class="material-symbols-outlined text-2xl">account_circle</span>
-</a>
+<a href="profile.html" data-profile-link class="px-4 py-2.5 rounded-full bg-surface-container text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors text-sm font-semibold whitespace-nowrap">프로필</a>
 </div>
 </nav>
 <main class="max-w-2xl mx-auto px-5 pt-20 text-sm">
@@ -395,5 +393,12 @@
 </div>
 </template>
 
+<script src="auth-guard.js"></script>
+<script src="profile-badge.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    window.authGuard.redirectToLoginIfNeeded();
+  });
+</script>
 <script src="recipe-editor.js"></script>
 </body></html>

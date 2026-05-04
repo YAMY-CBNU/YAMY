@@ -55,12 +55,11 @@
 <!-- TopNavBar -->
 <nav class="fixed top-0 w-full z-50 bg-[#F7F3F0]/90 backdrop-blur-xl border-b border-outline-variant/30">
 <div class="flex justify-between items-center px-8 h-16 w-full max-w-screen-xl mx-auto">
-<a href="landing.html" class="text-xl font-extrabold tracking-tighter text-primary font-['Plus_Jakarta_Sans']">
+<a href="index.html" class="text-xl font-extrabold tracking-tighter text-primary font-['Plus_Jakarta_Sans']">
             YAMY
         </a>
 <div class="hidden md:flex gap-6 items-center font-['Plus_Jakarta_Sans'] font-semibold tracking-tight text-sm">
-<a class="text-on-surface hover:text-primary transition-colors" href="landing.html">소개</a>
-<a class="text-on-surface hover:text-primary transition-colors" href="index.html">탐색</a>
+<a class="text-on-surface hover:text-primary transition-colors" href="index.html">탐색하기</a>
 <a class="text-primary border-b-2 border-primary pb-0.5" href="my-picks.html">저장됨</a>
 <a class="text-on-surface hover:text-primary transition-colors" href="my-recipe.html">내 레시피</a>
 <a class="text-on-surface hover:text-primary transition-colors" href="recipe-editor.html">레시피 작성</a>
@@ -69,9 +68,7 @@
 <div class="relative hidden lg:block">
 <input class="bg-surface-container-high border-none rounded-full px-4 py-2 text-xs focus:ring-2 focus:ring-primary w-52 transition-all" placeholder="Search saved recipes..." type="text"/>
 </div>
-<a href="profile.html" class="p-1.5 rounded-full hover:bg-surface-container-high transition-all">
-<span class="material-symbols-outlined text-primary text-xl">account_circle</span>
-</a>
+<a href="profile.html" data-profile-link class="px-4 py-2 rounded-full bg-surface-container-high text-primary text-sm font-semibold hover:bg-surface-container transition-all whitespace-nowrap">프로필</a>
 </div>
 </div>
 </nav>
@@ -184,11 +181,18 @@
 <p class="font-['Be_Vietnam_Pro'] text-xs text-on-surface-variant">© 2024 YAMY. A Modern Gastronomer's Guide.</p>
 </div>
 <div class="flex flex-wrap justify-center gap-6 font-['Be_Vietnam_Pro'] font-semibold text-sm">
-<a class="text-on-surface-variant hover:text-primary transition-all duration-300" href="#">About</a>
+<a class="text-on-surface-variant hover:text-primary transition-all duration-300" href="landing.html">About</a>
 <a class="text-on-surface-variant hover:text-primary transition-all duration-300" href="#">Privacy Policy</a>
 <a class="text-on-surface-variant hover:text-primary transition-all duration-300" href="#">Kitchen Essentials</a>
 <a class="text-on-surface-variant hover:text-primary transition-all duration-300" href="#">Contact</a>
 </div>
 </div>
 </footer>
+<script src="auth-guard.js"></script>
+<script src="profile-badge.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    window.authGuard.redirectToLoginIfNeeded();
+  });
+</script>
 </body></html>
