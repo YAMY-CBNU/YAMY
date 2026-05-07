@@ -1,7 +1,5 @@
 (function () {
   const API_BASE = 'http://localhost:3000/api/recipes';
-  const fallbackImage = 'https://cdnweb01.wikitree.co.kr/webdata/editor/202504/16/img_20250416102835_b3807a44.webp';
-
   const elements = {
     title: document.getElementById('recipe-title-main'),
     description: document.getElementById('recipe-description-main'),
@@ -12,10 +10,12 @@
     ingredientForm: document.getElementById('ingredient-form'),
     missingIngredients: document.getElementById('missing-ingredients'),
     finishedImage: document.getElementById('recipe-finished-image'),
+    finishedImageContainer: document.getElementById('recipe-finished-image')?.parentElement,
     stepNumber: document.getElementById('step-number'),
     stepTitle: document.getElementById('step-title'),
     stepDescription: document.getElementById('step-description'),
     stepImage: document.getElementById('step-image'),
+    stepImageContainer: document.getElementById('step-image')?.parentElement,
     stepCounter: document.getElementById('step-counter'),
     indicators: document.querySelector('#step-counter')?.nextElementSibling,
     prevButton: document.getElementById('prev-btn'),
@@ -35,6 +35,37 @@
   let totalSeconds = 0;
   let remainingSeconds = 0;
   let timerRunning = false;
+
+  function getImagePlaceholderMarkup(label) {
+    return `
+      <div class="w-full h-full min-h-52 flex flex-col items-center justify-center bg-surface-container text-on-surface-variant">
+      <span class="material-symbols-outlined text-5xl mb-2 text-primary/40">restaurant_menu</span>
+      <span class="text-xs font-bold">${label}</span>
+      </div>
+    `;
+  }
+
+  function setImageOrPlaceholder(key, src, alt, label) {
+    const image = elements[key];
+    const container = elements[`${key}Container`] || image?.parentElement;
+    if (!container) return;
+
+    if (!src) {
+      container.innerHTML = getImagePlaceholderMarkup(label);
+      elements[key] = null;
+      return;
+    }
+
+    container.innerHTML = `
+      <img
+        id="${key === 'finishedImage' ? 'recipe-finished-image' : 'step-image'}"
+        src="${escapeHtml(src)}"
+        alt="${escapeHtml(alt)}"
+        class="${key === 'finishedImage' ? 'w-full h-52 object-cover hover:scale-105 transition-transform duration-500' : 'w-full h-64 object-cover hover:scale-105 transition-transform duration-500'}"
+      />
+    `;
+    elements[key] = container.querySelector('img');
+  }
 
   function escapeHtml(value) {
     return String(value ?? '')
@@ -121,14 +152,14 @@
         number: index + 1,
         title: `${index + 1}단계`,
         description: step.description || '',
-        image: step.imageUrl || recipe.thumbnailUrl || fallbackImage,
+        image: step.imageUrl || recipe.thumbnailUrl || '',
         timerSeconds: Number(step.timerSeconds) || 0,
       }))
       : [{
         number: 1,
         title: '조리 과정',
         description: recipe.description || '등록된 조리 단계가 없습니다.',
-        image: recipe.thumbnailUrl || fallbackImage,
+        image: recipe.thumbnailUrl || '',
         timerSeconds: 0,
       }];
   }
@@ -186,10 +217,7 @@
     if (elements.stepNumber) elements.stepNumber.textContent = String(step.number);
     if (elements.stepTitle) elements.stepTitle.textContent = step.title;
     if (elements.stepDescription) elements.stepDescription.textContent = step.description;
-    if (elements.stepImage) {
-      elements.stepImage.src = step.image;
-      elements.stepImage.alt = step.title;
-    }
+    setImageOrPlaceholder('stepImage', step.image, step.title, '\uB2E8\uACC4 \uC774\uBBF8\uC9C0 \uC5C6\uC74C');
     if (elements.stepCounter) elements.stepCounter.textContent = `${step.number} / ${steps.length}`;
     if (elements.prevButton) elements.prevButton.disabled = currentStepIndex === 0;
     if (elements.nextButton) elements.nextButton.disabled = currentStepIndex === steps.length - 1;
@@ -205,8 +233,13 @@
     if (recipe.title) document.title = `${recipe.title} - YAMY`;
     if (elements.title) elements.title.textContent = recipe.title || '레시피';
     if (elements.description) elements.description.textContent = recipe.description || '';
+    setImageOrPlaceholder('finishedImage', recipe.thumbnailUrl, recipe.title || '\uC644\uC131 \uC774\uBBF8\uC9C0', '\uC644\uC131 \uC774\uBBF8\uC9C0 \uC5C6\uC74C');
     if (elements.finishedImage) {
-      elements.finishedImage.src = recipe.thumbnailUrl || fallbackImage;
+      if (!recipe.thumbnailUrl) {
+        setImageOrPlaceholder('finishedImage', '', recipe.title || '\uC644\uC131 \uC774\uBBF8\uC9C0', '\uC644\uC131 \uC774\uBBF8\uC9C0 \uC5C6\uC74C');
+      } else {
+        elements.finishedImage.src = recipe.thumbnailUrl;
+      }
       elements.finishedImage.alt = recipe.title || '완성 이미지';
     }
 
