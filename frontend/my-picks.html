@@ -5,6 +5,7 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>YAMY - 저장된 레시피</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;800&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Be_Vietnam_Pro:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
@@ -34,11 +35,11 @@
                     "xl": "1.25rem",
                     "full": "9999px"
             },
-            "fontFamily": {
-                    "headline": ["Plus Jakarta Sans"],
-                    "body": ["Be Vietnam Pro"],
-                    "label": ["Be Vietnam Pro"]
-            }
+                "fontFamily": {
+                  "headline": ["Epilogue", "Plus Jakarta Sans"],
+                  "body": ["Be Vietnam Pro"],
+                  "label": ["Be Vietnam Pro"]
+                }
           },
         },
       }
@@ -49,31 +50,31 @@
         }
         body { font-family: 'Be Vietnam Pro', sans-serif; }
         h1, h2, h3 { font-family: 'Plus Jakarta Sans', sans-serif; }
+        nav { font-family: 'Plus Jakarta Sans', sans-serif; }
     </style>
 </head>
 <body class="bg-surface text-on-surface min-h-screen flex flex-col">
 <!-- TopNavBar -->
-<nav class="fixed top-0 w-full z-50 bg-[#F7F3F0]/90 backdrop-blur-xl border-b border-outline-variant/30">
-<div class="flex justify-between items-center px-8 h-16 w-full max-w-screen-xl mx-auto">
-<a href="index.html" class="text-xl font-extrabold tracking-tighter text-primary font-['Plus_Jakarta_Sans']">
-            YAMY
-        </a>
-<div class="hidden md:flex gap-6 items-center font-['Plus_Jakarta_Sans'] font-semibold tracking-tight text-sm">
-<a class="text-on-surface hover:text-primary transition-colors" href="index.html">탐색하기</a>
-<a class="text-primary border-b-2 border-primary pb-0.5" href="my-picks.html">저장됨</a>
-<a class="text-on-surface hover:text-primary transition-colors" href="my-recipe.html">내 레시피</a>
-<a class="text-on-surface hover:text-primary transition-colors" href="recipe-editor.html">레시피 작성</a>
+<nav class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl flex justify-between items-center px-12 h-24 max-w-full mx-auto border-b border-outline-variant/30">
+<div class="flex items-center gap-12">
+<a href="index.html" class="text-3xl font-extrabold text-primary font-headline tracking-tighter">YAMY</a>
+<div class="hidden md:flex items-center gap-8 font-headline tracking-tight">
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="index.html">탐색하기</a>
+<a id="nav-my-recipe" class="text-on-surface-variant hover:text-primary transition-colors" href="my-recipe.html">내 레시피</a>
+<a id="nav-my-picks" class="text-primary border-b-2 border-primary pb-1 font-bold cursor-pointer" onclick="event.preventDefault(); window.authGuard.redirectToLoginIfNeeded() || (window.location.href='my-picks.html')">저장됨</a>
+<a id="nav-recipe-editor" class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer" onclick="event.preventDefault(); window.authGuard.redirectToLoginIfNeeded() || (window.location.href='recipe-editor.html')">레시피 작성</a>
 </div>
-<div class="flex items-center gap-4">
-<div class="relative hidden lg:block">
-<input class="bg-surface-container-high border-none rounded-full px-4 py-2 text-xs focus:ring-2 focus:ring-primary w-52 transition-all" placeholder="Search saved recipes..." type="text"/>
 </div>
-<a href="profile.html" data-profile-link class="hidden px-4 py-2 rounded-full bg-surface-container-high text-primary text-sm font-semibold hover:bg-surface-container transition-all whitespace-nowrap">프로필</a>
-<a href="#" data-logout-button class="hidden bg-primary text-on-primary px-4 py-2 rounded-full text-sm font-semibold hover:opacity-90 transition-all whitespace-nowrap">로그아웃</a>
+<div class="flex items-center gap-6">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="bg-surface-container border border-outline-variant/50 rounded-full pl-11 pr-6 py-2.5 text-sm focus:ring-2 focus:ring-primary w-72 transition-all outline-none" placeholder="요리 영감 검색..." type="text"/>
 </div>
+<a href="profile.html" data-profile-link class="hidden px-4 py-2.5 rounded-full bg-surface-container text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-all text-sm font-semibold whitespace-nowrap">프로필</a>
+<a id="auth-action" href="login.html" class="bg-primary text-on-primary px-8 py-2.5 rounded-full font-headline font-bold text-sm hover:opacity-90 duration-150 transition-all shadow-sm">로그인</a>
 </div>
 </nav>
-<main class="mt-16 flex-grow">
+<main class="pt-32 flex-grow">
 <!-- Hero Section -->
 <section class="px-6 py-8 md:py-10 max-w-screen-xl mx-auto">
 <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">

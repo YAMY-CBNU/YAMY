@@ -108,23 +108,27 @@
 <body class="bg-surface text-on-surface font-body">
 
 <!-- TopNavBar -->
-<nav class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl flex justify-between items-center px-12 h-20 border-b border-outline-variant/30">
-  <div class="flex items-center gap-10">
-    <a href="index.html" class="text-2xl font-extrabold text-primary font-headline tracking-tighter">YAMY</a>
-    <div class="hidden md:flex items-center gap-7 font-headline tracking-tight">
-      <a class="text-on-surface-variant hover:text-primary transition-colors text-sm" href="index.html">탐색하기</a>
-      <a class="text-on-surface-variant hover:text-primary transition-colors text-sm" href="my-recipe.html">내 레시피</a>
-      <a class="text-on-surface-variant hover:text-primary transition-colors text-sm" href="my-picks.html">저장됨</a>
-      <a class="text-on-surface-variant hover:text-primary transition-colors text-sm" href="recipe-editor.html">레시피 작성</a>
+<nav class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl flex justify-between items-center px-12 h-24 max-w-full mx-auto border-b border-outline-variant/30">
+  <div class="flex items-center gap-12">
+    <a href="index.html" class="text-3xl font-extrabold text-primary font-headline tracking-tighter">YAMY</a>
+    <div class="hidden md:flex items-center gap-8 font-headline tracking-tight">
+      <a class="text-on-surface-variant hover:text-primary transition-colors" href="index.html">탐색하기</a>
+      <a id="nav-my-recipe" class="text-on-surface-variant hover:text-primary transition-colors" href="my-recipe.html">내 레시피</a>
+      <a class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer" onclick="event.preventDefault(); window.authGuard.redirectToLoginIfNeeded() || (window.location.href='my-picks.html')">저장됨</a>
+      <a id="nav-recipe-editor" class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer" onclick="event.preventDefault(); window.authGuard.redirectToLoginIfNeeded() || (window.location.href='recipe-editor.html')">레시피 작성</a>
     </div>
   </div>
-  <div class="flex items-center gap-4">
-    <a href="login.html" class="text-on-surface-variant font-semibold text-sm hover:text-primary transition-colors hidden sm:block">로그인</a>
-    <a href="signup.html" class="bg-primary text-on-primary px-6 py-2.5 rounded-full font-headline font-bold text-sm hover:opacity-90 transition-all shadow-sm">회원가입</a>
+  <div class="flex items-center gap-6">
+    <div class="relative hidden sm:block">
+      <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+      <input class="bg-surface-container border border-outline-variant/50 rounded-full pl-11 pr-6 py-2.5 text-sm focus:ring-2 focus:ring-primary w-72 transition-all outline-none" placeholder="요리 영감 검색..." type="text"/>
+    </div>
+    <a href="profile.html" data-profile-link class="hidden px-4 py-2.5 rounded-full bg-surface-container text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-all text-sm font-semibold whitespace-nowrap">프로필</a>
+    <a id="auth-action" href="login.html" class="bg-primary text-on-primary px-8 py-2.5 rounded-full font-headline font-bold text-sm hover:opacity-90 duration-150 transition-all shadow-sm">로그인</a>
   </div>
 </nav>
 
-<main class="pt-20 pb-28 max-w-5xl mx-auto px-6">
+<main class="pt-32 pb-28 max-w-5xl mx-auto px-6">
 
   <div class="flex items-center gap-2 text-xs text-on-surface-variant font-semibold py-6">
     <a href="index.html" class="hover:text-primary transition-colors">홈</a>
@@ -346,6 +350,8 @@
   시간이 다 되었습니다!
 </div>
 
+<script src="auth-guard.js"></script>
+<script src="profile-badge.js"></script>
 <script src="recipe-detail.js"></script>
 </body>
 </html>

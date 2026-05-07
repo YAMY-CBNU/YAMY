@@ -1,6 +1,5 @@
 (function () {
   const API_BASE = 'http://localhost:3000/api/recipes';
-  const fallbackImage = 'https://cdnweb01.wikitree.co.kr/webdata/editor/202504/16/img_20250416102835_b3807a44.webp';
 
   const elements = {
     publishedGrid: document.getElementById('published-recipes-grid'),
@@ -19,14 +18,10 @@
   }
 
   function formatDate(value) {
-    if (!value) {
-      return '';
-    }
+    if (!value) return '';
 
     const date = new Date(value);
-    if (Number.isNaN(date.getTime())) {
-      return '';
-    }
+    if (Number.isNaN(date.getTime())) return '';
 
     return date.toLocaleDateString('ko-KR', {
       year: 'numeric',
@@ -39,9 +34,21 @@
     return `recipe-detail.html?id=${encodeURIComponent(recipe.id)}`;
   }
 
+  function createImageMarkup(recipe, title) {
+    if (recipe.thumbnailUrl) {
+      return `<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="${escapeHtml(recipe.thumbnailUrl)}" alt="${title}"/>`;
+    }
+
+    return `
+      <div class="w-full h-full flex flex-col items-center justify-center bg-surface-container text-on-surface-variant">
+        <span class="material-symbols-outlined text-4xl mb-2 text-primary/40">restaurant_menu</span>
+        <span class="text-[11px] font-bold">이미지 없음</span>
+      </div>
+    `;
+  }
+
   function createRecipeCard(recipe) {
     const title = escapeHtml(recipe.title || '제목 없는 레시피');
-    const image = escapeHtml(recipe.thumbnailUrl || fallbackImage);
     const cookTime = escapeHtml(recipe.cookTime || '시간 미정');
     const difficulty = escapeHtml(recipe.difficulty || '난이도 미정');
     const createdAt = escapeHtml(formatDate(recipe.createdAt));
@@ -51,7 +58,7 @@
       <article class="group">
         <a href="${link}" class="block">
           <div class="relative overflow-hidden rounded-lg aspect-[4/3] mb-2 shadow-sm bg-surface-container-lowest">
-            <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="${image}" alt="${title}"/>
+            ${createImageMarkup(recipe, title)}
             <div class="absolute top-2 left-2 bg-primary/90 text-on-primary px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-widest">공개</div>
           </div>
           <h3 class="text-sm font-bold tracking-tight mb-1 group-hover:text-primary transition-colors">${title}</h3>
@@ -80,9 +87,7 @@
       elements.publishedCount.textContent = String(recipes.length);
     }
 
-    if (!elements.publishedGrid) {
-      return;
-    }
+    if (!elements.publishedGrid) return;
 
     if (recipes.length === 0) {
       elements.publishedGrid.innerHTML = `
@@ -115,10 +120,7 @@
 
   async function loadMyRecipes() {
     const token = localStorage.getItem('yamy_token');
-
-    if (!token) {
-      return;
-    }
+    if (!token) return;
 
     if (elements.publishedGrid) {
       elements.publishedGrid.innerHTML = `
