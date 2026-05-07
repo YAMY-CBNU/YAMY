@@ -50,6 +50,17 @@
       button.classList.toggle('hidden', !loggedIn);
       button.addEventListener('click', handleLogout);
     });
+
+    document.querySelectorAll('#auth-action, [data-auth-action]').forEach((link) => {
+      link.textContent = loggedIn ? '로그아웃' : '로그인';
+      link.setAttribute('title', loggedIn ? '로그아웃' : '로그인');
+      link.setAttribute('href', loggedIn ? '#' : 'login.html');
+      link.onclick = loggedIn ? handleLogout : null;
+    });
+
+    document.querySelectorAll('#nav-my-recipe').forEach((link) => {
+      link.classList.toggle('hidden', !loggedIn);
+    });
   }
 
   if (document.readyState === 'loading') {

@@ -94,25 +94,26 @@
 </head>
 <body class="text-on-surface selection:bg-primary-fixed selection:text-on-primary-fixed">
 <!-- TopNavBar -->
-<nav class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 py-4 bg-[#F0EEE9]/80 backdrop-blur-md transition-all">
-<div class="flex items-center gap-8">
-<a href="landing.html" class="text-2xl font-bold text-[#C05B40] tracking-tight brand-font">YAMY</a>
-<div class="hidden md:flex gap-6 items-center">
-<a class="text-stone-600 font-medium hover:text-[#BA573C] transition-colors" href="index.html">탐색하기</a>
-<a class="text-stone-600 font-medium hover:text-[#BA573C] transition-colors" href="my-recipe.html">내 레시피</a>
-<a class="text-stone-600 font-medium hover:text-[#BA573C] transition-colors" href="my-picks.html">저장됨</a>
-<a class="text-stone-600 font-medium hover:text-[#BA573C] transition-colors" href="recipe-editor.html">레시피 작성</a>
+<nav class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl flex justify-between items-center px-12 h-24 max-w-full mx-auto border-b border-outline-variant/30">
+<div class="flex items-center gap-12">
+<a href="index.html" class="text-3xl font-extrabold text-primary font-headline tracking-tighter">YAMY</a>
+<div class="hidden md:flex items-center gap-8 font-headline tracking-tight">
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="index.html">탐색하기</a>
+<a id="nav-my-recipe" class="text-on-surface-variant hover:text-primary transition-colors" href="my-recipe.html">내 레시피</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer" onclick="event.preventDefault(); window.authGuard.redirectToLoginIfNeeded() || (window.location.href='my-picks.html')">저장됨</a>
+<a id="nav-recipe-editor" class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer" onclick="event.preventDefault(); window.authGuard.redirectToLoginIfNeeded() || (window.location.href='recipe-editor.html')">레시피 작성</a>
 </div>
 </div>
-<div class="flex items-center gap-4">
-<a href="my-picks.html" class="text-[#C05B40] flex items-center justify-center p-2 rounded-full hover:bg-surface-container-high transition-all">
-<span class="material-symbols-outlined" data-icon="star">star</span>
-</a>
-<a href="profile.html" data-profile-link class="hidden px-4 py-2.5 rounded-full border border-[#C05B40]/20 bg-white text-[#C05B40] text-sm font-semibold hover:bg-surface-container-high transition-all whitespace-nowrap">프로필</a>
-<a href="#" data-logout-button class="hidden bg-[#C05B40] text-white px-4 py-2.5 rounded-full text-sm font-semibold hover:opacity-90 transition-all whitespace-nowrap">로그아웃</a>
+<div class="flex items-center gap-6">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="bg-surface-container border border-outline-variant/50 rounded-full pl-11 pr-6 py-2.5 text-sm focus:ring-2 focus:ring-primary w-72 transition-all outline-none" placeholder="요리 영감 검색..." type="text"/>
+</div>
+<a href="profile.html" data-profile-link class="hidden px-4 py-2.5 rounded-full bg-surface-container text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-all text-sm font-semibold whitespace-nowrap">프로필</a>
+<a id="auth-action" href="login.html" class="bg-primary text-on-primary px-8 py-2.5 rounded-full font-headline font-bold text-sm hover:opacity-90 duration-150 transition-all shadow-sm whitespace-nowrap">로그인</a>
 </div>
 </nav>
-<main class="pt-24 pb-32 px-6 max-w-6xl mx-auto">
+<main class="pt-32 pb-32 px-6 max-w-6xl mx-auto">
 <!-- Profile Edit Section -->
 <section class="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-20">
 <!-- Left: Sidebar / Instructions (Editorial Style) -->
@@ -268,6 +269,7 @@
 <span class="text-[10px] font-bold">프로필</span>
 </a>
 </nav>
+<script src="auth-guard.js"></script>
 <script src="profile-badge.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', () => {
