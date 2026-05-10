@@ -56,12 +56,16 @@
       return;
     }
 
+    const containerHeight = key === 'finishedImage'
+      ? 'clamp(16rem, 52vh, 42rem)'
+      : 'clamp(12rem, 42vh, 32rem)';
+    container.style.cssText += `height:${containerHeight}; display:flex; align-items:center; justify-content:center; background:#fff;`;
     container.innerHTML = `
       <img
         id="${key === 'finishedImage' ? 'recipe-finished-image' : 'step-image'}"
         src="${escapeHtml(src)}"
         alt="${escapeHtml(alt)}"
-        class="${key === 'finishedImage' ? 'w-full h-52 object-cover hover:scale-105 transition-transform duration-500' : 'w-full h-64 object-cover hover:scale-105 transition-transform duration-500'}"
+        class="w-full h-full object-contain hover:scale-105 transition-transform duration-500"
       />
     `;
     elements[key] = container.querySelector('img');
@@ -129,9 +133,12 @@
       const value = amount ? `${name} ${amount}` : name;
 
       return `
-        <label class="flex items-center gap-3 p-3 bg-surface-container rounded-xl cursor-pointer hover:bg-surface-container-high transition-colors group">
-          <input type="checkbox" value="${value}" class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary/30 cursor-pointer"/>
-          <span class="text-sm font-medium text-on-surface group-hover:text-primary transition-colors">
+        <label class="flex items-center bg-surface-container-lowest border border-outline-variant/20 rounded-xl cursor-pointer hover:bg-surface-container transition-colors group"
+               style="gap: clamp(0.9rem,1.3vw,1.2rem); padding: clamp(1rem,1.9vh,1.4rem) clamp(1rem,1.6vw,1.4rem);">
+          <input type="checkbox" value="${value}" class="rounded border-outline-variant text-primary focus:ring-primary/30 cursor-pointer flex-shrink-0"
+                 style="width: clamp(1.2rem,1.7vw,1.5rem); height: clamp(1.2rem,1.7vw,1.5rem);"/>
+          <span class="font-medium text-on-surface group-hover:text-primary transition-colors"
+                style="font-size: clamp(1.05rem,1.4vw,1.3rem);">
             ${name}${amount ? ` <span class="text-on-surface-variant font-normal">${amount}</span>` : ''}
           </span>
         </label>

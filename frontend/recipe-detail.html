@@ -40,16 +40,154 @@
             "body":     ["Plus Jakarta Sans"],
             "label":    ["Plus Jakarta Sans"],
           }
-        },
-      },
+        }
+      }
     }
   </script>
   <style>
     .material-symbols-outlined {
       font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
     }
-    body { background-color: #F9F7F2; font-family: 'Plus Jakarta Sans', sans-serif; }
 
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html, body {
+      margin: 0; padding: 0;
+      width: 100%; height: 100%;
+      overflow: hidden;
+      background-color: #F9F7F2;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: #2D2926;
+    }
+
+    /* ── Slide system ── */
+    #slide-viewport {
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
+      position: fixed;
+      top: 0; left: 0;
+    }
+
+    #slides-track {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      will-change: transform;
+      transition: transform 0.72s cubic-bezier(0.77, 0, 0.175, 1);
+    }
+
+    .slide {
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .slide-content {
+      width: 100%;
+      height: 100%;
+      overflow-y: auto;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      scrollbar-width: none;
+    }
+    .slide-content::-webkit-scrollbar { display: none; }
+
+    /* ── Fixed YAMY logo ── */
+    #yamy-fixed {
+      position: fixed;
+      top: 1.1rem;
+      left: 1.75rem;
+      z-index: 1000;
+    }
+    #yamy-btn {
+      font-size: 1.65rem;
+      font-weight: 800;
+      color: #C05B40;
+      font-family: 'Epilogue', 'Plus Jakarta Sans', sans-serif;
+      letter-spacing: -0.05em;
+      cursor: pointer;
+      user-select: none;
+      transition: opacity 0.2s, transform 0.2s;
+      display: inline-block;
+      line-height: 1;
+    }
+    #yamy-btn:hover { opacity: 0.75; transform: scale(0.97); }
+    #yamy-btn.nav-open { color: #C05B40; }
+
+    /* ── Collapsible Nav ── */
+    #main-nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 999;
+      transform: translateY(-105%);
+      transition: transform 0.42s cubic-bezier(0.34, 1.4, 0.64, 1);
+      background: rgba(249, 247, 242, 0.96);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(201, 197, 180, 0.35);
+      box-shadow: 0 4px 24px rgba(44,41,38,0.06);
+    }
+    #main-nav.visible { transform: translateY(0); }
+
+    .nav-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 1.5rem 0 8rem;
+      height: 4rem;
+      max-width: 100%;
+    }
+
+    /* ── Side progress dots ── */
+    #slide-dots {
+      position: fixed;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      z-index: 1000;
+    }
+    .slide-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: rgba(192, 91, 64, 0.22);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .slide-dot.active {
+      background: #C05B40;
+      transform: scale(1.5);
+    }
+    .slide-dot:hover { background: rgba(192, 91, 64, 0.55); }
+
+    /* ── Nav hint arrows ── */
+    .slide-hint {
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 990;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.4s;
+      color: #C05B40;
+    }
+    .slide-hint.show { opacity: 0.38; }
+    #hint-prev { top: 0.25rem; }
+    #hint-next { bottom: 0.25rem; }
+    .slide-hint .material-symbols-outlined { font-size: 2rem; }
+
+    /* ── Timer styles ── */
     .timer-finished {
       animation: timerPulse 0.5s infinite alternate;
     }
@@ -57,7 +195,14 @@
       from { background-color: #F2EBE3; }
       to   { background-color: #FFDBD1; }
     }
+    #timer-progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #C05B40, #D9933D);
+      border-radius: 9999px;
+      transition: width 1s linear;
+    }
 
+    /* ── Recipe step indicators ── */
     .indicator-dot {
       width: 10px; height: 10px;
       border-radius: 9999px;
@@ -71,13 +216,21 @@
     }
     .indicator-dot:hover { background-color: #D9933D; }
 
+    /* ── Ingredient checkbox ── */
+    #ingredient-form label:has(input:checked) {
+      background-color: #F2EBE3;
+      text-decoration: line-through;
+      color: #81766E;
+    }
+
+    /* ── Timer notification ── */
     .notification {
       position: fixed;
-      top: 6rem;
+      top: 5.5rem;
       right: 1.5rem;
       background: linear-gradient(135deg, #C05B40, #D9933D);
       color: #fff;
-      padding: 1rem 1.5rem;
+      padding: 0.9rem 1.4rem;
       border-radius: 0.75rem;
       box-shadow: 0 8px 24px rgba(192, 91, 64, 0.35);
       transform: translateX(calc(100% + 2rem));
@@ -91,264 +244,856 @@
     }
     .notification.show { transform: translateX(0); }
 
-    #ingredient-form label:has(input:checked) {
-      background-color: #F2EBE3;
-      text-decoration: line-through;
-      color: #81766E;
+    /* ── Slide 5 rating buttons ── */
+    .rating-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      border: 2px solid var(--md-sys-color-outline-variant, #cac4d0);
+      border-radius: 1.25rem;
+      background: transparent;
+      cursor: pointer;
+      transition: border-color 0.18s, background 0.18s, transform 0.15s;
+      font-family: inherit;
+      color: var(--md-sys-color-on-surface, #1c1b1f);
+    }
+    .rating-btn:hover { border-color: #c05b40; background: rgba(192,91,64,0.06); transform: translateY(-2px); }
+    .rating-btn.selected { border-color: #c05b40; background: rgba(192,91,64,0.12); }
+    .rating-btn.selected .rating-emoji { transform: scale(1.18); }
+    .rating-emoji { transition: transform 0.2s; display: block; }
+    .action-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity 0.18s, transform 0.15s;
+      border: none;
+    }
+    .action-btn:hover { opacity: 0.88; transform: translateY(-2px); }
+    .action-btn:active { transform: scale(0.97); }
+    .action-btn-primary  { background: #c05b40; color: #fff; }
+    .action-btn-outline  { background: transparent; color: #c05b40; border: 2px solid #c05b40; }
+    .action-btn-surface  { background: var(--md-sys-color-surface-container-high, #ece6df); color: var(--md-sys-color-on-surface, #1c1b1f); }
+    .action-btn.saved    { background: #4caf50; color: #fff; opacity: 1; cursor: default; }
+
+    /* ── Voice control ── */
+    #voice-btn {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      z-index: 998;
+      width: 3.2rem;
+      height: 3.2rem;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--md-sys-color-surface-container-high, #ece6df);
+      color: var(--md-sys-color-on-surface-variant, #49454e);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+      transition: background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.15s;
+    }
+    #voice-btn:hover { transform: scale(1.08); }
+    #voice-btn.listening {
+      background: #c05b40;
+      color: #fff;
+      box-shadow: 0 0 0 0 rgba(192,91,64,0.5);
+      animation: voice-pulse 1.4s ease-out infinite;
+    }
+    @keyframes voice-pulse {
+      0%   { box-shadow: 0 0 0 0 rgba(192,91,64,0.5); }
+      70%  { box-shadow: 0 0 0 14px rgba(192,91,64,0); }
+      100% { box-shadow: 0 0 0 0 rgba(192,91,64,0); }
+    }
+    #voice-toast {
+      position: fixed;
+      bottom: 5.2rem;
+      right: 1.5rem;
+      z-index: 998;
+      background: rgba(30,27,30,0.88);
+      color: #fff;
+      padding: 0.45rem 0.9rem;
+      border-radius: 1rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      white-space: nowrap;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.22s, transform 0.22s;
+      pointer-events: none;
+    }
+    #voice-toast.show { opacity: 1; transform: translateY(0); }
+
+    /* ── Slide 1 decorative gradient ── */
+    .slide-1-bg::before {
+      content: '';
+      position: absolute;
+      top: -30%;
+      right: -20%;
+      width: 60vw;
+      height: 60vw;
+      background: radial-gradient(circle, rgba(192,91,64,0.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .slide-1-bg::after {
+      content: '';
+      position: absolute;
+      bottom: -20%;
+      left: -10%;
+      width: 40vw;
+      height: 40vw;
+      background: radial-gradient(circle, rgba(217,147,61,0.06) 0%, transparent 70%);
+      pointer-events: none;
     }
 
-    #timer-progress-bar {
-      height: 100%;
-      background: linear-gradient(90deg, #C05B40, #D9933D);
-      border-radius: 9999px;
-      transition: width 1s linear;
+    /* ── Responsive adjustments ── */
+    @media (max-width: 640px) {
+      #slide-dots { right: 0.4rem; }
+      #yamy-fixed { left: 1rem; top: 0.9rem; }
+      #yamy-btn { font-size: 1.4rem; }
+      .nav-inner { padding: 0 1rem 0 5.5rem; gap: 0.75rem; }
+    }
+    @media (max-width: 380px) {
+      #yamy-fixed { left: 0.75rem; }
+      #yamy-btn { font-size: 1.25rem; }
     }
   </style>
 </head>
-<body class="bg-surface text-on-surface font-body">
+<body>
 
-<!-- TopNavBar -->
-<nav class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl flex justify-between items-center px-12 h-24 max-w-full mx-auto border-b border-outline-variant/30">
-  <div class="flex items-center gap-12">
-    <a href="index.html" class="text-3xl font-extrabold text-primary font-headline tracking-tighter">YAMY</a>
-    <div class="hidden md:flex items-center gap-8 font-headline tracking-tight">
-      <a class="text-on-surface-variant hover:text-primary transition-colors" href="index.html">탐색하기</a>
-      <a id="nav-my-recipe" class="text-on-surface-variant hover:text-primary transition-colors" href="my-recipe.html">내 레시피</a>
-      <a class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer" onclick="event.preventDefault(); window.authGuard.redirectToLoginIfNeeded() || (window.location.href='my-picks.html')">저장됨</a>
-      <a id="nav-recipe-editor" class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer" onclick="event.preventDefault(); window.authGuard.redirectToLoginIfNeeded() || (window.location.href='recipe-editor.html')">레시피 작성</a>
+<!-- ── Always-visible YAMY logo ── -->
+<div id="yamy-fixed">
+  <span id="yamy-btn" title="클릭: 메뉴 열기/닫기">YAMY</span>
+</div>
+
+<!-- ── Collapsible nav bar ── -->
+<nav id="main-nav" aria-label="주 네비게이션">
+  <div class="nav-inner">
+    <div class="flex items-center gap-4 sm:gap-7 font-headline tracking-tight text-sm sm:text-base overflow-x-auto no-scrollbar">
+      <a class="text-on-surface-variant hover:text-primary transition-colors whitespace-nowrap" href="index.html">탐색하기</a>
+      <a id="nav-my-recipe" class="text-on-surface-variant hover:text-primary transition-colors whitespace-nowrap" href="my-recipe.html">내 레시피</a>
+      <a class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer whitespace-nowrap"
+         onclick="event.preventDefault(); window.authGuard?.redirectToLoginIfNeeded() || (window.location.href='my-picks.html')">저장됨</a>
+      <a id="nav-recipe-editor" class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer whitespace-nowrap"
+         onclick="event.preventDefault(); window.authGuard?.redirectToLoginIfNeeded() || (window.location.href='recipe-editor.html')">레시피 작성</a>
     </div>
-  </div>
-  <div class="flex items-center gap-6">
-    <div class="relative hidden sm:block">
-      <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
-      <input class="bg-surface-container border border-outline-variant/50 rounded-full pl-11 pr-6 py-2.5 text-sm focus:ring-2 focus:ring-primary w-72 transition-all outline-none" placeholder="요리 영감 검색..." type="text"/>
+    <div class="flex items-center gap-2 sm:gap-4 flex-shrink-0">
+      <div class="relative hidden sm:block">
+        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" style="font-size:1.1rem">search</span>
+        <input class="bg-surface-container border border-outline-variant/50 rounded-full pl-9 pr-4 py-1.5 text-sm focus:ring-2 focus:ring-primary w-44 sm:w-60 transition-all outline-none" placeholder="요리 영감 검색..." type="text"/>
+      </div>
+      <a href="profile.html" data-profile-link class="hidden px-3 py-1.5 rounded-full bg-surface-container text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-all text-sm font-semibold whitespace-nowrap">프로필</a>
+      <a id="auth-action" href="login.html" class="bg-primary text-on-primary px-4 sm:px-6 py-1.5 rounded-full font-headline font-bold text-sm hover:opacity-90 transition-all shadow-sm whitespace-nowrap">로그인</a>
     </div>
-    <a href="profile.html" data-profile-link class="hidden px-4 py-2.5 rounded-full bg-surface-container text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-all text-sm font-semibold whitespace-nowrap">프로필</a>
-    <a id="auth-action" href="login.html" class="bg-primary text-on-primary px-8 py-2.5 rounded-full font-headline font-bold text-sm hover:opacity-90 duration-150 transition-all shadow-sm">로그인</a>
   </div>
 </nav>
 
-<main class="pt-32 pb-28 max-w-5xl mx-auto px-6">
+<!-- ── Side progress dots ── -->
+<div id="slide-dots" aria-label="슬라이드 탐색">
+  <div class="slide-dot active" data-slide="0" title="레시피 소개"></div>
+  <div class="slide-dot" data-slide="1" title="재료"></div>
+  <div class="slide-dot" data-slide="2" title="요리 팁"></div>
+  <div class="slide-dot" data-slide="3" title="조리 과정"></div>
+</div>
 
-  <div class="flex items-center gap-2 text-xs text-on-surface-variant font-semibold py-6">
-    <a href="index.html" class="hover:text-primary transition-colors">홈</a>
-    <span class="material-symbols-outlined text-base">chevron_right</span>
-    <span class="text-primary">라면 끓이기</span>
-  </div>
+<!-- ── Navigation hint arrows ── -->
+<div class="slide-hint" id="hint-prev">
+  <span class="material-symbols-outlined">keyboard_arrow_up</span>
+</div>
+<div class="slide-hint show" id="hint-next">
+  <span class="material-symbols-outlined">keyboard_arrow_down</span>
+</div>
 
-  <section class="mb-10">
-    <div id="recipe-tags" class="flex flex-wrap gap-2 mb-4">
-      <span class="bg-primary text-on-primary px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">인기 메뉴</span>
-      <span class="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">한식</span>
-      <span class="bg-tertiary-container text-on-tertiary-container px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">간편식</span>
-    </div>
-    <h1 id="recipe-title-main" class="text-4xl font-headline font-extrabold text-on-surface tracking-tight mb-4">라면 끓이기</h1>
-    <p id="recipe-description-main" class="text-on-surface-variant text-base leading-relaxed mb-6 max-w-2xl">
-      누구나 쉽게 따라할 수 있는 기본 라면 레시피입니다. 몇 가지 간단한 재료만 있으면 집에서도 맛있는 라면을 즐길 수 있어요!
-    </p>
-    <div class="flex flex-wrap gap-4">
-      <div id="recipe-cook-time-chip" class="flex items-center gap-2 bg-surface-container px-4 py-2.5 rounded-xl text-sm font-semibold text-on-surface-variant">
-        <span class="material-symbols-outlined text-base text-secondary">schedule</span>
-        소요 시간: 약 5분
-      </div>
-      <div id="recipe-difficulty-chip" class="flex items-center gap-2 bg-surface-container px-4 py-2.5 rounded-xl text-sm font-semibold text-on-surface-variant">
-        <span class="material-symbols-outlined text-base text-primary">signal_cellular_alt</span>
-        난이도: ★☆☆ 초급
-      </div>
-      <div id="recipe-serving-chip" class="flex items-center gap-2 bg-surface-container px-4 py-2.5 rounded-xl text-sm font-semibold text-on-surface-variant">
-        <span class="material-symbols-outlined text-base text-tertiary">group</span>
-        1인분
-      </div>
-    </div>
-  </section>
+<!-- ──────────────────────────────────────
+     SLIDE VIEWPORT
+────────────────────────────────────── -->
+<div id="slide-viewport">
+  <div id="slides-track">
 
-  <section class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-    <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/20 p-7">
-      <div class="flex items-center gap-2 mb-5">
-        <div class="w-9 h-9 bg-secondary-container/40 rounded-xl flex items-center justify-center">
-          <span class="material-symbols-outlined text-secondary text-xl">checklist</span>
-        </div>
-        <h2 class="font-headline font-bold text-lg text-on-surface">재료 체크리스트</h2>
-      </div>
-      <form id="ingredient-form" class="space-y-2">
-        <label class="flex items-center gap-3 p-3 bg-surface-container rounded-xl cursor-pointer hover:bg-surface-container-high transition-colors group">
-          <input type="checkbox" value="라면 1봉지" class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary/30 cursor-pointer"/>
-          <span class="text-sm font-medium text-on-surface group-hover:text-primary transition-colors">🍜 라면 1봉지</span>
-        </label>
-        <label class="flex items-center gap-3 p-3 bg-surface-container rounded-xl cursor-pointer hover:bg-surface-container-high transition-colors group">
-          <input type="checkbox" value="물 550ml" class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary/30 cursor-pointer"/>
-          <span class="text-sm font-medium text-on-surface group-hover:text-primary transition-colors">💧 물 550ml</span>
-        </label>
-        <label class="flex items-center gap-3 p-3 bg-surface-container rounded-xl cursor-pointer hover:bg-surface-container-high transition-colors group">
-          <input type="checkbox" value="계란 1개" class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary/30 cursor-pointer"/>
-          <span class="text-sm font-medium text-on-surface group-hover:text-primary transition-colors">🥚 계란 1개</span>
-        </label>
-        <label class="flex items-center gap-3 p-3 bg-surface-container rounded-xl cursor-pointer hover:bg-surface-container-high transition-colors group">
-          <input type="checkbox" value="대파 조금" class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary/30 cursor-pointer"/>
-          <span class="text-sm font-medium text-on-surface group-hover:text-primary transition-colors">🧅 대파 조금</span>
-        </label>
-        <label class="flex items-center gap-3 p-3 bg-surface-container rounded-xl cursor-pointer hover:bg-surface-container-high transition-colors group">
-          <input type="checkbox" value="김치 (선택)" class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary/30 cursor-pointer"/>
-          <span class="text-sm font-medium text-on-surface group-hover:text-primary transition-colors">🥬 김치 <span class="text-on-surface-variant font-normal">(선택)</span></span>
-        </label>
-        <label class="flex items-center gap-3 p-3 bg-surface-container rounded-xl cursor-pointer hover:bg-surface-container-high transition-colors group">
-          <input type="checkbox" value="치즈 (선택)" class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary/30 cursor-pointer"/>
-          <span class="text-sm font-medium text-on-surface group-hover:text-primary transition-colors">🧀 치즈 <span class="text-on-surface-variant font-normal">(선택)</span></span>
-        </label>
-      </form>
-    </div>
+    <!-- ══════ SLIDE 1 · 레시피 소개 ══════ -->
+    <div class="slide bg-surface slide-1-bg" id="slide-0">
+      <div class="slide-content" style="padding: clamp(5rem,8vh,7rem) clamp(2rem,7vw,8rem) clamp(2rem,5vh,4rem);">
+        <div class="mx-auto w-full" style="max-width: min(92vw, 1560px);">
+          <div class="grid grid-cols-1 md:grid-cols-2 items-center" style="gap: clamp(3rem, 6vw, 9rem);">
 
-    <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/20 p-7">
-      <div class="flex items-center gap-2 mb-5">
-        <div class="w-9 h-9 bg-primary-container/30 rounded-xl flex items-center justify-center">
-          <span class="material-symbols-outlined text-primary text-xl">restaurant</span>
-        </div>
-        <h2 class="font-headline font-bold text-lg text-on-surface">완성 예시</h2>
-      </div>
-      <div class="rounded-xl overflow-hidden">
-        <img
-          id="recipe-finished-image"
-          src="https://cdnweb01.wikitree.co.kr/webdata/editor/202504/16/img_20250416102835_b3807a44.webp"
-          alt="맛있는 라면 완성 이미지"
-          class="w-full h-52 object-cover hover:scale-105 transition-transform duration-500"
-        />
-      </div>
-    </div>
-  </section>
+            <!-- Left: text -->
+            <div>
+              <!-- Breadcrumb -->
+              <div class="flex items-center gap-2 text-on-surface-variant font-semibold mb-9" style="font-size: clamp(0.7rem, 1vw, 0.9rem);">
+                <a href="index.html" class="hover:text-primary transition-colors">홈</a>
+                <span class="material-symbols-outlined" style="font-size: clamp(0.9rem, 1.2vw, 1.1rem);">chevron_right</span>
+                <span class="text-primary" id="breadcrumb-title">레시피 상세</span>
+              </div>
 
-  <div class="bg-secondary-container/30 border border-secondary/20 rounded-2xl px-6 py-4 mb-10 flex items-start gap-3">
-    <span class="material-symbols-outlined text-secondary mt-0.5">info</span>
-    <div class="text-sm">
-      <span class="font-bold text-on-surface">아직 준비되지 않은 재료: </span>
-      <span id="missing-ingredients" class="text-on-surface-variant"></span>
-    </div>
-  </div>
+              <!-- Category tags -->
+              <div id="recipe-tags" class="flex flex-wrap gap-2 mb-9">
+                <span class="bg-primary text-on-primary rounded-full font-bold uppercase tracking-wider"
+                      style="padding: clamp(0.25rem,0.5vh,0.4rem) clamp(0.6rem,1vw,1rem); font-size: clamp(0.6rem,0.85vw,0.8rem);">인기 메뉴</span>
+                <span class="bg-secondary-container text-on-secondary-container rounded-full font-bold uppercase tracking-wider"
+                      style="padding: clamp(0.25rem,0.5vh,0.4rem) clamp(0.6rem,1vw,1rem); font-size: clamp(0.6rem,0.85vw,0.8rem);">한식</span>
+                <span class="bg-tertiary-container text-on-tertiary-container rounded-full font-bold uppercase tracking-wider"
+                      style="padding: clamp(0.25rem,0.5vh,0.4rem) clamp(0.6rem,1vw,1rem); font-size: clamp(0.6rem,0.85vw,0.8rem);">간편식</span>
+              </div>
 
-  <section class="bg-surface-container-lowest rounded-2xl border border-outline-variant/20 p-8 mb-8">
-    <div class="flex items-center gap-3 mb-8 pb-6 border-b border-outline-variant/20">
-      <div class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
-        <span class="material-symbols-outlined text-primary">menu_book</span>
-      </div>
-      <h2 class="font-headline font-bold text-2xl text-on-surface tracking-tight">조리 과정</h2>
-    </div>
+              <!-- Title -->
+              <h1 id="recipe-title-main"
+                  class="font-headline font-extrabold text-on-surface tracking-tight leading-tight"
+                  style="font-size: clamp(2rem, 4.5vw, 5rem); margin-bottom: clamp(1.5rem, 3.6vh, 2.25rem);">라면 끓이기</h1>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center min-h-[320px] mb-8">
-      <div>
-        <div class="flex items-center gap-4 mb-5">
-          <div id="step-number" class="w-11 h-11 rounded-full bg-primary text-on-primary font-headline font-extrabold text-xl flex items-center justify-center shadow-md shadow-primary/20">1</div>
-          <h3 id="step-title" class="font-headline font-bold text-2xl text-on-surface"></h3>
-        </div>
-        <p id="step-description" class="text-on-surface-variant leading-relaxed text-base mb-6"></p>
+              <!-- Description -->
+              <p id="recipe-description-main" class="text-on-surface-variant leading-relaxed"
+                 style="font-size: clamp(0.9rem, 1.3vw, 1.3rem); margin-bottom: clamp(2.8rem, 6.5vh, 3.8rem); max-width: 36em;">
+                누구나 쉽게 따라할 수 있는 기본 라면 레시피입니다. 몇 가지 간단한 재료만 있으면 집에서도 맛있는 라면을 즐길 수 있어요!
+              </p>
 
-        <div id="timer-container" class="bg-surface-container rounded-2xl px-5 py-4 border border-outline-variant/30 transition-colors">
-          <div class="flex items-center justify-between mb-3">
-            <div class="flex items-center gap-2">
-              <span id="timer-label" class="text-lg">⏰</span>
-              <span id="timer-display" class="font-headline font-extrabold text-3xl text-on-surface tracking-tight">00:00</span>
+              <!-- Meta chips -->
+              <div class="flex flex-wrap" style="gap: clamp(0.5rem, 1vw, 1rem);">
+                <div id="recipe-cook-time-chip" class="flex items-center bg-surface-container rounded-xl font-semibold text-on-surface-variant"
+                     style="gap: clamp(0.4rem,0.7vw,0.6rem); padding: clamp(0.5rem,1.2vh,0.75rem) clamp(0.75rem,1.2vw,1.25rem); font-size: clamp(0.8rem,1vw,1rem);">
+                  <span class="material-symbols-outlined text-secondary" style="font-size: clamp(0.9rem,1.2vw,1.1rem);">schedule</span>
+                  소요 시간: 약 5분
+                </div>
+                <div id="recipe-difficulty-chip" class="flex items-center bg-surface-container rounded-xl font-semibold text-on-surface-variant"
+                     style="gap: clamp(0.4rem,0.7vw,0.6rem); padding: clamp(0.5rem,1.2vh,0.75rem) clamp(0.75rem,1.2vw,1.25rem); font-size: clamp(0.8rem,1vw,1rem);">
+                  <span class="material-symbols-outlined text-primary" style="font-size: clamp(0.9rem,1.2vw,1.1rem);">signal_cellular_alt</span>
+                  난이도: ★☆☆ 초급
+                </div>
+                <div id="recipe-serving-chip" class="flex items-center bg-surface-container rounded-xl font-semibold text-on-surface-variant"
+                     style="gap: clamp(0.4rem,0.7vw,0.6rem); padding: clamp(0.5rem,1.2vh,0.75rem) clamp(0.75rem,1.2vw,1.25rem); font-size: clamp(0.8rem,1vw,1rem);">
+                  <span class="material-symbols-outlined text-tertiary" style="font-size: clamp(0.9rem,1.2vw,1.1rem);">group</span>
+                  1인분
+                </div>
+              </div>
             </div>
-            <div class="flex gap-2">
-              <button id="start-timer" type="button" class="flex items-center gap-1.5 bg-primary text-on-primary px-4 py-2 rounded-xl text-sm font-bold hover:opacity-90 active:scale-95 transition-all shadow-sm">
-                <span class="material-symbols-outlined text-base">play_arrow</span> 시작
-              </button>
-              <button id="pause-timer" type="button" style="display:none" class="flex items-center gap-1.5 bg-secondary text-on-secondary px-4 py-2 rounded-xl text-sm font-bold hover:opacity-90 active:scale-95 transition-all shadow-sm">
-                <span class="material-symbols-outlined text-base">pause</span> 일시정지
-              </button>
-              <button id="reset-timer" type="button" class="flex items-center gap-1.5 bg-surface-container-highest text-on-surface-variant px-4 py-2 rounded-xl text-sm font-bold hover:bg-outline-variant/30 active:scale-95 transition-all">
-                <span class="material-symbols-outlined text-base">replay</span> 초기화
-              </button>
+
+            <!-- Right: finished image (desktop) -->
+            <div class="hidden md:block">
+              <div class="rounded-2xl overflow-hidden bg-white flex items-center justify-center" style="box-shadow: 0 24px 70px rgba(192,91,64,0.2); height: clamp(16rem, 52vh, 42rem);">
+                <img
+                  id="recipe-finished-image"
+                  src="https://cdnweb01.wikitree.co.kr/webdata/editor/202504/16/img_20250416102835_b3807a44.webp"
+                  alt="맛있는 라면 완성 이미지"
+                  class="w-full h-full object-contain hover:scale-105 transition-transform duration-700"
+                />
+              </div>
             </div>
-          </div>
-          <div class="w-full h-2 bg-outline-variant/30 rounded-full overflow-hidden">
-            <div id="timer-progress-bar" style="width: 0%"></div>
+
+            <!-- Mobile: image below text -->
+            <div class="block md:hidden mt-4">
+              <div class="rounded-xl overflow-hidden shadow-lg bg-white flex items-center justify-center" style="height: 13rem;">
+                <img
+                  src="https://cdnweb01.wikitree.co.kr/webdata/editor/202504/16/img_20250416102835_b3807a44.webp"
+                  alt="맛있는 라면 완성 이미지"
+                  class="w-full h-full object-contain"
+                />
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
-
-      <div class="rounded-2xl overflow-hidden shadow-lg">
-        <img
-          id="step-image"
-          src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=400&h=300&fit=crop"
-          alt="물 끓이기"
-          class="w-full h-64 object-cover hover:scale-105 transition-transform duration-500"
-        />
-      </div>
     </div>
 
-    <div class="flex justify-between items-center pt-6 border-t border-outline-variant/20">
-      <button id="prev-btn" type="button" disabled
-        class="flex items-center gap-2 bg-primary text-on-primary px-6 py-3 rounded-full font-headline font-bold text-sm hover:opacity-90 active:scale-95 transition-all shadow-md disabled:bg-outline-variant/40 disabled:text-on-surface-variant disabled:shadow-none disabled:cursor-not-allowed">
-        <span class="material-symbols-outlined text-base">arrow_back</span> 이전
-      </button>
+    <!-- ══════ SLIDE 2 · 재료 체크리스트 ══════ -->
+    <div class="slide bg-surface" id="slide-1">
+      <div class="slide-content" style="padding: clamp(5rem,8vh,7rem) clamp(2rem,7vw,8rem) clamp(2rem,4vh,3rem);">
+        <div class="mx-auto w-full" style="max-width: min(68vw, 1020px);">
 
-      <div class="flex items-center gap-3">
-        <span id="step-counter" class="text-sm font-bold text-primary font-headline">1 / 4</span>
-        <div class="flex gap-2 items-center">
-          <div class="indicator-dot active" data-step="1"></div>
-          <div class="indicator-dot" data-step="2"></div>
-          <div class="indicator-dot" data-step="3"></div>
-          <div class="indicator-dot" data-step="4"></div>
+          <!-- Heading -->
+          <div class="flex items-center mb-6" style="gap: clamp(0.8rem,1.2vw,1.1rem);">
+            <div class="bg-secondary-container/40 rounded-xl flex items-center justify-center flex-shrink-0"
+                 style="width: clamp(2.8rem,4.2vw,3.8rem); height: clamp(2.8rem,4.2vw,3.8rem);">
+              <span class="material-symbols-outlined text-secondary" style="font-size: clamp(1.4rem,2vw,1.9rem);">checklist</span>
+            </div>
+            <h2 class="font-headline font-bold text-on-surface" style="font-size: clamp(2rem,3.5vw,3.25rem);">재료 체크리스트</h2>
+          </div>
+
+          <!-- Ingredient list -->
+          <form id="ingredient-form" class="space-y-3" style="max-height: calc(100dvh - 22rem); overflow-y: auto; scrollbar-width: thin;">
+            <label class="flex items-center bg-surface-container-lowest border border-outline-variant/20 rounded-xl cursor-pointer hover:bg-surface-container transition-colors group"
+                   style="gap: clamp(0.9rem,1.3vw,1.2rem); padding: clamp(1rem,1.9vh,1.4rem) clamp(1rem,1.6vw,1.4rem);">
+              <input type="checkbox" value="라면 1봉지" class="rounded border-outline-variant text-primary focus:ring-primary/30 cursor-pointer flex-shrink-0"
+                     style="width: clamp(1.2rem,1.7vw,1.5rem); height: clamp(1.2rem,1.7vw,1.5rem);"/>
+              <span class="font-medium text-on-surface group-hover:text-primary transition-colors" style="font-size: clamp(1.05rem,1.4vw,1.3rem);">🍜 라면 1봉지</span>
+            </label>
+            <label class="flex items-center bg-surface-container-lowest border border-outline-variant/20 rounded-xl cursor-pointer hover:bg-surface-container transition-colors group"
+                   style="gap: clamp(0.9rem,1.3vw,1.2rem); padding: clamp(1rem,1.9vh,1.4rem) clamp(1rem,1.6vw,1.4rem);">
+              <input type="checkbox" value="물 550ml" class="rounded border-outline-variant text-primary focus:ring-primary/30 cursor-pointer flex-shrink-0"
+                     style="width: clamp(1.2rem,1.7vw,1.5rem); height: clamp(1.2rem,1.7vw,1.5rem);"/>
+              <span class="font-medium text-on-surface group-hover:text-primary transition-colors" style="font-size: clamp(1.05rem,1.4vw,1.3rem);">💧 물 550ml</span>
+            </label>
+            <label class="flex items-center bg-surface-container-lowest border border-outline-variant/20 rounded-xl cursor-pointer hover:bg-surface-container transition-colors group"
+                   style="gap: clamp(0.9rem,1.3vw,1.2rem); padding: clamp(1rem,1.9vh,1.4rem) clamp(1rem,1.6vw,1.4rem);">
+              <input type="checkbox" value="계란 1개" class="rounded border-outline-variant text-primary focus:ring-primary/30 cursor-pointer flex-shrink-0"
+                     style="width: clamp(1.2rem,1.7vw,1.5rem); height: clamp(1.2rem,1.7vw,1.5rem);"/>
+              <span class="font-medium text-on-surface group-hover:text-primary transition-colors" style="font-size: clamp(1.05rem,1.4vw,1.3rem);">🥚 계란 1개</span>
+            </label>
+            <label class="flex items-center bg-surface-container-lowest border border-outline-variant/20 rounded-xl cursor-pointer hover:bg-surface-container transition-colors group"
+                   style="gap: clamp(0.9rem,1.3vw,1.2rem); padding: clamp(1rem,1.9vh,1.4rem) clamp(1rem,1.6vw,1.4rem);">
+              <input type="checkbox" value="대파 조금" class="rounded border-outline-variant text-primary focus:ring-primary/30 cursor-pointer flex-shrink-0"
+                     style="width: clamp(1.2rem,1.7vw,1.5rem); height: clamp(1.2rem,1.7vw,1.5rem);"/>
+              <span class="font-medium text-on-surface group-hover:text-primary transition-colors" style="font-size: clamp(1.05rem,1.4vw,1.3rem);">🧅 대파 조금</span>
+            </label>
+            <label class="flex items-center bg-surface-container-lowest border border-outline-variant/20 rounded-xl cursor-pointer hover:bg-surface-container transition-colors group"
+                   style="gap: clamp(0.9rem,1.3vw,1.2rem); padding: clamp(1rem,1.9vh,1.4rem) clamp(1rem,1.6vw,1.4rem);">
+              <input type="checkbox" value="김치 (선택)" class="rounded border-outline-variant text-primary focus:ring-primary/30 cursor-pointer flex-shrink-0"
+                     style="width: clamp(1.2rem,1.7vw,1.5rem); height: clamp(1.2rem,1.7vw,1.5rem);"/>
+              <span class="font-medium text-on-surface group-hover:text-primary transition-colors" style="font-size: clamp(1.05rem,1.4vw,1.3rem);">🥬 김치 <span class="text-on-surface-variant font-normal">(선택)</span></span>
+            </label>
+            <label class="flex items-center bg-surface-container-lowest border border-outline-variant/20 rounded-xl cursor-pointer hover:bg-surface-container transition-colors group"
+                   style="gap: clamp(0.9rem,1.3vw,1.2rem); padding: clamp(1rem,1.9vh,1.4rem) clamp(1rem,1.6vw,1.4rem);">
+              <input type="checkbox" value="치즈 (선택)" class="rounded border-outline-variant text-primary focus:ring-primary/30 cursor-pointer flex-shrink-0"
+                     style="width: clamp(1.2rem,1.7vw,1.5rem); height: clamp(1.2rem,1.7vw,1.5rem);"/>
+              <span class="font-medium text-on-surface group-hover:text-primary transition-colors" style="font-size: clamp(1.05rem,1.4vw,1.3rem);">🧀 치즈 <span class="text-on-surface-variant font-normal">(선택)</span></span>
+            </label>
+          </form>
+
+          <!-- Missing ingredients -->
+          <div class="bg-secondary-container/30 border border-secondary/20 rounded-xl flex items-start"
+               style="margin-top: clamp(1rem,2vh,1.5rem); padding: clamp(0.8rem,1.5vh,1.2rem) clamp(1rem,1.6vw,1.4rem); gap: clamp(0.5rem,0.9vw,0.85rem);">
+            <span class="material-symbols-outlined text-secondary flex-shrink-0" style="font-size: clamp(1rem,1.3vw,1.25rem); margin-top: 0.1em;">info</span>
+            <div style="font-size: clamp(1.05rem,1.3vw,1.25rem);">
+              <span class="font-bold text-on-surface">아직 준비되지 않은 재료: </span>
+              <span id="missing-ingredients" class="text-on-surface-variant"></span>
+            </div>
+          </div>
         </div>
       </div>
-
-      <button id="next-btn" type="button"
-        class="flex items-center gap-2 bg-primary text-on-primary px-6 py-3 rounded-full font-headline font-bold text-sm hover:opacity-90 active:scale-95 transition-all shadow-md disabled:bg-outline-variant/40 disabled:text-on-surface-variant disabled:shadow-none disabled:cursor-not-allowed">
-        다음 <span class="material-symbols-outlined text-base">arrow_forward</span>
-      </button>
     </div>
-  </section>
 
-  <section class="bg-tertiary-container/30 border border-tertiary/20 rounded-2xl p-8 mb-6">
-    <div class="flex items-center gap-3 mb-6">
-      <div class="w-10 h-10 bg-tertiary/10 rounded-xl flex items-center justify-center">
-        <span class="material-symbols-outlined text-tertiary">tips_and_updates</span>
+    <!-- ══════ SLIDE 3 · 요리 팁 ══════ -->
+    <div class="slide" style="background: rgba(158,242,232,0.18);" id="slide-2">
+      <div class="slide-content" style="padding: clamp(5rem,8vh,7rem) clamp(2rem,7vw,8rem) clamp(2rem,4vh,3rem);">
+        <div class="mx-auto w-full" style="max-width: min(60vw, 900px);">
+
+          <!-- Section heading -->
+          <div class="flex items-center" style="gap: clamp(0.75rem,1.2vw,1.1rem); margin-bottom: clamp(2rem,4vh,3.5rem);">
+            <div class="bg-tertiary/10 rounded-xl flex items-center justify-center flex-shrink-0"
+                 style="width: clamp(2.5rem,4vw,3.5rem); height: clamp(2.5rem,4vw,3.5rem);">
+              <span class="material-symbols-outlined text-tertiary" style="font-size: clamp(1.3rem,2vw,1.8rem);">tips_and_updates</span>
+            </div>
+            <h2 class="font-headline font-bold text-on-surface tracking-tight" style="font-size: clamp(1.6rem,3vw,3rem);">요리 팁</h2>
+          </div>
+
+          <!-- Tips list -->
+          <ul style="display: flex; flex-direction: column; gap: clamp(1rem,2.2vh,1.8rem);">
+            <li class="flex items-start text-on-surface-variant leading-relaxed" style="gap: clamp(0.75rem,1.2vw,1.1rem); font-size: clamp(0.9rem,1.3vw,1.25rem);">
+              <span class="material-symbols-outlined text-tertiary flex-shrink-0" style="font-size: clamp(1.1rem,1.5vw,1.4rem); margin-top: 0.1em;">check_circle</span>
+              물의 양을 정확히 맞추면 더 맛있는 라면을 만들 수 있어요
+            </li>
+            <li class="flex items-start text-on-surface-variant leading-relaxed" style="gap: clamp(0.75rem,1.2vw,1.1rem); font-size: clamp(0.9rem,1.3vw,1.25rem);">
+              <span class="material-symbols-outlined text-tertiary flex-shrink-0" style="font-size: clamp(1.1rem,1.5vw,1.4rem); margin-top: 0.1em;">check_circle</span>
+              계란은 완전히 익히지 말고 반숙 상태로 두면 더 부드러워요
+            </li>
+            <li class="flex items-start text-on-surface-variant leading-relaxed" style="gap: clamp(0.75rem,1.2vw,1.1rem); font-size: clamp(0.9rem,1.3vw,1.25rem);">
+              <span class="material-symbols-outlined text-tertiary flex-shrink-0" style="font-size: clamp(1.1rem,1.5vw,1.4rem); margin-top: 0.1em;">check_circle</span>
+              김치를 넣으면 칼칼하고 시원한 맛을 즐길 수 있어요
+            </li>
+            <li class="flex items-start text-on-surface-variant leading-relaxed" style="gap: clamp(0.75rem,1.2vw,1.1rem); font-size: clamp(0.9rem,1.3vw,1.25rem);">
+              <span class="material-symbols-outlined text-tertiary flex-shrink-0" style="font-size: clamp(1.1rem,1.5vw,1.4rem); margin-top: 0.1em;">check_circle</span>
+              면을 너무 오래 끓이면 퍼지니 주의하세요
+            </li>
+            <li class="flex items-start text-on-surface-variant leading-relaxed" style="gap: clamp(0.75rem,1.2vw,1.1rem); font-size: clamp(0.9rem,1.3vw,1.25rem);">
+              <span class="material-symbols-outlined text-tertiary flex-shrink-0" style="font-size: clamp(1.1rem,1.5vw,1.4rem); margin-top: 0.1em;">check_circle</span>
+              치즈는 마지막에 넣어 살짝만 녹여주세요
+            </li>
+          </ul>
+
+          <!-- Footer -->
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between border-t border-tertiary/20"
+               style="margin-top: clamp(2rem,5vh,4rem); padding-top: clamp(1rem,2.5vh,2rem); gap: clamp(0.5rem,1vh,1rem);">
+            <p class="text-on-surface-variant/50" style="font-size: clamp(0.65rem,0.9vw,0.8rem);">© 2026 YAMY. 맛있는 요리의 시작!</p>
+            <div class="flex gap-5">
+              <a class="text-on-surface-variant hover:text-primary transition-colors" href="#" style="font-size: clamp(0.65rem,0.9vw,0.8rem);">이용약관</a>
+              <a class="text-on-surface-variant hover:text-primary transition-colors" href="#" style="font-size: clamp(0.65rem,0.9vw,0.8rem);">개인정보 처리방침</a>
+              <a class="text-on-surface-variant hover:text-primary transition-colors" href="#" style="font-size: clamp(0.65rem,0.9vw,0.8rem);">문의하기</a>
+            </div>
+          </div>
+        </div>
       </div>
-      <h2 class="font-headline font-bold text-xl text-on-surface tracking-tight">요리 팁</h2>
     </div>
-    <ul class="space-y-3">
-      <li class="flex items-start gap-3 text-sm text-on-surface-variant leading-relaxed">
-        <span class="material-symbols-outlined text-tertiary text-base mt-0.5 flex-shrink-0">check_circle</span>
-        물의 양을 정확히 맞추면 더 맛있는 라면을 만들 수 있어요
-      </li>
-      <li class="flex items-start gap-3 text-sm text-on-surface-variant leading-relaxed">
-        <span class="material-symbols-outlined text-tertiary text-base mt-0.5 flex-shrink-0">check_circle</span>
-        계란은 완전히 익히지 말고 반숙 상태로 두면 더 부드러워요
-      </li>
-      <li class="flex items-start gap-3 text-sm text-on-surface-variant leading-relaxed">
-        <span class="material-symbols-outlined text-tertiary text-base mt-0.5 flex-shrink-0">check_circle</span>
-        김치를 넣으면 칼칼하고 시원한 맛을 즐길 수 있어요
-      </li>
-      <li class="flex items-start gap-3 text-sm text-on-surface-variant leading-relaxed">
-        <span class="material-symbols-outlined text-tertiary text-base mt-0.5 flex-shrink-0">check_circle</span>
-        면을 너무 오래 끓이면 퍼지니 주의하세요
-      </li>
-      <li class="flex items-start gap-3 text-sm text-on-surface-variant leading-relaxed">
-        <span class="material-symbols-outlined text-tertiary text-base mt-0.5 flex-shrink-0">check_circle</span>
-        치즈는 마지막에 넣어 살짝만 녹여주세요
-      </li>
-    </ul>
-  </section>
 
-</main>
+    <!-- ══════ SLIDE 4 · 조리 과정 ══════ -->
+    <div class="slide" style="background: #FFFFFF;" id="slide-3">
+      <div class="slide-content" style="padding: clamp(4rem,6vh,6rem) clamp(2rem,7vw,8rem) clamp(2rem,4vh,3rem);">
+        <div class="mx-auto w-full" style="max-width: min(92vw, 1560px);">
 
-<footer class="bg-surface-container w-full py-16 px-8 flex flex-col items-center gap-8 border-t border-outline-variant/30">
-  <a href="index.html" class="text-2xl font-extrabold text-primary font-headline tracking-tighter">YAMY</a>
-  <div class="flex gap-10 text-sm font-semibold">
-    <a class="text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">이용약관</a>
-    <a class="text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">개인정보 처리방침</a>
-    <a class="text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">문의하기</a>
-  </div>
-  <div class="flex gap-6">
-    <span class="material-symbols-outlined text-primary cursor-pointer text-2xl hover:scale-110 transition-transform">public</span>
-    <span class="material-symbols-outlined text-primary cursor-pointer text-2xl hover:scale-110 transition-transform">restaurant</span>
-    <span class="material-symbols-outlined text-primary cursor-pointer text-2xl hover:scale-110 transition-transform">local_cafe</span>
-  </div>
-  <p class="text-on-surface-variant/60 text-xs text-center leading-relaxed">© 2026 YAMY. 맛있는 요리의 시작!</p>
-</footer>
+          <!-- Section heading -->
+          <div class="flex items-center" style="gap: clamp(0.6rem,1vw,0.9rem); margin-bottom: clamp(2rem,4vh,3.5rem);">
+            <div class="bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0"
+                 style="width: clamp(2.2rem,3.5vw,3rem); height: clamp(2.2rem,3.5vw,3rem);">
+              <span class="material-symbols-outlined text-primary" style="font-size: clamp(1.1rem,1.6vw,1.5rem);">menu_book</span>
+            </div>
+            <h2 class="font-headline font-bold text-on-surface tracking-tight" style="font-size: clamp(1.4rem,2.5vw,2.25rem);">조리 과정</h2>
+          </div>
 
+          <!-- Step content -->
+          <div class="grid grid-cols-1 md:grid-cols-2 items-center" style="gap: clamp(1.5rem,4vw,5rem); margin-bottom: clamp(1.5rem,3vh,2.5rem);">
+            <div class="flex flex-col items-center text-center">
+              <div class="flex items-center justify-center" style="gap: clamp(0.75rem,1.2vw,1.1rem); margin-bottom: clamp(1rem,2.5vh,2rem);">
+                <div id="step-number"
+                     class="rounded-full bg-primary text-on-primary font-headline font-extrabold flex items-center justify-center flex-shrink-0"
+                     style="width: clamp(2.4rem,4vw,3.5rem); height: clamp(2.4rem,4vw,3.5rem); font-size: clamp(1rem,1.8vw,1.6rem); box-shadow: 0 4px 14px rgba(192,91,64,0.28);">1</div>
+                <h3 id="step-title" class="font-headline font-bold text-on-surface" style="font-size: clamp(1.1rem,2vw,1.8rem);"></h3>
+              </div>
+                <p id="step-description" class="text-on-surface-variant leading-relaxed"
+                  style="font-size: clamp(1rem,1.6vw,1.25rem); margin-bottom: clamp(1.2rem,3vh,2.5rem); max-width: 32em;"></p>
+
+              <!-- Timer -->
+              <div class="w-full text-left">
+              <div id="timer-container" class="bg-surface-container rounded-2xl border border-outline-variant/30 transition-colors"
+                   style="padding: clamp(0.9rem,2vh,1.4rem) clamp(1rem,2vw,1.75rem);">
+                <div class="flex items-center justify-between" style="margin-bottom: clamp(0.6rem,1.2vh,1rem);">
+                  <div class="flex items-center" style="gap: clamp(0.4rem,0.7vw,0.7rem);">
+                    <span id="timer-label" style="font-size: clamp(1rem,1.5vw,1.4rem);">⏰</span>
+                    <span id="timer-display" class="font-headline font-extrabold text-on-surface tracking-tight"
+                          style="font-size: clamp(1.6rem,3.5vw,3rem);">00:00</span>
+                  </div>
+                  <div class="flex" style="gap: clamp(0.4rem,0.7vw,0.7rem);">
+                    <button id="start-timer" type="button"
+                      class="flex items-center bg-primary text-on-primary rounded-xl font-bold hover:opacity-90 active:scale-95 transition-all shadow-sm"
+                      style="gap: clamp(0.3rem,0.5vw,0.5rem); padding: clamp(0.4rem,0.9vh,0.65rem) clamp(0.65rem,1.1vw,1rem); font-size: clamp(0.75rem,1vw,0.95rem);">
+                      <span class="material-symbols-outlined" style="font-size: clamp(0.85rem,1.1vw,1rem);">play_arrow</span> 시작
+                    </button>
+                    <button id="pause-timer" type="button" style="display:none"
+                      class="flex items-center bg-secondary text-on-secondary rounded-xl font-bold hover:opacity-90 active:scale-95 transition-all shadow-sm"
+                      style="gap: clamp(0.3rem,0.5vw,0.5rem); padding: clamp(0.4rem,0.9vh,0.65rem) clamp(0.65rem,1.1vw,1rem); font-size: clamp(0.75rem,1vw,0.95rem);">
+                      <span class="material-symbols-outlined" style="font-size: clamp(0.85rem,1.1vw,1rem);">pause</span> 일시정지
+                    </button>
+                    <button id="reset-timer" type="button"
+                      class="flex items-center bg-surface-container-highest text-on-surface-variant rounded-xl font-bold hover:bg-outline-variant/30 active:scale-95 transition-all"
+                      style="gap: clamp(0.3rem,0.5vw,0.5rem); padding: clamp(0.4rem,0.9vh,0.65rem) clamp(0.65rem,1.1vw,1rem); font-size: clamp(0.75rem,1vw,0.95rem);">
+                      <span class="material-symbols-outlined" style="font-size: clamp(0.85rem,1.1vw,1rem);">replay</span> 초기화
+                    </button>
+                  </div>
+                </div>
+                <div class="w-full bg-outline-variant/30 rounded-full overflow-hidden" style="height: clamp(0.3rem,0.5vh,0.5rem);">
+                  <div id="timer-progress-bar" style="width: 0%"></div>
+                </div>
+              </div>
+              </div>
+            </div>
+
+            <!-- Step image -->
+            <div class="rounded-2xl overflow-hidden shadow-lg bg-white flex items-center justify-center" style="height: clamp(12rem,42vh,32rem);">
+              <img
+                id="step-image"
+                src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=400&h=300&fit=crop"
+                alt="물 끓이기"
+                class="w-full h-full object-contain hover:scale-105 transition-transform duration-500"
+              />
+            </div>
+          </div>
+
+          <!-- Step navigation -->
+          <div class="flex justify-between items-center border-t border-outline-variant/20" style="padding-top: clamp(1rem,2vh,1.5rem);">
+            <button id="prev-btn" type="button" disabled
+              class="flex items-center bg-primary text-on-primary rounded-full font-headline font-bold hover:opacity-90 active:scale-95 transition-all shadow-md disabled:bg-outline-variant/40 disabled:text-on-surface-variant disabled:shadow-none disabled:cursor-not-allowed"
+              style="gap: clamp(0.4rem,0.6vw,0.6rem); padding: clamp(0.55rem,1.2vh,0.85rem) clamp(1rem,1.8vw,1.75rem); font-size: clamp(0.8rem,1.1vw,1rem);">
+              <span class="material-symbols-outlined" style="font-size: clamp(0.9rem,1.2vw,1.1rem);">arrow_back</span> 이전
+            </button>
+
+            <div class="flex items-center" style="gap: clamp(0.75rem,1.2vw,1.25rem);">
+              <span id="step-counter" class="font-bold text-primary font-headline" style="font-size: clamp(0.8rem,1.1vw,1rem);">1 / 4</span>
+              <div class="flex gap-2 items-center">
+                <div class="indicator-dot active" data-step="1"></div>
+                <div class="indicator-dot" data-step="2"></div>
+                <div class="indicator-dot" data-step="3"></div>
+                <div class="indicator-dot" data-step="4"></div>
+              </div>
+            </div>
+
+            <button id="next-btn" type="button"
+              class="flex items-center bg-primary text-on-primary rounded-full font-headline font-bold hover:opacity-90 active:scale-95 transition-all shadow-md disabled:bg-outline-variant/40 disabled:text-on-surface-variant disabled:shadow-none disabled:cursor-not-allowed"
+              style="gap: clamp(0.4rem,0.6vw,0.6rem); padding: clamp(0.55rem,1.2vh,0.85rem) clamp(1rem,1.8vw,1.75rem); font-size: clamp(0.8rem,1.1vw,1rem);">
+              다음 <span class="material-symbols-outlined" style="font-size: clamp(0.9rem,1.2vw,1.1rem);">arrow_forward</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════ SLIDE 5 · 평가 & 다음 행동 ══════ -->
+    <div class="slide" id="slide-4" style="background: linear-gradient(150deg, #fff8f5 0%, #ffeee8 100%);">
+      <div class="slide-content" style="padding: clamp(4rem,6vh,6rem) clamp(2rem,7vw,8rem) clamp(2rem,4vh,3rem);">
+        <div class="mx-auto w-full flex flex-col items-center text-center" style="max-width: min(72vw, 960px); gap: clamp(2rem,4.5vh,3.5rem);">
+
+          <!-- 상단 헤딩 -->
+          <div>
+            <div style="font-size: clamp(3rem,6vw,5rem); line-height:1; margin-bottom: clamp(0.75rem,1.5vh,1.2rem);">🎉</div>
+            <h2 class="font-headline font-extrabold text-on-surface tracking-tight"
+                style="font-size: clamp(1.8rem,3.5vw,3rem); margin-bottom: clamp(0.4rem,0.8vh,0.6rem);">요리 완성!</h2>
+            <p class="text-on-surface-variant" style="font-size: clamp(0.9rem,1.3vw,1.2rem);">수고하셨어요. 맛있게 드세요!</p>
+          </div>
+
+          <!-- 평가 섹션 -->
+          <div class="w-full">
+            <p class="font-bold text-on-surface" style="font-size: clamp(1rem,1.5vw,1.35rem); margin-bottom: clamp(1rem,2.2vh,1.6rem);">레시피가 유익했나요?</p>
+            <div class="flex justify-center" style="gap: clamp(0.9rem,2vw,1.8rem);">
+              <button class="rating-btn" data-rating="1"
+                      style="padding: clamp(1rem,2vh,1.5rem) clamp(1.2rem,2.2vw,2rem); gap: clamp(0.4rem,0.8vh,0.6rem);">
+                <span class="rating-emoji" style="font-size: clamp(1.8rem,3.5vw,3rem);">😕</span>
+                <span class="font-bold" style="font-size: clamp(0.8rem,1.1vw,1rem);">아쉬워요</span>
+              </button>
+              <button class="rating-btn" data-rating="2"
+                      style="padding: clamp(1rem,2vh,1.5rem) clamp(1.2rem,2.2vw,2rem); gap: clamp(0.4rem,0.8vh,0.6rem);">
+                <span class="rating-emoji" style="font-size: clamp(1.8rem,3.5vw,3rem);">👍</span>
+                <span class="font-bold" style="font-size: clamp(0.8rem,1.1vw,1rem);">좋아요</span>
+              </button>
+              <button class="rating-btn" data-rating="3"
+                      style="padding: clamp(1rem,2vh,1.5rem) clamp(1.2rem,2.2vw,2rem); gap: clamp(0.4rem,0.8vh,0.6rem);">
+                <span class="rating-emoji" style="font-size: clamp(1.8rem,3.5vw,3rem);">⭐</span>
+                <span class="font-bold" style="font-size: clamp(0.8rem,1.1vw,1rem);">최고에요</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 행동 섹션 -->
+          <div class="w-full">
+            <div class="flex flex-wrap justify-center" style="gap: clamp(0.7rem,1.5vw,1.2rem);">
+              <button id="pick-save-btn" class="action-btn action-btn-primary"
+                      style="gap: clamp(0.4rem,0.6vw,0.6rem); padding: clamp(0.7rem,1.4vh,1rem) clamp(1.4rem,2.5vw,2.2rem); font-size: clamp(0.85rem,1.2vw,1.1rem);">
+                <span class="material-symbols-outlined" style="font-size: clamp(1rem,1.3vw,1.2rem);">bookmark</span>
+                저장하기
+              </button>
+              <a id="pick-edit-btn" class="action-btn action-btn-primary" style="display:none;
+                 gap: clamp(0.4rem,0.6vw,0.6rem); padding: clamp(0.7rem,1.4vh,1rem) clamp(1.4rem,2.5vw,2.2rem); font-size: clamp(0.85rem,1.2vw,1.1rem);">
+                <span class="material-symbols-outlined" style="font-size: clamp(1rem,1.3vw,1.2rem);">edit</span>
+                수정하기
+              </a>
+              <a href="index.html" class="action-btn action-btn-outline"
+                 style="gap: clamp(0.4rem,0.6vw,0.6rem); padding: clamp(0.7rem,1.4vh,1rem) clamp(1.4rem,2.5vw,2.2rem); font-size: clamp(0.85rem,1.2vw,1.1rem);">
+                <span class="material-symbols-outlined" style="font-size: clamp(1rem,1.3vw,1.2rem);">home</span>
+                홈으로 이동하기
+              </a>
+              <a href="my-recipe.html" class="action-btn action-btn-surface"
+                 style="gap: clamp(0.4rem,0.6vw,0.6rem); padding: clamp(0.7rem,1.4vh,1rem) clamp(1.4rem,2.5vw,2.2rem); font-size: clamp(0.85rem,1.2vw,1.1rem);">
+                <span class="material-symbols-outlined" style="font-size: clamp(1rem,1.3vw,1.2rem);">menu_book</span>
+                내 레시피
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /slides-track -->
+</div><!-- /slide-viewport -->
+
+<!-- Timer notification -->
 <div class="notification" id="notification">
-  <span class="material-symbols-outlined text-xl">alarm</span>
+  <span class="material-symbols-outlined" style="font-size:1.2rem">alarm</span>
   시간이 다 되었습니다!
 </div>
+
+<!-- Voice control -->
+<button id="voice-btn" type="button" title="음성으로 슬라이드 조작 (다음·이전·처음·마지막)">
+  <span class="material-symbols-outlined" style="font-size:1.4rem">mic</span>
+</button>
+<div id="voice-toast"></div>
+
+<!-- ──────────────────────────────────────
+     SLIDE ENGINE + YAMY TOGGLE
+────────────────────────────────────── -->
+<script>
+(function () {
+  const TOTAL = 5;
+  let current = 0;
+
+  const track     = document.getElementById('slides-track');
+  const dots      = document.querySelectorAll('.slide-dot');
+  const hintPrev  = document.getElementById('hint-prev');
+  const hintNext  = document.getElementById('hint-next');
+  const yamyBtn   = document.getElementById('yamy-btn');
+  const mainNav   = document.getElementById('main-nav');
+  const bcTitle   = document.getElementById('breadcrumb-title');
+
+  /* ── go to slide index ── */
+  function goTo(idx) {
+    current = Math.max(0, Math.min(TOTAL - 1, idx));
+    track.style.transform = `translateY(calc(-${current} * 100vh))`;
+    dots.forEach((d, i) => d.classList.toggle('active', i === current));
+    hintPrev.classList.toggle('show', current > 0);
+    hintNext.classList.toggle('show', current < TOTAL - 1);
+  }
+  function next() { goTo(current + 1); }
+  function prev() { goTo(current - 1); }
+
+  /* ── side dot clicks ── */
+  dots.forEach(d => d.addEventListener('click', e => {
+    e.stopPropagation();
+    goTo(Number(d.dataset.slide));
+  }));
+
+  /* ── YAMY toggle (click = open/close) ── */
+  yamyBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    const open = mainNav.classList.toggle('visible');
+    yamyBtn.classList.toggle('nav-open', open);
+  });
+
+  /* ── Interactive element selector – clicks here don't navigate ── */
+  const SKIP = [
+    'button', 'input', 'label', 'a', 'select', 'textarea',
+    '[role="button"]', '.indicator-dot', '.slide-dot',
+    '#yamy-fixed', '#main-nav', '#slide-dots',
+    '#hint-prev', '#hint-next', '#voice-btn',
+    '#pick-save-btn', '#pick-edit-btn', '.rating-btn', '.action-btn',
+  ].join(', ');
+
+  /* ── Click navigation (top half = prev, bottom half = next) ── */
+  document.addEventListener('click', e => {
+    if (e.target.closest(SKIP)) return;
+    e.clientY < window.innerHeight / 2 ? prev() : next();
+  });
+
+  /* ── Cursor feedback ── */
+  document.addEventListener('mousemove', e => {
+    if (e.target.closest(SKIP)) { document.body.style.cursor = ''; return; }
+    const inTop = e.clientY < window.innerHeight / 2;
+    if (inTop)  document.body.style.cursor = current > 0          ? 'n-resize' : 'default';
+    else        document.body.style.cursor = current < TOTAL - 1  ? 's-resize' : 'default';
+  });
+
+  /* ── Touch / swipe ── */
+  let ty = 0, tx = 0;
+  document.addEventListener('touchstart', e => {
+    ty = e.touches[0].clientY;
+    tx = e.touches[0].clientX;
+  }, { passive: true });
+  document.addEventListener('touchend', e => {
+    if (e.target.closest('input, button, .indicator-dot')) return;
+    const dy = ty - e.changedTouches[0].clientY;
+    const dx = Math.abs(tx - e.changedTouches[0].clientX);
+    if (Math.abs(dy) > 45 && Math.abs(dy) > dx) { dy > 0 ? next() : prev(); }
+  }, { passive: true });
+
+  /* ── Keyboard ── */
+  document.addEventListener('keydown', e => {
+    if (['ArrowDown', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); next(); }
+    if (['ArrowUp',   'PageUp'        ].includes(e.key)) { e.preventDefault(); prev(); }
+  });
+
+  /* ── Sync breadcrumb with recipe title after API load ── */
+  const titleEl = document.getElementById('recipe-title-main');
+  if (titleEl && bcTitle) {
+    new MutationObserver(() => {
+      if (titleEl.textContent.trim()) bcTitle.textContent = titleEl.textContent.trim();
+    }).observe(titleEl, { childList: true, subtree: true, characterData: true });
+  }
+
+  /* ── Wheel on desktop (throttled) ── */
+  let wheelLocked = false;
+  document.addEventListener('wheel', e => {
+    if (e.target.closest('#ingredient-form, #timer-container')) return;
+    if (wheelLocked) return;
+    wheelLocked = true;
+    e.deltaY > 0 ? next() : prev();
+    setTimeout(() => { wheelLocked = false; }, 800);
+  }, { passive: true });
+
+  goTo(0);
+
+  /* ── Missing ingredients: static HTML fallback ──
+     recipe-detail.js only calls updateMissingIngredients when a recipe is
+     loaded from the API. For the static / no-id case we wire it up here.   ── */
+  document.addEventListener('DOMContentLoaded', () => {
+    const form    = document.getElementById('ingredient-form');
+    const display = document.getElementById('missing-ingredients');
+    if (!form || !display) return;
+
+    function syncMissing() {
+      const unchecked = Array.from(form.querySelectorAll('input[type="checkbox"]'))
+        .filter(cb => !cb.checked)
+        .map(cb => cb.value);
+      display.textContent = unchecked.length > 0 ? unchecked.join(', ') : '없음';
+    }
+
+    form.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+      cb.addEventListener('change', syncMissing);
+    });
+    syncMissing();
+  });
+
+  /* ── Slide 5: rating + pick/edit actions ── */
+  (function () {
+    const API_BASE = 'http://localhost:3000/api/recipes';
+    const recipeId = new URLSearchParams(window.location.search).get('id');
+
+    // Rating buttons
+    document.querySelectorAll('.rating-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.rating-btn').forEach((b) => b.classList.remove('selected'));
+        btn.classList.add('selected');
+      });
+    });
+
+    // Determine author vs. visitor
+    const saveBtn = document.getElementById('pick-save-btn');
+    const editBtn = document.getElementById('pick-edit-btn');
+
+    if (recipeId) {
+      fetch(`${API_BASE}/${encodeURIComponent(recipeId)}`)
+        .then((r) => r.json())
+        .then(({ recipe }) => {
+          if (!recipe) return;
+          const user = window.authGuard?.getLoggedInUser();
+          if (user && Number(recipe.authorId) === Number(user.user_id)) {
+            if (saveBtn) saveBtn.style.display = 'none';
+            if (editBtn) {
+              editBtn.style.display = 'inline-flex';
+              editBtn.href = `recipe-editor.html?id=${encodeURIComponent(recipeId)}`;
+            }
+          }
+        })
+        .catch(() => {});
+    }
+
+    // Save (pick) button
+    if (saveBtn) {
+      saveBtn.addEventListener('click', async () => {
+        const token = localStorage.getItem('yamy_token');
+        if (!token) {
+          window.location.href = `login.html?returnUrl=${encodeURIComponent(window.location.href)}`;
+          return;
+        }
+        if (!recipeId || saveBtn.classList.contains('saved')) return;
+
+        saveBtn.disabled = true;
+        try {
+          const res = await fetch(`${API_BASE}/${encodeURIComponent(recipeId)}/pick`, {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (res.ok) {
+            saveBtn.classList.add('saved');
+            saveBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size:1.1rem">check</span> 저장됨';
+          } else {
+            saveBtn.disabled = false;
+          }
+        } catch {
+          saveBtn.disabled = false;
+        }
+      });
+    }
+  })();
+
+  /* ── Voice control ── */
+  (function () {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const voiceBtn   = document.getElementById('voice-btn');
+    const voiceToast = document.getElementById('voice-toast');
+    if (!SR || !voiceBtn) return;
+
+    const recognition = new SR();
+    recognition.lang = 'ko-KR';
+    recognition.continuous = true;
+    recognition.interimResults = true;
+
+    let active = false;
+    let silenceTimer = null;
+    let lastFired = '';
+
+    function showToast(msg, duration = 2000) {
+      voiceToast.textContent = msg;
+      voiceToast.classList.add('show');
+      clearTimeout(voiceToast._t);
+      voiceToast._t = setTimeout(() => voiceToast.classList.remove('show'), duration);
+    }
+
+    function resetSilenceTimer() {
+      clearTimeout(silenceTimer);
+      silenceTimer = setTimeout(stop, 10000);
+    }
+
+    function start() {
+      active = true;
+      voiceBtn.classList.add('listening');
+      recognition.start();
+      showToast('🎤 듣고 있어요… (다음·이전·처음·마지막)', 2500);
+      resetSilenceTimer();
+    }
+
+    function stop() {
+      active = false;
+      clearTimeout(silenceTimer);
+      voiceBtn.classList.remove('listening');
+      try { recognition.stop(); } catch (_) {}
+      showToast('마이크 꺼짐');
+    }
+
+    function voiceNext() {
+      if (current === TOTAL - 1) {
+        const btn = document.getElementById('next-btn');
+        if (btn && !btn.disabled) { btn.click(); showToast('▶ 다음 단계'); return; }
+      }
+      next(); showToast('▶ 다음');
+    }
+
+    function voicePrev() {
+      if (current === TOTAL - 1) {
+        const btn = document.getElementById('prev-btn');
+        if (btn && !btn.disabled) { btn.click(); showToast('◀ 이전 단계'); return; }
+      }
+      prev(); showToast('◀ 이전');
+    }
+
+    recognition.onresult = function (e) {
+      let text = '';
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        text += e.results[i][0].transcript;
+      }
+      text = text.trim();
+      resetSilenceTimer();
+
+      if (e.results[e.results.length - 1].isFinal) lastFired = '';
+
+      if (text.includes('타이머') && text.includes('초기화') && lastFired !== '타이머초기화')
+        { lastFired = '타이머초기화'; document.getElementById('reset-timer')?.click(); showToast('🔄 타이머 초기화'); }
+      else if (text.includes('타이머') && text.includes('시작') && lastFired !== '타이머시작')
+        { lastFired = '타이머시작'; document.getElementById('start-timer')?.click(); showToast('▶ 타이머 시작'); }
+      else if (text.includes('타이머') && (text.includes('정지') || text.includes('멈춰') || text.includes('멈춤')) && lastFired !== '타이머정지')
+        { lastFired = '타이머정지'; document.getElementById('pause-timer')?.click(); showToast('⏸ 타이머 정지'); }
+      else if (text.includes('조리') && lastFired !== '조리')
+        { lastFired = '조리'; goTo(TOTAL - 1); document.querySelector('.indicator-dot[data-step="1"]')?.click(); showToast('🍳 조리 단계로'); }
+      else if (text.includes('팁') && lastFired !== '팁')
+        { lastFired = '팁'; goTo(TOTAL - 2); showToast('💡 요리 팁으로'); }
+      else if (text.includes('재료') && lastFired !== '재료')
+        { lastFired = '재료'; goTo(1); showToast('🛒 재료로'); }
+      else if (text.includes('다음') && lastFired !== '다음')
+        { lastFired = '다음'; voiceNext(); }
+      else if ((text.includes('이전') || text.includes('뒤로')) && lastFired !== '이전')
+        { lastFired = '이전'; voicePrev(); }
+      else if ((text.includes('처음') || text.includes('첫')) && lastFired !== '처음')
+        { lastFired = '처음'; goTo(0); showToast('⏮ 처음으로'); }
+      else if ((text.includes('마지막') || text.includes('끝')) && lastFired !== '마지막')
+        { lastFired = '마지막'; goTo(TOTAL - 1); showToast('⏭ 마지막으로'); }
+    };
+
+    recognition.onend = function () {
+      if (active) recognition.start();
+    };
+
+    recognition.onerror = function (e) {
+      if (e.error === 'no-speech') { resetSilenceTimer(); return; }
+      stop();
+    };
+
+    voiceBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      active ? stop() : start();
+    });
+  })();
+
+})();
+</script>
 
 <script src="auth-guard.js"></script>
 <script src="profile-badge.js"></script>
