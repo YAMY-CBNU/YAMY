@@ -33,7 +33,7 @@ async function detectMode() {
   try {
     const connection = await mysqlPool.getConnection();
     try {
-      await connection.query('SELECT 1');
+      await connection.query('SELECT 1 FROM `USER` LIMIT 1');
       return 'mysql';
     } finally {
       connection.release();
