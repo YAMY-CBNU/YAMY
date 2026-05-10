@@ -141,7 +141,6 @@
 <p class="text-primary font-headline font-bold text-[10px] uppercase tracking-[0.25em] mb-1">Step 02 of 04</p>
 <div class="flex items-baseline justify-between mb-2.5">
 <h1 class="font-headline text-xl font-extrabold text-on-surface tracking-tight">나만의 레시피 작성하기</h1>
-<span class="text-primary/60 text-[11px] font-body italic hidden sm:block flex-shrink-0 ml-6">오전 10:42에 자동 저장됨</span>
 </div>
 <div class="w-full h-1 bg-primary-container/40 rounded-full overflow-hidden">
 <div class="h-full bg-primary rounded-full" style="width: 50%"></div>
@@ -274,14 +273,10 @@
 <button class="flex items-center gap-1 px-3 py-1.5 bg-secondary-fixed text-on-secondary-fixed rounded-full font-bold text-xs hover:scale-105 transition-all toggle-timer-settings" type="button">
 <span class="material-symbols-outlined text-sm" data-icon="timer">timer</span><span>타이머 설정</span>
 </button>
-<button class="flex items-center gap-1 px-3 py-1.5 border border-outline-variant/30 text-on-surface-variant rounded-full font-bold text-xs hover:bg-surface-container-highest transition-all select-step-image" type="button">
-<span class="material-symbols-outlined text-sm" data-icon="image">image</span><span>사진 추가</span>
-</button>
 </div>
 <div class="hidden mt-3 grid grid-cols-3 gap-2 timer-settings">
 <input class="bg-surface-container-highest border-none rounded-lg p-2 text-xs focus:ring-2 focus:ring-primary-fixed step-minutes" min="0" placeholder="분" type="number"/>
 <input class="bg-surface-container-highest border-none rounded-lg p-2 text-xs focus:ring-2 focus:ring-primary-fixed step-seconds" max="59" min="0" placeholder="초" type="number"/>
-<div class="col-span-3 rounded-lg border border-dashed border-outline-variant/40 bg-surface-container-highest p-2 text-[10px] text-on-surface-variant step-image-meta">사진 없음</div>
 </div>
 </div>
 <div class="md:col-span-5">
@@ -309,14 +304,10 @@
 <button class="flex items-center gap-1 px-3 py-1.5 bg-secondary-fixed text-on-secondary-fixed rounded-full font-bold text-xs hover:scale-105 transition-all toggle-timer-settings" type="button">
 <span class="material-symbols-outlined text-sm" data-icon="timer">timer</span><span>타이머 설정</span>
 </button>
-<button class="flex items-center gap-1 px-3 py-1.5 border border-outline-variant/30 text-on-surface-variant rounded-full font-bold text-xs hover:bg-surface-container-highest transition-all select-step-image" type="button">
-<span class="material-symbols-outlined text-sm" data-icon="image">image</span><span>사진 추가</span>
-</button>
 </div>
 <div class="hidden mt-3 grid grid-cols-3 gap-2 timer-settings">
 <input class="bg-surface-container-highest border-none rounded-lg p-2 text-xs focus:ring-2 focus:ring-primary-fixed step-minutes" min="0" placeholder="분" type="number"/>
 <input class="bg-surface-container-highest border-none rounded-lg p-2 text-xs focus:ring-2 focus:ring-primary-fixed step-seconds" max="59" min="0" placeholder="초" type="number"/>
-<div class="col-span-3 rounded-lg border border-dashed border-outline-variant/40 bg-surface-container-highest p-2 text-[10px] text-on-surface-variant step-image-meta">사진 없음</div>
 </div>
 </div>
 <div class="md:col-span-5">
@@ -340,6 +331,7 @@
 <!-- Final Actions -->
 <div class="flex gap-2 justify-end items-center py-5 border-t border-outline-variant/10">
 <button class="px-6 py-2 text-on-surface-variant font-bold text-xs hover:bg-surface-container-high rounded-full transition-colors" id="reset-editor-button" type="button">초기화</button>
+<button class="px-6 py-2 border-2 border-primary text-primary font-bold text-xs hover:bg-primary/10 rounded-full transition-colors" id="save-draft-button" type="button">임시저장</button>
 <button class="px-7 py-2 bg-gradient-to-br from-primary to-primary-container text-on-primary font-bold text-xs rounded-full editorial-shadow hover:scale-[1.02] active:scale-95 transition-all" id="save-recipe-button" type="button">레시피 공개하기</button>
 </div>
 </main>
@@ -390,14 +382,10 @@
 <button class="flex items-center gap-1 px-3 py-1.5 bg-secondary-fixed text-on-secondary-fixed rounded-full font-bold text-xs hover:scale-105 transition-all toggle-timer-settings" type="button">
 <span class="material-symbols-outlined text-sm" data-icon="timer">timer</span><span>타이머 설정</span>
 </button>
-<button class="flex items-center gap-1 px-3 py-1.5 border border-outline-variant/30 text-on-surface-variant rounded-full font-bold text-xs hover:bg-surface-container-highest transition-all select-step-image" type="button">
-<span class="material-symbols-outlined text-sm" data-icon="image">image</span><span>사진 추가</span>
-</button>
 </div>
 <div class="hidden mt-3 grid grid-cols-3 gap-2 timer-settings">
 <input class="bg-surface-container-highest border-none rounded-lg p-2 text-xs focus:ring-2 focus:ring-primary-fixed step-minutes" min="0" placeholder="분" type="number"/>
 <input class="bg-surface-container-highest border-none rounded-lg p-2 text-xs focus:ring-2 focus:ring-primary-fixed step-seconds" max="59" min="0" placeholder="초" type="number"/>
-<div class="col-span-3 rounded-lg border border-dashed border-outline-variant/40 bg-surface-container-highest p-2 text-[10px] text-on-surface-variant step-image-meta">사진 없음</div>
 </div>
 </div>
 <div class="md:col-span-5">

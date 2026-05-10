@@ -59,6 +59,7 @@ function mapRecipeRecord(recipe, ingredients = [], steps = []) {
     servingSize: recipe.serving_size,
     cookTime: recipe.cook_time,
     isExternal: Boolean(recipe.is_external),
+    isDraft: Boolean(recipe.is_draft),
     categories: {
       method: recipe.cat1_method,
       situation: recipe.cat2_situation,
@@ -107,8 +108,9 @@ async function createRecipe(payload) {
           cat2_situation,
           cat3_ingredient,
           cat4_type,
-          is_external
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, FALSE)`,
+          is_external,
+          is_draft
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, FALSE, ?)`,
         [
           payload.authorId,
           payload.title,
@@ -121,6 +123,7 @@ async function createRecipe(payload) {
           payload.categories.situation,
           payload.categories.mainIngredient,
           payload.categories.type,
+          Boolean(payload.isDraft),
         ]
       );
 
@@ -175,6 +178,7 @@ async function createRecipe(payload) {
     cat3_ingredient: payload.categories.mainIngredient,
     cat4_type: payload.categories.type,
     is_external: false,
+    is_draft: Boolean(payload.isDraft),
     created_at: now,
     updated_at: now,
     ingredients: payload.ingredients.map((ingredient, index) => ({
@@ -200,6 +204,137 @@ async function createRecipe(payload) {
   return mapRecipeRecord(recipeRecord, recipeRecord.ingredients, recipeRecord.steps);
 }
 
+async function updateRecipeById(recipeId, payload) {
+  const mode = await getMode();
+
+  if (mode === 'mysql') {
+    const connection = await mysqlPool.getConnection();
+
+    try {
+      await connection.beginTransaction();
+
+      const [recipeRows] = await connection.query(
+        `SELECT recipe_id
+         FROM RECIPE
+         WHERE recipe_id = ?
+         LIMIT 1`,
+        [recipeId]
+      );
+
+      if (recipeRows.length === 0) {
+        await connection.rollback();
+        return null;
+      }
+
+      await connection.query(
+        `UPDATE RECIPE
+         SET title = ?,
+             description = ?,
+             thumbnail_url = ?,
+             difficulty = ?,
+             serving_size = ?,
+             cook_time = ?,
+             cat1_method = ?,
+             cat2_situation = ?,
+             cat3_ingredient = ?,
+             cat4_type = ?,
+             is_draft = ?
+         WHERE recipe_id = ?`,
+        [
+          payload.title,
+          payload.description,
+          payload.thumbnailUrl,
+          payload.difficulty,
+          payload.servingSize,
+          payload.cookTime,
+          payload.categories.method,
+          payload.categories.situation,
+          payload.categories.mainIngredient,
+          payload.categories.type,
+          Boolean(payload.isDraft),
+          recipeId,
+        ]
+      );
+
+      await connection.query('DELETE FROM RECIPE_INGREDIENT WHERE recipe_id = ?', [recipeId]);
+      await connection.query('DELETE FROM RECIPE_STEP WHERE recipe_id = ?', [recipeId]);
+
+      for (const ingredient of payload.ingredients) {
+        await connection.query(
+          'INSERT INTO RECIPE_INGREDIENT (recipe_id, name, amount) VALUES (?, ?, ?)',
+          [recipeId, ingredient.name, ingredient.amount]
+        );
+      }
+
+      for (const [index, step] of payload.steps.entries()) {
+        await connection.query(
+          `INSERT INTO RECIPE_STEP (
+            recipe_id,
+            step_order,
+            description,
+            image_url,
+            timer_seconds
+          ) VALUES (?, ?, ?, ?, ?)`,
+          [recipeId, index + 1, step.description, step.imageUrl, step.timerSeconds]
+        );
+      }
+
+      await connection.commit();
+      return findRecipeById(recipeId);
+    } catch (error) {
+      await connection.rollback();
+      throw error;
+    } finally {
+      connection.release();
+    }
+  }
+
+  const recipes = await readRecipes();
+  const index = recipes.findIndex((item) => Number(item.recipe_id) === Number(recipeId));
+
+  if (index === -1) {
+    return null;
+  }
+
+  const existing = recipes[index];
+  const now = new Date().toISOString();
+  const updatedRecipe = {
+    ...existing,
+    title: payload.title,
+    description: payload.description,
+    thumbnail_url: payload.thumbnailUrl,
+    difficulty: payload.difficulty,
+    serving_size: payload.servingSize,
+    cook_time: payload.cookTime,
+    cat1_method: payload.categories.method,
+    cat2_situation: payload.categories.situation,
+    cat3_ingredient: payload.categories.mainIngredient,
+    cat4_type: payload.categories.type,
+    is_draft: Boolean(payload.isDraft),
+    updated_at: now,
+    ingredients: payload.ingredients.map((ingredient, ingredientIndex) => ({
+      ingredient_id: ingredientIndex + 1,
+      name: ingredient.name,
+      amount: ingredient.amount,
+      section: '재료',
+    })),
+    steps: payload.steps.map((step, stepIndex) => ({
+      step_id: stepIndex + 1,
+      step_order: stepIndex + 1,
+      description: step.description,
+      image_url: step.imageUrl,
+      timer_seconds: step.timerSeconds,
+      heat_level: null,
+      tip: null,
+    })),
+  };
+
+  recipes[index] = updatedRecipe;
+  await writeRecipes(recipes);
+
+  return mapRecipeRecord(updatedRecipe, updatedRecipe.ingredients, updatedRecipe.steps);
+}
+
 async function findRecipeById(recipeId) {
   const mode = await getMode();
 
@@ -219,6 +354,7 @@ async function findRecipeById(recipeId) {
         cat3_ingredient,
         cat4_type,
         is_external,
+        is_draft,
         created_at,
         updated_at
       FROM RECIPE
@@ -281,6 +417,7 @@ async function listRecipesByAuthor(authorId) {
         cat3_ingredient,
         cat4_type,
         is_external,
+        is_draft,
         created_at,
         updated_at
       FROM RECIPE
@@ -320,9 +457,57 @@ async function listRecipesByAuthor(authorId) {
     .map((recipe) => mapRecipeRecord(recipe, recipe.ingredients || [], recipe.steps || []));
 }
 
+async function deleteRecipeById(recipeId) {
+  const mode = await getMode();
+
+  if (mode === 'mysql') {
+    const connection = await mysqlPool.getConnection();
+
+    try {
+      await connection.beginTransaction();
+
+      const [recipeRows] = await connection.query(
+        `SELECT recipe_id, is_draft
+         FROM RECIPE
+         WHERE recipe_id = ?
+         LIMIT 1`,
+        [recipeId]
+      );
+
+      const recipe = recipeRows[0];
+      if (!recipe) {
+        await connection.rollback();
+        return null;
+      }
+
+      await connection.query('DELETE FROM RECIPE WHERE recipe_id = ?', [recipeId]);
+      await connection.commit();
+      return Boolean(recipe.is_draft);
+    } catch (error) {
+      await connection.rollback();
+      throw error;
+    } finally {
+      connection.release();
+    }
+  }
+
+  const recipes = await readRecipes();
+  const index = recipes.findIndex((item) => Number(item.recipe_id) === Number(recipeId));
+
+  if (index === -1) {
+    return null;
+  }
+
+  const [removed] = recipes.splice(index, 1);
+  await writeRecipes(recipes);
+  return Boolean(removed?.is_draft);
+}
+
 module.exports = {
   getMode,
   createRecipe,
+  updateRecipeById,
   findRecipeById,
   listRecipesByAuthor,
+  deleteRecipeById,
 };
