@@ -128,5 +128,77 @@
     "updated_at": "2026-05-10T12:57:44.883Z",
     "ingredients": [],
     "steps": []
+  },
+  {
+    "recipe_id": 6,
+    "author_id": 3,
+    "title": "할머니의 비법 된장찌개",
+    "description": "할머니가 끓여주던 맛이다",
+    "thumbnail_url": null,
+    "difficulty": null,
+    "serving_size": null,
+    "cook_time": "120",
+    "cat1_method": null,
+    "cat2_situation": null,
+    "cat3_ingredient": null,
+    "cat4_type": null,
+    "is_external": false,
+    "is_draft": true,
+    "created_at": "2026-05-14T05:20:43.086Z",
+    "updated_at": "2026-05-14T05:20:46.567Z",
+    "ingredients": [],
+    "steps": []
+  },
+  {
+    "recipe_id": 7,
+    "author_id": 3,
+    "title": "d",
+    "description": "d",
+    "thumbnail_url": null,
+    "difficulty": "초급",
+    "serving_size": "d",
+    "cook_time": "d",
+    "cat1_method": "볶기",
+    "cat2_situation": "일상",
+    "cat3_ingredient": "소고기",
+    "cat4_type": "국/탕",
+    "is_external": false,
+    "is_draft": false,
+    "created_at": "2026-05-15T15:48:16.547Z",
+    "updated_at": "2026-05-15T15:48:16.547Z",
+    "ingredients": [
+      {
+        "ingredient_id": 1,
+        "name": "d",
+        "amount": "",
+        "section": "재료"
+      },
+      {
+        "ingredient_id": 2,
+        "name": "d",
+        "amount": "",
+        "section": "재료"
+      }
+    ],
+    "steps": [
+      {
+        "step_id": 1,
+        "step_order": 1,
+        "description": "d",
+        "image_url": null,
+        "timer_seconds": null,
+        "heat_level": null,
+        "tip": null
+      },
+      {
+        "step_id": 2,
+        "step_order": 2,
+        "description": "d",
+        "image_url": null,
+        "timer_seconds": null,
+        "heat_level": null,
+        "tip": null
+      }
+    ]
   }
 ]

@@ -1,5 +1,5 @@
 (function () {
-  const API_BASE = 'http://localhost:3000/api/recipes';
+  const API_BASE = 'http://localhost:3001/api/recipes';
   const elements = {
     title: document.getElementById('recipe-title-main'),
     description: document.getElementById('recipe-description-main'),

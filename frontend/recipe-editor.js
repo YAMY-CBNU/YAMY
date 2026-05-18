@@ -1,5 +1,5 @@
 (() => {
-  const API_BASE = 'http://localhost:3000/api/recipes';
+  const API_BASE = 'http://localhost:3001/api/recipes';
   const EDITOR_STATE_PREFIX = 'yamy_recipe_editor_state:';
 
   const recipeIdParam = new URLSearchParams(window.location.search).get('id');

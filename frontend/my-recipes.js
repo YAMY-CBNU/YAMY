@@ -1,5 +1,5 @@
 (function () {
-  const API_BASE = 'http://localhost:3000/api/recipes';
+  const API_BASE = 'http://localhost:3001/api/recipes';
 
   const elements = {
     publishedGrid: document.getElementById('published-recipes-grid'),
