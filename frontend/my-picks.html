@@ -55,9 +55,9 @@
 </head>
 <body class="bg-surface text-on-surface min-h-screen flex flex-col">
 <!-- TopNavBar -->
-<nav class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl flex justify-between items-center px-12 h-24 max-w-full mx-auto border-b border-outline-variant/30">
-<div class="flex items-center gap-12">
-<a href="index.html" class="text-3xl font-extrabold text-primary font-headline tracking-tighter">YAMY</a>
+<nav class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl flex justify-between items-center px-4 md:px-12 h-16 md:h-24 max-w-full mx-auto border-b border-outline-variant/30">
+<div class="flex items-center gap-4 md:gap-12 min-w-0">
+<a href="index.html" class="text-2xl md:text-3xl font-extrabold text-primary font-headline tracking-tighter flex-shrink-0">YAMY</a>
 <div class="hidden md:flex items-center gap-8 font-headline tracking-tight">
 <a class="text-on-surface-variant hover:text-primary transition-colors" href="index.html">탐색하기</a>
 <a id="nav-my-recipe" class="text-on-surface-variant hover:text-primary transition-colors" href="my-recipe.html">내 레시피</a>
@@ -65,16 +65,16 @@
 <a id="nav-recipe-editor" class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer" onclick="event.preventDefault(); window.authGuard.redirectToLoginIfNeeded() || (window.location.href='recipe-editor.html')">레시피 작성</a>
 </div>
 </div>
-<div class="flex items-center gap-6">
-<div class="relative hidden sm:block">
+<div class="flex items-center gap-3 md:gap-6 flex-shrink-0">
+<div class="relative hidden md:block">
 <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
 <input class="bg-surface-container border border-outline-variant/50 rounded-full pl-11 pr-6 py-2.5 text-sm focus:ring-2 focus:ring-primary w-72 transition-all outline-none" placeholder="요리 영감 검색..." type="text"/>
 </div>
 <a href="profile.html" data-profile-link class="hidden px-4 py-2.5 rounded-full bg-surface-container text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-all text-sm font-semibold whitespace-nowrap">프로필</a>
-<a id="auth-action" href="login.html" class="bg-primary text-on-primary px-8 py-2.5 rounded-full font-headline font-bold text-sm hover:opacity-90 duration-150 transition-all shadow-sm">로그인</a>
+<a id="auth-action" href="login.html" class="bg-primary text-on-primary px-4 md:px-8 py-2 md:py-2.5 rounded-full font-headline font-bold text-xs md:text-sm hover:opacity-90 duration-150 transition-all shadow-sm whitespace-nowrap">로그인</a>
 </div>
 </nav>
-<main class="pt-32 flex-grow">
+<main class="pt-20 md:pt-32 flex-grow">
 <!-- Hero Section -->
 <section class="px-6 py-8 md:py-10 max-w-screen-xl mx-auto">
 <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">

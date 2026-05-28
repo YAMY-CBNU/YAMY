@@ -6,7 +6,7 @@ const authRoutes = require('./routes/auth');
 const recipeRoutes = require('./routes/recipes');
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = Number(process.env.PORT) || 3000;
 const corsOrigin = process.env.CORS_ORIGIN || '*';
 const corsOptions = process.env.CORS_ORIGIN
   ? { origin: corsOrigin === '*' ? true : corsOrigin, credentials: true }
@@ -31,6 +31,23 @@ app.use((error, req, res, next) => {
   res.status(500).json({ message: '서버 내부 오류가 발생했습니다.' });
 });
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`YAMY auth server running on http://localhost:${port}`);
+});
+
+server.on('error', (err) => {
+  if (err && err.code === 'EADDRINUSE') {
+    const fallbackPort = port + 1;
+    console.warn(`Port ${port} in use, trying ${fallbackPort}`);
+    // try listening on the next port
+    app.listen(fallbackPort, () => {
+      console.log(`YAMY auth server running on http://localhost:${fallbackPort}`);
+    }).on('error', (e) => {
+      console.error('Failed to bind to fallback port:', e);
+      process.exit(1);
+    });
+  } else {
+    console.error(err);
+    process.exit(1);
+  }
 });
