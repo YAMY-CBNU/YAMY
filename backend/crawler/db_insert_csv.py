@@ -52,10 +52,6 @@ def int_or_none(value):
         return None
 
 
-
-# 기존 하위 데이터 삭제
-# 중복 실행 시 재료/스텝이 계속 쌓이는 것 방지
-
 def delete_recipe_children(conn, recipe_ids):
     if not recipe_ids:
         return
