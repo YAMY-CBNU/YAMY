@@ -10,29 +10,11 @@
   },
   {
     "user_id": 2,
-    "username": "skgu",
-    "email": "chlskgus789@gmail.com",
-    "password_hash": "$2a$10$w4DymAtmqlkUlz9nbbHDVuUzjIMpbCZ7HYMeKRW8DESmFvV9Q9NDu",
+    "username": "skgus",
+    "email": "test789@gmail.com",
+    "password_hash": "$2a$10$7jcNmDEPVM64z5QajTYh6eiFrWGGsGCZdoFxcOAem7XlhA4LVpm32",
     "profile_image_url": null,
     "created_at": "2026-05-09T07:42:52.727Z",
     "updated_at": "2026-05-09T07:43:32.851Z"
-  },
-  {
-    "user_id": 3,
-    "username": "테스트",
-    "email": "test789@gmail.com",
-    "password_hash": "$2a$10$.JXJAvnSUUckjBxNrUvM2OIbjk1otHVCwq9I1.uO7E8h2mGnCf7oO",
-    "profile_image_url": null,
-    "created_at": "2026-05-28T05:20:45.855Z",
-    "updated_at": "2026-05-28T05:20:45.855Z"
-  },
-  {
-    "user_id": 4,
-    "username": "skgus2",
-    "email": "chlskgus789@naver.com",
-    "password_hash": "$2a$10$/0AnJkZOOsu/balyVMBeh.zG20hoHcca7ZW3DdiTf34rB70I1076y",
-    "profile_image_url": null,
-    "created_at": "2026-06-04T06:27:42.962Z",
-    "updated_at": "2026-06-04T06:27:42.962Z"
   }
 ]

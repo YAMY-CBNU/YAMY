@@ -33,7 +33,7 @@ async function detectMode() {
   try {
     const connection = await mysqlPool.getConnection();
     try {
-      await connection.query('SELECT 1');
+      await connection.query('SELECT 1 FROM `USER` LIMIT 1');
       return 'mysql';
     } finally {
       connection.release();
@@ -197,45 +197,6 @@ async function createPasswordHash(password) {
   return bcrypt.hash(password, BCRYPT_ROUNDS);
 }
 
-async function addPick(userId, recipeId) {
-  const mode = await getMode();
-  if (mode === 'mysql') return;
-
-  const users = await readUsers();
-  const idx = users.findIndex((u) => Number(u.user_id) === Number(userId));
-  if (idx === -1) return;
-
-  const picks = users[idx].picks || [];
-  const id = Number(recipeId);
-  if (!picks.includes(id)) {
-    users[idx].picks = [...picks, id];
-    users[idx].updated_at = new Date().toISOString();
-    await writeUsers(users);
-  }
-}
-
-async function removePick(userId, recipeId) {
-  const mode = await getMode();
-  if (mode === 'mysql') return;
-
-  const users = await readUsers();
-  const idx = users.findIndex((u) => Number(u.user_id) === Number(userId));
-  if (idx === -1) return;
-
-  users[idx].picks = (users[idx].picks || []).filter((id) => id !== Number(recipeId));
-  users[idx].updated_at = new Date().toISOString();
-  await writeUsers(users);
-}
-
-async function getPicks(userId) {
-  const mode = await getMode();
-  if (mode === 'mysql') return [];
-
-  const users = await readUsers();
-  const user = users.find((u) => Number(u.user_id) === Number(userId));
-  return user?.picks || [];
-}
-
 module.exports = {
   getMode,
   findByEmailOrUsername,
@@ -245,7 +206,4 @@ module.exports = {
   createUser,
   updateUser,
   createPasswordHash,
-  addPick,
-  removePick,
-  getPicks,
 };
