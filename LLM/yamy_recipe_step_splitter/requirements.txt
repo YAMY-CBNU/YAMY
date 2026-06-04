@@ -1,0 +1,14 @@
+pandas
+scikit-learn
+datasets
+transformers
+accelerate
+peft
+trl
+torch
+tqdm
+
+# Optional for QLoRA 4-bit loading.
+# On Windows this can be difficult to install, so keep USE_4BIT=False unless
+# your environment supports bitsandbytes.
+# bitsandbytes

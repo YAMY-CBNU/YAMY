@@ -1,0 +1,68 @@
+{
+  "citation": "",
+  "description": "",
+  "features": {
+    "recipe_id": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "input_text": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "target_json": {
+      "steps": {
+        "feature": {
+          "step": {
+            "dtype": "int64",
+            "_type": "Value"
+          },
+          "description": {
+            "dtype": "string",
+            "_type": "Value"
+          },
+          "timer_minutes": {
+            "dtype": "float64",
+            "_type": "Value"
+          }
+        },
+        "_type": "List"
+      }
+    },
+    "timer_meta": {
+      "feature": {
+        "step": {
+          "dtype": "int64",
+          "_type": "Value"
+        },
+        "csv_timer_minutes": {
+          "dtype": "float64",
+          "_type": "Value"
+        },
+        "regex_timer_minutes": {
+          "dtype": "float64",
+          "_type": "Value"
+        },
+        "regex_raw_text": {
+          "dtype": "string",
+          "_type": "Value"
+        },
+        "regex_unit": {
+          "dtype": "string",
+          "_type": "Value"
+        },
+        "source": {
+          "dtype": "string",
+          "_type": "Value"
+        },
+        "mismatch": {
+          "dtype": "bool",
+          "_type": "Value"
+        }
+      },
+      "_type": "List"
+    }
+  },
+  "homepage": "",
+  "license": ""
+}
