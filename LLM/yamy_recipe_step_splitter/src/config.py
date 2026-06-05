@@ -20,7 +20,9 @@ TEST_JSONL_PATH = DATA_DIR / "processed_test.jsonl"
 HF_DATASET_DIR = DATA_DIR / "hf_dataset"
 
 BASELINE_PREDICTIONS_PATH = OUTPUT_DIR / "baseline_predictions.jsonl"
+LORA_PREDICTIONS_PATH = OUTPUT_DIR / "lora_predictions.jsonl"
 EVAL_RESULT_PATH = OUTPUT_DIR / "eval_result.json"
+EXAMPLE_COMPARISON_PATH = OUTPUT_DIR / "prediction_examples.md"
 LORA_OUTPUT_DIR = OUTPUT_DIR / "lora_adapter"
 
 
@@ -29,7 +31,8 @@ RECIPE_ID_COL = "external_recipe_id"
 STEP_NO_COL = "step_order"
 STEP_TEXT_COL = "description"
 
-# Optional column. If it exists, it is used as the preferred timer label.
+# Optional column. This is the only timer label source used by prepare_dataset.py.
+# Empty values become null; timers are not extracted from STEP_TEXT_COL.
 TIMER_SECONDS_COL = "timer_seconds"
 
 
@@ -42,7 +45,7 @@ RANDOM_SEED = 42
 
 # Model and generation
 MODEL_NAME = "Qwen/Qwen2.5-1.5B-Instruct"
-MAX_LENGTH = 2048
+MAX_LENGTH = 1024
 MAX_NEW_TOKENS = 768
 TEMPERATURE = 0.2
 TOP_P = 0.9
@@ -50,19 +53,29 @@ TOP_P = 0.9
 # "few_shot" usually improves JSON format adherence. Use "zero_shot" for a
 # stricter baseline without examples.
 BASELINE_MODE = "few_shot"
-BASELINE_SAMPLE_SIZE = 20
+BASELINE_SAMPLE_SIZE = 80
+
+# LoRA adapters were trained with the zero-shot instruction format, so use the
+# same format for adapter inference by default.
+LORA_INFERENCE_MODE = "zero_shot"
+LORA_SAMPLE_SIZE = 80
+
+EXAMPLE_SAMPLE_SIZE = 5
 
 
 # LoRA / QLoRA
+USE_GPU = True
 USE_4BIT = False
-LORA_R = 16
-LORA_ALPHA = 32
+LORA_R = 8
+LORA_ALPHA = 16
 LORA_DROPOUT = 0.05
-LORA_TARGET_MODULES = ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
+LORA_TARGET_MODULES = ["q_proj", "v_proj"]
 
 TRAIN_EPOCHS = 1
 LEARNING_RATE = 2e-4
 BATCH_SIZE = 1
-GRADIENT_ACCUMULATION_STEPS = 8
+GRADIENT_ACCUMULATION_STEPS = 16
+GRADIENT_CHECKPOINTING = True
+EVAL_DURING_TRAINING = False
 LOGGING_STEPS = 10
 SAVE_STEPS = 100

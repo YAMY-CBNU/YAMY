@@ -37,7 +37,7 @@ from config import (
     VALID_JSONL_PATH,
     VALID_RATIO,
 )
-from utils import extract_timer_from_text, seconds_to_minutes, set_seed, write_jsonl
+from utils import seconds_to_minutes, set_seed, write_jsonl
 
 
 def validate_split_ratios() -> None:
@@ -76,36 +76,22 @@ def make_input_text(step_texts: list[str]) -> str:
     return " ".join(cleaned)
 
 
-def choose_timer(row: pd.Series, regex_timer: dict[str, Any]) -> tuple[float | None, dict[str, Any]]:
-    """Choose timer label and keep source metadata for analysis."""
+def choose_timer(row: pd.Series) -> tuple[float | None, dict[str, Any]]:
+    """Use only the timer column as the label source.
+
+    We intentionally do not extract timers from free-form text here. If
+    TIMER_SECONDS_COL is empty or missing, timer_minutes stays null even when
+    the description contains text such as "5분" or "30초".
+    """
     csv_minutes = None
     if TIMER_SECONDS_COL in row.index:
         csv_minutes = seconds_to_minutes(row.get(TIMER_SECONDS_COL))
 
-    regex_minutes = regex_timer.get("timer_minutes")
-    if csv_minutes is not None:
-        timer_minutes = csv_minutes
-        source = "csv_timer_seconds"
-    elif regex_minutes is not None:
-        timer_minutes = regex_minutes
-        source = "regex_text"
-    else:
-        timer_minutes = None
-        source = None
-
-    mismatch = False
-    if csv_minutes is not None and regex_minutes is not None:
-        mismatch = abs(float(csv_minutes) - float(regex_minutes)) > 0.01
-
     meta = {
         "csv_timer_minutes": csv_minutes,
-        "regex_timer_minutes": regex_minutes,
-        "regex_raw_text": regex_timer.get("raw_text"),
-        "regex_unit": regex_timer.get("unit"),
-        "source": source,
-        "mismatch": mismatch,
+        "source": "csv_timer_seconds" if csv_minutes is not None else None,
     }
-    return timer_minutes, meta
+    return csv_minutes, meta
 
 
 def build_recipe_record(recipe_id: Any, group: pd.DataFrame) -> dict[str, Any]:
@@ -119,8 +105,7 @@ def build_recipe_record(recipe_id: Any, group: pd.DataFrame) -> dict[str, Any]:
 
     for output_step_no, (_, row) in enumerate(group.iterrows(), start=1):
         description = str(row.get(STEP_TEXT_COL, "")).strip()
-        regex_timer = extract_timer_from_text(description)
-        timer_minutes, meta = choose_timer(row, regex_timer)
+        timer_minutes, meta = choose_timer(row)
 
         steps.append(
             {

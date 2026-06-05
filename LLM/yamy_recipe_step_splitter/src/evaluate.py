@@ -7,7 +7,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from config import BASELINE_PREDICTIONS_PATH, EVAL_RESULT_PATH, OUTPUT_DIR, TEST_JSONL_PATH
+from config import BASELINE_PREDICTIONS_PATH, EVAL_RESULT_PATH, LORA_PREDICTIONS_PATH, OUTPUT_DIR, TEST_JSONL_PATH
 from utils import is_valid_step_schema, normalize_text, parse_model_json, read_jsonl
 
 
@@ -62,8 +62,10 @@ def evaluate_rows(prediction_rows: list[dict[str, Any]], gold_rows: list[dict[st
 
     for pred_row in prediction_rows:
         recipe_id = str(pred_row.get("recipe_id"))
-        gold_row = pred_row if pred_row.get("gold_json") else gold_by_id.get(recipe_id)
-        gold_json = gold_row.get("gold_json") or gold_row.get("target_json") if gold_row else None
+        # Prefer the current processed_test.jsonl gold labels. Prediction files
+        # may contain older embedded gold_json from a previous dataset policy.
+        gold_row = gold_by_id.get(recipe_id) or pred_row
+        gold_json = (gold_row.get("target_json") or gold_row.get("gold_json")) if gold_row else None
         pred_json, parsed_ok = load_prediction_json(pred_row)
 
         compared += 1
@@ -108,21 +110,35 @@ def evaluate_rows(prediction_rows: list[dict[str, Any]], gold_rows: list[dict[st
     }
 
 
+def select_predictions_path() -> Path | None:
+    """Prefer LoRA predictions when available, otherwise fall back to baseline."""
+    if LORA_PREDICTIONS_PATH.exists():
+        return LORA_PREDICTIONS_PATH
+    if BASELINE_PREDICTIONS_PATH.exists():
+        return BASELINE_PREDICTIONS_PATH
+    return None
+
+
 def main() -> int:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-    if not BASELINE_PREDICTIONS_PATH.exists():
+    predictions_path = select_predictions_path()
+    if predictions_path is None:
+        print(f"[WARN] Predictions file not found: {LORA_PREDICTIONS_PATH}")
         print(f"[WARN] Predictions file not found: {BASELINE_PREDICTIONS_PATH}")
-        print("[INFO] Run baseline inference first: python src/infer_baseline.py")
+        print("[INFO] Run LoRA inference first: python src/infer_lora.py")
+        print("[INFO] Or run baseline inference: python src/infer_baseline.py")
         return 0
 
-    prediction_rows = read_jsonl(BASELINE_PREDICTIONS_PATH)
+    print(f"[INFO] Evaluating predictions: {predictions_path}")
+    prediction_rows = read_jsonl(predictions_path)
     gold_rows = read_jsonl(TEST_JSONL_PATH)
     if not prediction_rows:
         print("[WARN] No predictions to evaluate.")
         return 0
 
     result = evaluate_rows(prediction_rows, gold_rows)
+    result["predictions_path"] = str(predictions_path)
     print(json.dumps(result, ensure_ascii=False, indent=2))
 
     EVAL_RESULT_PATH.parent.mkdir(parents=True, exist_ok=True)
