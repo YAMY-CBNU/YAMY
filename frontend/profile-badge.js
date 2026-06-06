@@ -38,7 +38,12 @@
     const label = getProfileLabel(getStoredUser());
 
     document.querySelectorAll('[data-profile-link]').forEach((link) => {
-      link.textContent = label;
+      const textSpan = link.querySelector('[data-profile-text]');
+      if (textSpan) {
+        textSpan.textContent = label;
+      } else {
+        link.textContent = label;
+      }
       link.setAttribute('title', label);
       link.setAttribute('aria-label', '\uD504\uB85C\uD544\uB85C \uC774\uB3D9');
       link.classList.toggle('hidden', !loggedIn);
