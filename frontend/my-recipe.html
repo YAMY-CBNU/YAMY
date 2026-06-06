@@ -8,35 +8,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;800&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Be_Vietnam_Pro:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-<script id="tailwind-config">
-  tailwind.config = {
-    darkMode: "class",
-    theme: {
-      extend: {
-        colors: {
-          "surface": "#F7F3F0", "primary": "#C05B40", "on-primary": "#ffffff",
-          "on-surface": "#2D2926", "on-surface-variant": "#6D645E",
-          "outline-variant": "#D9D0C7", "surface-container": "#EFEAE6",
-          "surface-container-high": "#E6DFD9", "surface-container-lowest": "#ffffff",
-          "tertiary": "#D99E32", "tertiary-container": "#FCE9C8",
-          "on-tertiary-container": "#7A5200", "error": "#ba1a1a"
-        },
-        borderRadius: { DEFAULT: "0.5rem", lg: "0.75rem", xl: "1.25rem", full: "9999px" },
-        fontFamily: { headline: ["Epilogue", "Plus Jakarta Sans"], body: ["Be Vietnam Pro"] }
-      }
-    }
-  }
-</script>
-<style>
-  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-  body { font-family: 'Be Vietnam Pro', sans-serif; }
-  h1, h2, h3 { font-family: 'Plus Jakarta Sans', sans-serif; }
-  nav { font-family: 'Plus Jakarta Sans', sans-serif; }
-  .tab-panel { display: none; }
-  .tab-panel.active { display: block; }
-  .tab-btn { color: #6D645E; border-bottom: 2px solid transparent; }
-  .tab-btn.active { color: #C05B40; border-bottom-color: #C05B40; }
-</style>
+<script src="tailwind-collection.js"></script>
+<link rel="stylesheet" href="styles.css"/>
+<link rel="stylesheet" href="my-recipe.css"/>
 </head>
 <body class="bg-surface text-on-surface min-h-screen flex flex-col">
 

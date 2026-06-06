@@ -6,98 +6,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;800&amp;family=Plus+Jakarta+Sans:ital,wght@0,400;0,700;0,800;1,400;1,700;1,800&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<script id="tailwind-config">
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            "colors": {
-                    "tertiary-dim": "#005555",
-                    "on-background": "#2D2926",
-                    "surface-container": "#F2EBE3",
-                    "tertiary-fixed": "#008880",
-                    "on-primary": "#FFFFFF",
-                    "primary-fixed-dim": "#C05B40",
-                    "on-primary-fixed-variant": "#4A2318",
-                    "surface-variant": "#EBE3D9",
-                    "surface-container-highest": "#E5DCD2",
-                    "surface": "#F9F7F2",
-                    "on-secondary": "#FFFFFF",
-                    "on-error-container": "#410002",
-                    "tertiary": "#008880",
-                    "surface-container-high": "#F0E9E0",
-                    "surface-dim": "#EBE3D9",
-                    "secondary-fixed": "#D9933D",
-                    "surface-container-low": "#F5F0E9",
-                    "primary-container": "#C05B40",
-                    "on-primary-fixed": "#000000",
-                    "surface-tint": "#C05B40",
-                    "on-error": "#FFFFFF",
-                    "tertiary-container": "#008880",
-                    "on-secondary-fixed-variant": "#4E3210",
-                    "background": "#F9F7F2",
-                    "error": "#B3261E",
-                    "primary": "#C05B40",
-                    "secondary-container": "#D9933D",
-                    "error-container": "#F9DEDC",
-                    "outline-variant": "#C9C5B4",
-                    "secondary-fixed-dim": "#D9933D",
-                    "on-surface": "#2D2926",
-                    "on-tertiary": "#FFFFFF",
-                    "secondary": "#D9933D",
-                    "on-tertiary-fixed": "#00201F",
-                    "primary-dim": "#A04A33",
-                    "secondary-dim": "#B77C33",
-                    "on-tertiary-fixed-variant": "#004F4C",
-                    "inverse-primary": "#FFB4A1",
-                    "on-primary-container": "#FFFFFF",
-                    "inverse-surface": "#322F2D",
-                    "on-tertiary-container": "#FFFFFF",
-                    "on-secondary-container": "#FFFFFF",
-                    "surface-bright": "#F9F7F2",
-                    "tertiary-fixed-dim": "#008880",
-                    "inverse-on-surface": "#F7F0E8",
-                    "error-dim": "#F2B8B5",
-                    "on-secondary-fixed": "#291800",
-                    "on-surface-variant": "#4F4842",
-                    "primary-fixed": "#FFDBD1",
-                    "surface-container-lowest": "#FFFFFF",
-                    "outline": "#81766E"
-            },
-            "borderRadius": {
-                    "DEFAULT": "0.25rem",
-                    "lg": "0.5rem",
-                    "xl": "1rem",
-                    "2xl": "1.5rem",
-                    "full": "9999px"
-            },
-            "fontFamily": {
-                    "headline": ["Epilogue", "Plus Jakarta Sans"],
-                    "body": ["Plus Jakarta Sans"],
-                    "label": ["Plus Jakarta Sans"]
-            }
-          },
-        },
-      }
-    </script>
-<style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-        .hide-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .hide-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-        .artisanal-gradient {
-            background: linear-gradient(135deg, #C05B40 0%, #D9933D 100%);
-        }
-        body {
-            background-color: #F9F7F2;
-        }
-    </style>
+<script src="tailwind-index.js"></script>
+<link rel="stylesheet" href="styles.css"/>
+<link rel="stylesheet" href="index.css"/>
 </head>
 <body class="bg-surface text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container">
 <!-- TopNavBar -->
@@ -123,36 +34,12 @@
 <main class="pt-20 md:pt-32 pb-32 overflow-x-hidden max-w-7xl mx-auto">
 <!-- Hero Section -->
 <section class="px-4 md:px-8 mb-16 md:mb-24">
-<div class="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 md:h-[550px]">
-<div class="md:col-span-8 relative rounded-2xl overflow-hidden group shadow-lg h-72 sm:h-96 md:h-full">
+<div class="relative rounded-2xl overflow-hidden group shadow-lg h-72 sm:h-96 md:h-[550px]">
 <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="Gourmet roasted lamb chops" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJVuqypwNHV4hx8MiUWKljawG_lBCbP-ihQi_kH_LWEPFfC5bHgjkqOMI3xSEB-TwkYTXaKDhguZhyrVeVhvcLPQOYUrRKAiV7Jtz4vPOdRM_Q9YOn8YaKynJ0TRICOiSjBaAjllYujyjZ0sGPmBrKcUxKxaimd2yY_rDLqocOTaYilHPWtstfdO2j2aGHg2q12FlKcmDcv0OaHTn4fZnT3pHqNgJqLEj8cYD-GwqcBE_nGyxYa2CRz6-R0Egh9oj5PYIqfYrXLL8"/>
 <div class="absolute inset-0 bg-gradient-to-t from-on-background/90 via-on-background/20 to-transparent flex flex-col justify-end p-12">
 <span class="bg-secondary text-on-secondary px-5 py-1.5 rounded-full text-[10px] font-bold w-fit mb-4 md:mb-6 font-headline uppercase tracking-widest">에디터의 선택</span>
 <h1 class="text-white text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-headline font-extrabold tracking-tighter mb-3 md:mb-6 leading-tight">슬로우 로스트 지중해식 양고기</h1>
 <p class="text-white/90 max-w-xl font-body leading-relaxed text-lg hidden sm:block">허브를 듬뿍 넣은 시그니처 슬로우 로스팅 기법으로 입안에서 살살 녹는 양고기 요리의 비결을 확인해보세요.</p>
-</div>
-</div>
-<div class="md:col-span-4 grid grid-cols-2 md:grid-rows-2 md:grid-cols-1 gap-4 md:gap-8">
-<div class="bg-surface-variant rounded-2xl p-6 md:p-10 flex flex-col justify-center relative overflow-hidden group hover:shadow-md transition-shadow">
-<div class="z-10">
-<h3 class="font-headline text-xl md:text-3xl font-bold text-on-background mb-2 md:mb-3">장인 베이킹</h3>
-<p class="text-on-surface-variant text-base leading-relaxed hidden sm:block">완벽한 사워도우 크럼의 비밀을 풀어보세요.</p>
-<button class="mt-3 md:mt-6 text-primary font-bold text-sm flex items-center gap-2 group-hover:translate-x-1 transition-transform">테크닉 탐색하기 <span class="material-symbols-outlined text-sm">arrow_forward</span></button>
-</div>
-<span class="material-symbols-outlined absolute -right-6 -bottom-6 text-[8rem] md:text-[12rem] text-primary opacity-10 rotate-12">bakery_dining</span>
-</div>
-<div class="bg-tertiary rounded-2xl p-6 md:p-10 text-on-tertiary flex flex-col justify-center relative group hover:shadow-md transition-shadow">
-<h3 class="font-headline text-xl md:text-3xl font-bold mb-2 md:mb-3">여름 수확</h3>
-<p class="text-on-tertiary/90 text-base leading-relaxed hidden sm:block">테라스 디너 파티를 위한 신선한 제철 레시피.</p>
-<div class="mt-4 md:mt-8 flex items-center gap-3 md:gap-4">
-<div class="flex -space-x-3">
-<div class="w-8 h-8 md:w-10 md:h-10 rounded-full border-2 border-white bg-stone-300 overflow-hidden"><img data-alt="Chef" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCNlv6ddOFZjj_ePev33rUslaPw79BhercO7FReTE9tfnAFOwaKpZ-yzGnsxzR7HOK8wLjBGO43EtrgxWmCnFmB1_bpWZ8qsCYFSTootvRR6E9fOaJ0jXfMXSaUDh-zm88UvLouCPmTfbyhRZd0W_tbu55eGKK_mKSpY2MKDAZVl-pE1U5Cny_np65cbEatcSVTGDq1uifu0iVb6xPSAkFlj2uzELFsdpsHqhHoqZ1jQAno3VZgGuW1QDIDvgSSjadgWJLLhZq-FqA"/></div>
-<div class="w-8 h-8 md:w-10 md:h-10 rounded-full border-2 border-white bg-stone-300 overflow-hidden"><img data-alt="Blogger" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDJVygo2fPlFlqd7_Lrqwv4sU-mgoUgOC_lranZlxqf3VsK5PsQ-_Z-lmPCATFOjv1DQbfdQiQ6XmVXMsExbq4lQwNBqLsfbcN9OAxznh4IwdipNMJaAbh0FZrBmNVg6fDdbvRCHWcIEqxoeakiK1fR9-FaHU4XOirtB01QlLmjsAitfcXv3_5VcaSZY4VuDlKquVAQmQcuP3sBUd-t79ZSuNyOqNAmiFdYPZ02Nb6OTTZ0Jr74bTYi4BlmT5Bes4KmPO6-J2kRBo"/></div>
-<div class="flex items-center justify-center w-8 h-8 md:w-10 md:h-10 rounded-full border-2 border-white bg-primary text-[10px] font-bold text-white">+1.2만</div>
-</div>
-<span class="text-xs font-bold uppercase tracking-widest text-on-tertiary/80 hidden sm:block">함께하는 미식가들</span>
-</div>
-</div>
 </div>
 </div>
 </section>

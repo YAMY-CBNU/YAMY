@@ -7,57 +7,9 @@
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
-  <script id="tailwind-config">
-    tailwind.config = {
-      darkMode: "class",
-      theme: {
-        extend: {
-          colors: {
-            "primary": "#9d3d1c",
-            "primary-container": "#bd5532",
-            "on-primary": "#ffffff",
-            "secondary": "#74593d",
-            "on-secondary": "#ffffff",
-            "secondary-container": "#fed9b5",
-            "on-secondary-container": "#785e41",
-            "surface": "#fcf9f4",
-            "surface-container": "#f0ede9",
-            "surface-container-low": "#f6f3ee",
-            "surface-container-lowest": "#ffffff",
-            "on-surface": "#1c1c19",
-            "on-surface-variant": "#56423c",
-            "outline": "#8a726b",
-            "outline-variant": "#ddc0b8",
-            "background": "#fcf9f4",
-          },
-          fontFamily: {
-            "headline": ["Epilogue"],
-            "body": ["Plus Jakarta Sans"],
-          }
-        },
-      },
-    }
-  </script>
-  <style>
-    body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-font-smoothing: antialiased; }
-    h1, h2, h3 { font-family: 'Epilogue', sans-serif; }
-    .input-field {
-      width: 100%;
-      background: #f0ede9;
-      border: none;
-      border-bottom: 2px solid transparent;
-      padding: 0.65rem 1rem;
-      border-radius: 0.5rem;
-      color: #1c1c19;
-      transition: all 0.2s;
-      outline: none;
-    }
-    .input-field::placeholder { color: #8a726b; }
-    .input-field:focus {
-      border-bottom: 2px solid #9d3d1c;
-      box-shadow: 0 4px 12px -4px rgba(157, 61, 28, 0.1);
-    }
-  </style>
+  <script src="tailwind-landing.js"></script>
+  <link rel="stylesheet" href="styles.css"/>
+  <link rel="stylesheet" href="auth.css"/>
 </head>
 <body class="bg-background text-on-background h-screen overflow-hidden flex flex-col">
 

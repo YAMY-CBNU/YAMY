@@ -1,0 +1,7 @@
+body {
+    background-color: #F9F7F2;
+}
+
+.artisanal-gradient {
+    background: linear-gradient(135deg, #C05B40 0%, #D9933D 100%);
+}
