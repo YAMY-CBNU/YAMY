@@ -1,0 +1,97 @@
+@import "tailwindcss";
+
+@theme {
+  --color-on-surface-variant: #56423c;
+  --color-secondary-container: #fed9b5;
+  --color-surface: #fcf9f4;
+  --color-inverse-surface: #31302d;
+  --color-error-container: #ffdad6;
+  --color-primary-container: #bd5532;
+  --color-on-secondary-fixed: #2a1803;
+  --color-surface-container: #f0ede9;
+  --color-tertiary-container: #aa6149;
+  --color-on-background: #1c1c19;
+  --color-primary: #9d3d1c;
+  --color-on-primary-fixed-variant: #802908;
+  --color-primary-fixed: #ffdbd0;
+  --color-error: #ba1a1a;
+  --color-on-tertiary-container: #fffbff;
+  --color-on-tertiary: #ffffff;
+  --color-secondary-fixed-dim: #e3c09d;
+  --color-inverse-primary: #ffb59e;
+  --color-on-tertiary-fixed: #3a0b00;
+  --color-surface-bright: #fcf9f4;
+  --color-secondary: #74593d;
+  --color-surface-container-highest: #e5e2dd;
+  --color-tertiary: #8d4933;
+  --color-surface-container-high: #ebe8e3;
+  --color-surface-tint: #a0401f;
+  --color-primary-fixed-dim: #ffb59e;
+  --color-on-tertiary-fixed-variant: #723520;
+  --color-tertiary-fixed: #ffdbd0;
+  --color-on-error: #ffffff;
+  --color-surface-variant: #e5e2dd;
+  --color-surface-container-lowest: #ffffff;
+  --color-tertiary-fixed-dim: #ffb59e;
+  --color-on-error-container: #93000a;
+  --color-outline: #8a726b;
+  --color-background: #fcf9f4;
+  --color-on-secondary: #ffffff;
+  --color-surface-container-low: #f6f3ee;
+  --color-on-primary-container: #fffbff;
+  --color-on-secondary-container: #785e41;
+  --color-on-secondary-fixed-variant: #5a4227;
+  --color-inverse-on-surface: #f3f0eb;
+  --color-on-primary: #ffffff;
+  --color-outline-variant: #ddc0b8;
+  --color-secondary-fixed: #ffddbb;
+  --color-surface-dim: #dcdad5;
+  --color-on-surface: #1c1c19;
+  --color-on-primary-fixed: #3a0b00;
+
+  --font-headline: 'Epilogue', sans-serif;
+  --font-body: 'Plus Jakarta Sans', sans-serif;
+  --font-label: 'Plus Jakarta Sans', sans-serif;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+h1, h2, h3 {
+  font-family: 'Epilogue', sans-serif;
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+.fluid-h1    { font-size: clamp(1.75rem, 5vw, 4.5rem);    line-height: 1.1; }
+.fluid-h2    { font-size: clamp(1.5rem,  3.5vw, 3rem); }
+.fluid-h3    { font-size: clamp(1.1rem,  2.5vw, 1.875rem); }
+.fluid-h4    { font-size: clamp(0.875rem, 1.8vw, 1.25rem); }
+.fluid-body  { font-size: clamp(0.875rem, 1.4vw, 1.125rem); }
+.fluid-sm    { font-size: clamp(0.75rem,  1.1vw, 0.875rem); }
+
+.fluid-section { padding-top: clamp(3rem, 6vw, 6rem); padding-bottom: clamp(3rem, 6vw, 6rem); }
+.fluid-px      { padding-left: clamp(1rem, 4vw, 1.5rem); padding-right: clamp(1rem, 4vw, 1.5rem); }
+.fluid-card    { padding: clamp(1.25rem, 3vw, 3rem); }
+
+.fluid-photo {
+  width:  clamp(7rem, 18vw, 12rem);
+  height: clamp(7rem, 18vw, 12rem);
+}
+.fluid-hero-img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  object-position: center top;
+  max-height: 420px;
+}
+.fluid-btn {
+  padding: clamp(0.625rem, 1.2vw, 1rem) clamp(1.25rem, 2.5vw, 2rem);
+  font-size: clamp(0.875rem, 1.4vw, 1.125rem);
+}
+.fluid-gap   { gap: clamp(0.75rem, 2vw, 1.5rem); }
+.fluid-mb    { margin-bottom: clamp(1.5rem, 3vw, 2.5rem); }
+.fluid-mb-sm { margin-bottom: clamp(0.75rem, 1.5vw, 1rem); }
