@@ -7,78 +7,38 @@
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
-  <script id="tailwind-config">
-    tailwind.config = {
-      darkMode: "class",
-      theme: {
-        extend: {
-          colors: {
-            "primary": "#9d3d1c",
-            "primary-container": "#bd5532",
-            "on-primary": "#ffffff",
-            "secondary": "#74593d",
-            "on-secondary": "#ffffff",
-            "secondary-container": "#fed9b5",
-            "on-secondary-container": "#785e41",
-            "surface": "#fcf9f4",
-            "surface-container": "#f0ede9",
-            "surface-container-low": "#f6f3ee",
-            "surface-container-lowest": "#ffffff",
-            "on-surface": "#1c1c19",
-            "on-surface-variant": "#56423c",
-            "outline": "#8a726b",
-            "outline-variant": "#ddc0b8",
-            "background": "#fcf9f4",
-          },
-          fontFamily: {
-            "headline": ["Epilogue"],
-            "body": ["Plus Jakarta Sans"],
-          }
-        },
-      },
-    }
-  </script>
-  <style>
-    body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-font-smoothing: antialiased; }
-    h1, h2, h3 { font-family: 'Epilogue', sans-serif; }
-    .input-field {
-      width: 100%;
-      background: #f0ede9;
-      border: none;
-      border-bottom: 2px solid transparent;
-      padding: 0.65rem 1rem;
-      border-radius: 0.5rem;
-      color: #1c1c19;
-      transition: all 0.2s;
-      outline: none;
-    }
-    .input-field::placeholder { color: #8a726b; }
-    .input-field:focus {
-      border-bottom: 2px solid #9d3d1c;
-      box-shadow: 0 4px 12px -4px rgba(157, 61, 28, 0.1);
-    }
-  </style>
+  <script src="tailwind-landing.js"></script>
+  <link rel="stylesheet" href="styles.css"/>
 </head>
-<body class="bg-background text-on-background h-screen overflow-hidden flex flex-col">
+<body class="bg-background text-on-background font-body h-screen overflow-hidden flex flex-col">
 
   <!-- TopNavBar -->
-  <nav class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl flex justify-between items-center px-12 h-24 max-w-full mx-auto border-b border-outline-variant/30">
-    <div class="flex items-center gap-12">
+  <nav class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl flex justify-between items-center px-4 md:px-12 h-16 md:h-24 max-w-full mx-auto border-b border-outline-variant/30">
+    <div class="flex items-center gap-6 lg:gap-12">
       <a href="index.html" class="text-3xl font-extrabold text-primary font-headline tracking-tighter">YAMY</a>
-      <div class="hidden md:flex items-center gap-8 font-headline tracking-tight">
-        <a class="text-primary border-b-2 border-primary pb-1 font-bold" href="index.html">검색하기</a>
+      <div class="hidden md:flex items-center gap-5 lg:gap-8 font-headline tracking-tight whitespace-nowrap">
+        <a class="text-on-surface-variant hover:text-primary transition-colors" href="index.html">탐색하기</a>
         <a id="nav-my-recipe" class="text-on-surface-variant hover:text-primary transition-colors" href="my-recipe.html">내 레시피</a>
         <a id="nav-my-picks" class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer" onclick="event.preventDefault(); window.authGuard.redirectToLoginIfNeeded() || (window.location.href='my-picks.html')">저장됨</a>
         <a id="nav-recipe-editor" class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer" onclick="event.preventDefault(); window.authGuard.redirectToLoginIfNeeded() || (window.location.href='recipe-editor.html')">레시피 작성</a>
       </div>
     </div>
-    <div class="flex items-center gap-6">
-      <div class="relative hidden sm:block">
+    <div class="flex items-center gap-2 md:gap-3 lg:gap-6">
+      <!-- 검색: lg+ 전체 입력창, lg 미만 아이콘 버튼 -->
+      <button type="button" class="flex lg:hidden p-2 text-on-surface-variant hover:text-primary rounded-full hover:bg-surface-container transition-all">
+        <span class="material-symbols-outlined">search</span>
+      </button>
+      <div class="relative hidden lg:block">
         <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
-        <input class="bg-surface-container border border-outline-variant/50 rounded-full pl-11 pr-6 py-2.5 text-sm focus:ring-2 focus:ring-primary w-72 transition-all outline-none" placeholder="요리 영감 검색..." type="text"/>
+        <input class="bg-surface-container border border-outline-variant/50 rounded-full pl-11 pr-6 py-2.5 text-sm focus:ring-2 focus:ring-primary w-64 transition-all outline-none" placeholder="요리 영감 검색..." type="text"/>
       </div>
-      <a href="profile.html" data-profile-link class="hidden px-4 py-2.5 rounded-full bg-surface-container text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-all text-sm font-semibold whitespace-nowrap">프로필</a>
-      <a id="auth-action" href="login.html" class="bg-primary text-on-primary px-8 py-2.5 rounded-full font-headline font-bold text-sm hover:opacity-90 duration-150 transition-all shadow-sm">로그인</a>
+      <!-- 프로필: lg+ 텍스트+아이콘, lg 미만 아이콘 버튼 -->
+      <a href="profile.html" data-profile-link class="hidden items-center rounded-full bg-surface-container text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-all font-semibold p-2 lg:px-4 lg:py-2.5">
+        <span class="material-symbols-outlined lg:hidden">person</span>
+        <span class="hidden lg:inline text-sm whitespace-nowrap" data-profile-text>프로필</span>
+      </a>
+      <!-- 로그인/아웃: styles.css에서 lg 미만 아이콘 처리 -->
+      <a id="auth-action" href="login.html" class="bg-primary text-on-primary px-8 py-2.5 rounded-full font-headline font-bold text-sm hover:opacity-90 duration-150 transition-all shadow-sm whitespace-nowrap">로그인</a>
     </div>
   </nav>
   <nav class="hidden fixed top-0 w-full z-50 bg-[#f6f3ee]/90 backdrop-blur-md border-b border-[#ddc0b8]/20">
@@ -91,7 +51,7 @@
   </nav>
 
   <!-- Main Content: Split Screen -->
-  <main class="flex pt-24 h-full overflow-hidden">
+  <main class="flex pt-16 md:pt-24 h-full overflow-hidden">
 
     <!-- Left Side: Lifestyle Image (데스크탑만 표시) -->
     <div class="hidden lg:block lg:w-1/2 relative h-full">
@@ -101,17 +61,17 @@
         src="https://lh3.googleusercontent.com/aida-public/AB6AXuAqubcB6ESb_Xgwzkikp4kdhzvVg4bABokrfHuTF9UX7fuUkvsnAqpsVD9tLOUggC13Hkr-0qDBhdZqQ6ll3citqtN0Atw32nkhbILiwat6H0gso294gPew6MzoI5XArG2F9nbRRJjg-mwbEEzBDa8KVVQkJbN437x0qDM_eWmC5Oe6jMQ5fnac8V9MqetKHVg10-OXfvy8tdtGdmtjnJOO795CdoS_iLxqTcIimHvBSbKbqD7uWRCe6yQVtnF7p_XKpr0eOk4FDK8"
       >
       <div class="absolute inset-0 bg-black/10"></div>
-      <div class="absolute bottom-16 left-16 max-w-md">
-        <div class="bg-[#fcf9f4]/90 backdrop-blur-sm p-8 rounded-xl shadow-2xl">
+      <div class="absolute bottom-8 left-8 md:bottom-16 md:left-16 max-w-md">
+        <div class="bg-[#fcf9f4]/90 backdrop-blur-sm p-6 md:p-8 rounded-xl shadow-2xl">
           <span class="text-[#9d3d1c] font-bold tracking-widest uppercase text-xs mb-4 block">Seasonal Inspiration</span>
-          <h2 class="text-3xl font-extrabold text-[#1c1c19] mb-4 leading-tight">가장 따뜻한 주방에서 시작되는 맛있는 이야기.</h2>
+          <h2 class="text-2xl md:text-3xl font-extrabold text-[#1c1c19] mb-4 leading-tight">가장 따뜻한 주방에서 시작되는 맛있는 이야기.</h2>
           <p class="text-[#56423c] font-medium">당신의 일상이 레시피가 되는 공간, YAMY에 오신 것을 환영합니다.</p>
         </div>
       </div>
     </div>
 
     <!-- Right Side: Login Form -->
-    <div class="w-full lg:w-1/2 h-full overflow-y-auto bg-[#ffffff] flex items-center justify-center px-16 py-6">
+    <div class="w-full lg:w-1/2 h-full overflow-y-auto bg-[#ffffff] flex items-center justify-center px-6 md:px-16 py-6">
       <div class="w-full max-w-[480px]">
 
         <!-- Tab Switcher -->
@@ -122,7 +82,7 @@
 
         <!-- Header -->
         <div class="mb-8">
-          <h1 class="text-2xl font-extrabold text-[#9d3d1c] tracking-tight mb-2">다시 만나서 반가워요!</h1>
+          <h1 class="text-xl md:text-2xl font-extrabold text-[#9d3d1c] tracking-tight mb-2">다시 만나서 반가워요!</h1>
           <p class="text-sm text-[#56423c] leading-relaxed font-medium">
             즐겨찾는 레시피를 저장하고, 나만의 요리 리스트를 관리해보세요.
           </p>
@@ -174,7 +134,7 @@
           <!-- 제출 버튼 -->
           <button
             type="submit"
-            class="w-full py-3.5 px-6 bg-gradient-to-r from-[#9d3d1c] to-[#bd5532] text-white font-bold text-base rounded-xl active:scale-95 transition-all shadow-lg hover:shadow-xl"
+            class="w-full py-3.5 px-6 bg-gradient-to-r from-[#9d3d1c] to-[#bd5532] text-white font-bold text-base rounded-xl active:scale-95 hover:scale-[1.01] transition-all shadow-lg hover:shadow-xl"
           >
             로그인하기
           </button>

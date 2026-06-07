@@ -1,5 +1,5 @@
 (() => {
-  const API_BASE = 'http://localhost:3000/api/auth';
+  const API_BASE = 'http://127.0.0.1:3000/api/auth';
 
   function ensureStatusBox(form) {
     let box = form.parentElement.querySelector('[data-auth-status]');

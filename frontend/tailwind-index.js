@@ -1,0 +1,72 @@
+tailwind.config = {
+    darkMode: "class",
+    theme: {
+        extend: {
+            colors: {
+                "tertiary-dim": "#005555",
+                "on-background": "#2D2926",
+                "surface-container": "#F2EBE3",
+                "tertiary-fixed": "#008880",
+                "on-primary": "#FFFFFF",
+                "primary-fixed-dim": "#C05B40",
+                "on-primary-fixed-variant": "#4A2318",
+                "surface-variant": "#EBE3D9",
+                "surface-container-highest": "#E5DCD2",
+                "surface": "#F9F7F2",
+                "on-secondary": "#FFFFFF",
+                "on-error-container": "#410002",
+                "tertiary": "#008880",
+                "surface-container-high": "#F0E9E0",
+                "surface-dim": "#EBE3D9",
+                "secondary-fixed": "#D9933D",
+                "surface-container-low": "#F5F0E9",
+                "primary-container": "#C05B40",
+                "on-primary-fixed": "#000000",
+                "surface-tint": "#C05B40",
+                "on-error": "#FFFFFF",
+                "tertiary-container": "#008880",
+                "on-secondary-fixed-variant": "#4E3210",
+                "background": "#F9F7F2",
+                "error": "#B3261E",
+                "primary": "#C05B40",
+                "secondary-container": "#D9933D",
+                "error-container": "#F9DEDC",
+                "outline-variant": "#C9C5B4",
+                "secondary-fixed-dim": "#D9933D",
+                "on-surface": "#2D2926",
+                "on-tertiary": "#FFFFFF",
+                "secondary": "#D9933D",
+                "on-tertiary-fixed": "#00201F",
+                "primary-dim": "#A04A33",
+                "secondary-dim": "#B77C33",
+                "on-tertiary-fixed-variant": "#004F4C",
+                "inverse-primary": "#FFB4A1",
+                "on-primary-container": "#FFFFFF",
+                "inverse-surface": "#322F2D",
+                "on-tertiary-container": "#FFFFFF",
+                "on-secondary-container": "#FFFFFF",
+                "surface-bright": "#F9F7F2",
+                "tertiary-fixed-dim": "#008880",
+                "inverse-on-surface": "#F7F0E8",
+                "error-dim": "#F2B8B5",
+                "on-secondary-fixed": "#291800",
+                "on-surface-variant": "#4F4842",
+                "primary-fixed": "#FFDBD1",
+                "surface-container-lowest": "#FFFFFF",
+                "outline": "#81766E"
+            },
+            borderRadius: {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "1rem",
+                "2xl": "1.5rem",
+                "full": "9999px"
+            },
+            fontFamily: {
+                "headline": ["Epilogue", "Plus Jakarta Sans"],
+                "body": ["Plus Jakarta Sans"],
+                "label": ["Plus Jakarta Sans"]
+            }
+        }
+    }
+};

@@ -7,129 +7,38 @@
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
-<script id="tailwind-config">
-  tailwind.config = {
-    darkMode: "class",
-    theme: {
-      extend: {
-        "colors": {
-          "on-surface-variant": "#56423c",
-          "secondary-container": "#fed9b5",
-          "surface": "#fcf9f4",
-          "inverse-surface": "#31302d",
-          "error-container": "#ffdad6",
-          "primary-container": "#bd5532",
-          "on-secondary-fixed": "#2a1803",
-          "surface-container": "#f0ede9",
-          "tertiary-container": "#aa6149",
-          "on-background": "#1c1c19",
-          "primary": "#9d3d1c",
-          "on-primary-fixed-variant": "#802908",
-          "primary-fixed": "#ffdbd0",
-          "error": "#ba1a1a",
-          "on-tertiary-container": "#fffbff",
-          "on-tertiary": "#ffffff",
-          "secondary-fixed-dim": "#e3c09d",
-          "inverse-primary": "#ffb59e",
-          "on-tertiary-fixed": "#3a0b00",
-          "surface-bright": "#fcf9f4",
-          "secondary": "#74593d",
-          "surface-container-highest": "#e5e2dd",
-          "tertiary": "#8d4933",
-          "surface-container-high": "#ebe8e3",
-          "surface-tint": "#a0401f",
-          "primary-fixed-dim": "#ffb59e",
-          "on-tertiary-fixed-variant": "#723520",
-          "tertiary-fixed": "#ffdbd0",
-          "on-error": "#ffffff",
-          "surface-variant": "#e5e2dd",
-          "surface-container-lowest": "#ffffff",
-          "tertiary-fixed-dim": "#ffb59e",
-          "on-error-container": "#93000a",
-          "outline": "#8a726b",
-          "background": "#fcf9f4",
-          "on-secondary": "#ffffff",
-          "surface-container-low": "#f6f3ee",
-          "on-primary-container": "#fffbff",
-          "on-secondary-container": "#785e41",
-          "on-secondary-fixed-variant": "#5a4227",
-          "inverse-on-surface": "#f3f0eb",
-          "on-primary": "#ffffff",
-          "outline-variant": "#ddc0b8",
-          "secondary-fixed": "#ffddbb",
-          "surface-dim": "#dcdad5",
-          "on-surface": "#1c1c19",
-          "on-primary-fixed": "#3a0b00"
-        },
-        "borderRadius": {
-          "DEFAULT": "0.25rem",
-          "lg": "0.5rem",
-          "xl": "0.75rem",
-          "full": "9999px"
-        },
-        "fontFamily": {
-          "headline": ["Epilogue"],
-          "body": ["Plus Jakarta Sans"],
-          "label": ["Plus Jakarta Sans"]
-        }
-      },
-    },
-  }
-</script>
-<style>
-  .material-symbols-outlined {
-    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-  }
-  body { font-family: 'Plus Jakarta Sans', sans-serif; }
-  h1, h2, h3 { font-family: 'Epilogue', sans-serif; }
-
-  /* 유동적 스케일링: 모바일 크기를 최솟값으로, 화면이 커질수록 비례해서 커짐 */
-  .fluid-h1    { font-size: clamp(1.75rem, 5vw, 4.5rem);   line-height: 1.1; }
-  .fluid-h2    { font-size: clamp(1.5rem,  3.5vw, 3rem);   }
-  .fluid-h3    { font-size: clamp(1.1rem,  2.5vw, 1.875rem); }
-  .fluid-h4    { font-size: clamp(0.875rem, 1.8vw, 1.25rem); }
-  .fluid-body  { font-size: clamp(0.875rem, 1.4vw, 1.125rem); }
-  .fluid-sm    { font-size: clamp(0.75rem,  1.1vw, 0.875rem); }
-
-  .fluid-section { padding-top: clamp(3rem, 6vw, 6rem); padding-bottom: clamp(3rem, 6vw, 6rem); }
-  .fluid-px      { padding-left: clamp(1rem, 4vw, 1.5rem); padding-right: clamp(1rem, 4vw, 1.5rem); }
-  .fluid-card    { padding: clamp(1.25rem, 3vw, 3rem); }
-
-  .fluid-photo {
-    width:  clamp(7rem, 18vw, 12rem);
-    height: clamp(7rem, 18vw, 12rem);
-  }
-  .fluid-hero-img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; object-position: center top; max-height: 420px; }
-
-  .fluid-btn {
-    padding: clamp(0.625rem, 1.2vw, 1rem) clamp(1.25rem, 2.5vw, 2rem);
-    font-size: clamp(0.875rem, 1.4vw, 1.125rem);
-  }
-  .fluid-gap   { gap: clamp(0.75rem, 2vw, 1.5rem); }
-  .fluid-mb    { margin-bottom: clamp(1.5rem, 3vw, 2.5rem); }
-  .fluid-mb-sm { margin-bottom: clamp(0.75rem, 1.5vw, 1rem); }
-</style>
+<script src="tailwind-landing.js"></script>
+<link rel="stylesheet" href="styles.css"/>
 </head>
 <body class="bg-surface text-on-surface font-body">
 
 <!-- TopNavBar -->
-<nav class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl flex justify-between items-center px-12 h-24 max-w-full mx-auto border-b border-outline-variant/30">
-  <div class="flex items-center gap-12">
+<nav class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl flex justify-between items-center px-4 md:px-12 h-16 md:h-24 max-w-full mx-auto border-b border-outline-variant/30">
+  <div class="flex items-center gap-6 lg:gap-12">
     <a href="index.html" class="text-3xl font-extrabold text-primary font-headline tracking-tighter">YAMY</a>
-    <div class="hidden md:flex items-center gap-8 font-headline tracking-tight">
-      <a class="text-primary border-b-2 border-primary pb-1 font-bold" href="index.html">검색하기</a>
+    <div class="hidden md:flex items-center gap-5 lg:gap-8 font-headline tracking-tight whitespace-nowrap">
+      <a class="text-on-surface-variant hover:text-primary transition-colors" href="index.html">탐색하기</a>
       <a id="nav-my-recipe" class="text-on-surface-variant hover:text-primary transition-colors" href="my-recipe.html">내 레시피</a>
       <a id="nav-my-picks" class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer" onclick="event.preventDefault(); window.authGuard.redirectToLoginIfNeeded() || (window.location.href='my-picks.html')">저장됨</a>
       <a id="nav-recipe-editor" class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer" onclick="event.preventDefault(); window.authGuard.redirectToLoginIfNeeded() || (window.location.href='recipe-editor.html')">레시피 작성</a>
     </div>
   </div>
-  <div class="flex items-center gap-6">
-    <div class="relative hidden sm:block">
+  <div class="flex items-center gap-2 md:gap-3 lg:gap-6">
+    <!-- 검색: lg+ 전체 입력창, lg 미만 아이콘 버튼 -->
+    <button type="button" class="flex lg:hidden p-2 text-on-surface-variant hover:text-primary rounded-full hover:bg-surface-container transition-all">
+      <span class="material-symbols-outlined">search</span>
+    </button>
+    <div class="relative hidden lg:block">
       <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
-      <input class="bg-surface-container border border-outline-variant/50 rounded-full pl-11 pr-6 py-2.5 text-sm focus:ring-2 focus:ring-primary w-72 transition-all outline-none" placeholder="요리 영감 검색..." type="text"/>
+      <input class="bg-surface-container border border-outline-variant/50 rounded-full pl-11 pr-6 py-2.5 text-sm focus:ring-2 focus:ring-primary w-64 transition-all outline-none" placeholder="요리 영감 검색..." type="text"/>
     </div>
-    <a href="profile.html" data-profile-link class="hidden px-4 py-2.5 rounded-full bg-surface-container text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-all text-sm font-semibold whitespace-nowrap">프로필</a>
-    <a id="auth-action" href="login.html" class="bg-primary text-on-primary px-8 py-2.5 rounded-full font-headline font-bold text-sm hover:opacity-90 duration-150 transition-all shadow-sm">로그인</a>
+    <!-- 프로필: lg+ 텍스트+아이콘, lg 미만 아이콘 버튼 -->
+    <a href="profile.html" data-profile-link class="hidden items-center rounded-full bg-surface-container text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-all font-semibold p-2 lg:px-4 lg:py-2.5">
+      <span class="material-symbols-outlined lg:hidden">person</span>
+      <span class="hidden lg:inline text-sm whitespace-nowrap" data-profile-text>프로필</span>
+    </a>
+    <!-- 로그인/아웃: styles.css에서 lg 미만 아이콘 처리 -->
+    <a id="auth-action" href="login.html" class="bg-primary text-on-primary px-8 py-2.5 rounded-full font-headline font-bold text-sm hover:opacity-90 duration-150 transition-all shadow-sm whitespace-nowrap">로그인</a>
   </div>
 </nav>
 <nav class="hidden fixed top-0 w-full z-50 bg-[#fcf9f4]/80 dark:bg-stone-900/80 backdrop-blur-md">
@@ -147,7 +56,7 @@
   </div>
 </nav>
 
-<main class="pt-24">
+<main class="pt-16 md:pt-24 overflow-x-hidden">
   <!-- Hero Section -->
   <section class="relative fluid-section fluid-px overflow-hidden" style="padding-top: clamp(5rem, 10vw, 8rem);">
     <div class="max-w-7xl mx-auto grid lg:grid-cols-2 fluid-gap items-center">
@@ -285,19 +194,19 @@
       <div class="text-center group">
         <div class="fluid-photo relative fluid-mb-sm mx-auto">
           <div class="absolute inset-0 bg-primary-container rounded-full rotate-6 group-hover:rotate-0 transition-transform duration-500"></div>
-          <img alt="Team member" class="absolute inset-0 w-full h-full object-cover rounded-full border-4 border-surface shadow-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBi3K4iKDKEq6Ng6eJM45kadfLjU3GlI1KY8BZqLaPGUNA_MulN3M6Jo31tYheMuCe390YTuTxt82cRySDTcuEf0iwRMJo4BPvFk2VZxpvgBzkDU8MwpeRvFBtZgAiFA7ftObmvtrFQYuaWfDsZtPlP2zr4s09kjmXqrIUByZQPKoYQOWK5UppvjpryesSrRjckYtSdOcKVQ-ClvwMe07zO2HbJ6orA8JrkQAM38kyr34wbuHDjbN_Wmvdg5-XyHwNg8KipR5kSM1I">
+          <img alt="Team member" class="absolute inset-0 w-full h-full object-cover rounded-full border-4 border-primary shadow-lg" src="images/HJchoi.png">
         </div>
-        <h4 class="fluid-h4 font-bold text-on-surface">최현준</h4>
+        <h4 class="fluid-h4 font-bold text-on-surface">HyunJoon Choi</h4>
         <p class="fluid-sm text-primary font-medium">Team Leader</p>
-        <p class="fluid-sm text-secondary font-medium mt-1">Frontend · AI</p>
+        <p class="fluid-sm text-secondary font-medium mt-1">Full-Stack</p>
       </div>
       <!-- Team Member 2 -->
       <div class="text-center group">
         <div class="fluid-photo relative fluid-mb-sm mx-auto">
           <div class="absolute inset-0 bg-secondary-container rounded-full -rotate-6 group-hover:rotate-0 transition-transform duration-500"></div>
-          <img alt="Team member" class="absolute inset-0 w-full h-full object-cover rounded-full border-4 border-surface shadow-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDXxM7oDJ_jbplF_qb5S-O-YDEoQpQBPjX3V0T_tjBPvltMzQjKCYlJmbuU3_uqDZApohl8wF-uM_uBugKmauek4s9A61vAgIuIFaG2dTbeUG29me7GC7zw0M79EAHlRJXqASDW5hJ-BPgxTscnYq0A_856omiTc6Z1eks2ScNakUjZX16EvcYYYnevtrPu4q5UdHoeSLB1bmQ9owDqV6xXqZimx84oBq0BuwkvNhr8pL1Bx3PPw1k7NLDttPj3-QQ2yc5OCNJNxiY">
+          <img alt="Team member" class="absolute inset-0 w-full h-full object-cover rounded-full border-4 border-primary shadow-lg" src="images/JWhan.png">
         </div>
-        <h4 class="fluid-h4 font-bold text-on-surface">한정우</h4>
+        <h4 class="fluid-h4 font-bold text-on-surface">JeongWoo Han</h4>
         <p class="fluid-sm text-primary font-medium">Backend</p>
         <p class="fluid-sm text-secondary font-medium mt-1">Database</p>
       </div>
@@ -305,9 +214,9 @@
       <div class="text-center group">
         <div class="fluid-photo relative fluid-mb-sm mx-auto">
           <div class="absolute inset-0 bg-outline-variant rounded-full rotate-3 group-hover:rotate-0 transition-transform duration-500"></div>
-          <img alt="Team member" class="absolute inset-0 w-full h-full object-cover rounded-full border-4 border-surface shadow-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuATNYYPzEPY6o2zXOldJk55zhwtL_aBuiOa59bPYtc-3QFdoMVRH5XBhwAW82e6LFPwIKHrBm3p8hQJe2xhcBCZ35EJd2cZaQBNlj6Rw_Ak-CgBDMDsIZdHIiYi48cAlX_629f1tPv1e2Xp-MXrUliiG-kq876kCmIwg31N9LoGyvY0_AAssA6TNetO6we80mXWgQTcoeQnhMA9QSvnSR6WIGzI9XEvVKwlyj9nlNN2wYeboLIPXeffQaEt8HEM-j2D4--UNAL1bXo">
+          <img alt="Team member" class="absolute inset-0 w-full h-full object-cover rounded-full border-4 border-primary shadow-lg" src="images/NHchoi.png">
         </div>
-        <h4 class="fluid-h4 font-bold text-on-surface">최나현</h4>
+        <h4 class="fluid-h4 font-bold text-on-surface">NaHyun Choi</h4>
         <p class="fluid-sm text-primary font-medium">Frontend</p>
         <p class="fluid-sm text-secondary font-medium mt-1">UI/UX Design</p>
       </div>
@@ -315,10 +224,11 @@
       <div class="text-center group">
         <div class="fluid-photo relative fluid-mb-sm mx-auto">
           <div class="absolute inset-0 bg-tertiary-container rounded-full -rotate-3 group-hover:rotate-0 transition-transform duration-500"></div>
-          <img alt="Team member" class="absolute inset-0 w-full h-full object-cover rounded-full border-4 border-surface shadow-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJyYO6Jx8NDlTFLJy1NlpgUEyZhRrMY-wuo3y96FAkzTi1nBwjZKj4_WqOqzdk-fSNXiXOPRil9guXkS0omCbWik33QeD09QPN7eTnldG-Oh2CalkDX2caXWYzcZzoLOGtr1KHw2wdp4ka3OwKFO146VvQGS7n_6QZJ0XielDiLivz5W0ZUUkGp5pbDK8UwkftdQJew8Z4HjlZXbSmmN7BiUpUx1N8vO1WIvBV8QgpcMik3as2WDduwVH0yAz1MAoDw2p7OtXG86c">
+          <img alt="Team member" class="absolute inset-0 w-full h-full object-cover rounded-full border-4 border-primary shadow-lg" src="images/Nandin.png">
         </div>
-        <h4 class="fluid-h4 font-bold text-on-surface">최현우</h4>
-        <p class="fluid-sm text-primary font-medium">Experience Designer</p>
+        <h4 class="fluid-h4 font-bold text-on-surface">Nandin-Erdene</h4>
+        <p class="fluid-sm text-primary font-medium">Frontend</p>
+        <p class="fluid-sm text-secondary font-medium mt-1">UI/UX Design</p>
       </div>
     </div>
   </section>
@@ -347,26 +257,19 @@
 </main>
 
 <!-- Footer -->
-<footer class="w-full py-10 sm:py-12 px-4 sm:px-6 bg-[#fcf9f4] dark:bg-stone-950">
-  <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6 sm:gap-8 text-center md:text-left">
-    <div class="flex flex-col items-center md:items-start gap-3 sm:gap-4">
-      <div class="text-lg font-bold text-[#9d3d1c]">YAMY</div>
-      <p class="font-['Plus_Jakarta_Sans'] text-xs leading-relaxed text-[#74593d] dark:text-stone-400">© 2026 YAMY. Your Assistant for Making Yummy.</p>
-    </div>
-    <div class="flex gap-5 sm:gap-8">
-      <a class="font-['Plus_Jakarta_Sans'] text-xs text-[#74593d] hover:text-[#9d3d1c] transition-colors opacity-80 hover:opacity-100" href="#">이용약관</a>
-      <a class="font-['Plus_Jakarta_Sans'] text-xs text-[#9d3d1c] underline transition-colors opacity-80 hover:opacity-100" href="#">개인정보처리방침</a>
-      <a class="font-['Plus_Jakarta_Sans'] text-xs text-[#74593d] hover:text-[#9d3d1c] transition-colors opacity-80 hover:opacity-100" href="#">문의하기</a>
-    </div>
-    <div class="flex gap-4">
-      <a class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center hover:bg-primary/10 transition-colors" href="#">
-        <span class="material-symbols-outlined text-sm text-secondary">public</span>
-      </a>
-      <a class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center hover:bg-primary/10 transition-colors" href="#">
-        <span class="material-symbols-outlined text-sm text-secondary">share</span>
-      </a>
-    </div>
-  </div>
+<footer class="bg-surface-container w-full py-14 md:py-20 px-6 md:px-8 flex flex-col items-center gap-6 md:gap-8 border-t border-outline-variant/30">
+<span class="text-2xl md:text-3xl font-extrabold text-primary font-headline tracking-tighter">YAMY</span>
+<p class="text-on-surface-variant/60 text-xs text-center">© 2026 YAMY. Your Assistant for Making Yummy.</p>
+<div class="flex flex-wrap justify-center gap-6 text-sm font-semibold">
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="landing.html">회사소개</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">이용약관</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">개인정보처리방침</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">문의하기</a>
+</div>
+<div class="flex gap-6">
+<span class="material-symbols-outlined text-primary cursor-pointer text-2xl hover:scale-110 transition-transform">public</span>
+<span class="material-symbols-outlined text-primary cursor-pointer text-2xl hover:scale-110 transition-transform">share</span>
+</div>
 </footer>
 <script src="auth-guard.js"></script>
 <script src="profile-badge.js"></script>
