@@ -2,5 +2,4 @@
 __pycache__/
 *.py[cod]
 LLM/yamy_recipe_step_splitter/.venv/
-LLM/yamy_recipe_step_splitter/src/__pycache__/
-*.pyc
+LLM/yamy_recipe_step_splitter/src/__pycache__/*.pyc
