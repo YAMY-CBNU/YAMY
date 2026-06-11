@@ -4,6 +4,7 @@
   let currentRecipeId = /^\d+$/.test(recipeIdParam || '') ? Number(recipeIdParam) : null;
   let isSaving = false;
 
+  // DOM 요소 / DOM Elements
   const elements = {
     status: document.getElementById('editor-status'),
     title: document.getElementById('recipe-title'),
@@ -30,6 +31,7 @@
     stepTemplate: document.getElementById('step-card-template'),
   };
 
+  // 상태 메시지 / Draft Status
   function showDraftStatus(updatedAt) {
     const savedAt = new Date(updatedAt);
     const formattedSavedAt = new Intl.DateTimeFormat('ko-KR', {
@@ -54,6 +56,7 @@
     window.alert(message);
   }
 
+  // 이미지 읽기 / Read Image
   function readFileAsDataUrl(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -90,6 +93,7 @@
     }
   }
 
+  // 드롭존 바인딩 / Dropzone Bind
   function bindDropzone(dropzone, onFile) {
     if (!dropzone) {
       return;
@@ -123,6 +127,7 @@
     });
   }
 
+  // 단계 번호 업데이트 / Update Step Numbers
   function updateStepNumbers() {
     const stepCards = Array.from(elements.stepsList.querySelectorAll('.step-card'));
     stepCards.forEach((card, index) => {
@@ -138,6 +143,7 @@
     });
   }
 
+  // 재료 행 바인딩 / Bind Ingredient Row
   function bindIngredientRow(row) {
     row.querySelector('.remove-ingredient')?.addEventListener('click', () => {
       const rows = elements.ingredientsList.querySelectorAll('.ingredient-row');
@@ -150,6 +156,7 @@
     });
   }
 
+  // 조리 단계 카드 바인딩 / Bind Step Card
   function bindStepCard(card) {
     card.querySelector('.toggle-timer-settings')?.addEventListener('click', () => {
       const timerSettings = card.querySelector('.timer-settings');
@@ -213,6 +220,7 @@
     bindDropzone(dropzone, (file) => setStepImage(card, file));
   }
 
+  // 재료 행 추가 / Add Ingredient
   function addIngredientRow() {
     const fragment = elements.ingredientTemplate.content.cloneNode(true);
     const row = fragment.querySelector('.ingredient-row');
@@ -220,6 +228,7 @@
     elements.ingredientsList.appendChild(fragment);
   }
 
+  // 조리 단계 추가 / Add Step
   function addStepCard() {
     const fragment = elements.stepTemplate.content.cloneNode(true);
     const card = fragment.querySelector('.step-card');
@@ -242,6 +251,7 @@
     }
   }
 
+  // 에디터 채우기 / Populate Editor
   function populateEditor(recipe) {
     elements.title.value = recipe.title || '';
     elements.description.value = recipe.description || '';
@@ -291,6 +301,7 @@
     }
   }
 
+  // 레시피 불러오기 / Load for Edit
   async function loadRecipeForEdit() {
     if (!currentRecipeId) {
       return;
@@ -313,6 +324,7 @@
     populateEditor(data.recipe);
   }
 
+  // 재료 수집 / Gather Ingredients
   function gatherIngredients() {
     return Array.from(elements.ingredientsList.querySelectorAll('.ingredient-row'))
       .map((row) => ({
@@ -322,6 +334,7 @@
       .filter((ingredient) => ingredient.name || ingredient.amount);
   }
 
+  // 조리 단계 수집 / Gather Steps
   function gatherSteps() {
     return Array.from(elements.stepsList.querySelectorAll('.step-card'))
       .map((card) => {
@@ -343,6 +356,7 @@
       ));
   }
 
+  // 에디터 초기화 / Reset Editor
   function resetEditor() {
     elements.title.value = '';
     elements.description.value = '';
@@ -363,6 +377,7 @@
     hideStatus();
   }
 
+  // 저장 페이로드 / Build Payload
   function buildPayload(status) {
     return {
       status,
@@ -383,6 +398,7 @@
     };
   }
 
+  // 레시피 저장 / Save Recipe
   async function saveRecipe(status) {
     if (isSaving) {
       return;
@@ -431,6 +447,7 @@
     }
   }
 
+  // 이벤트 리스너 / Event Listeners
   elements.ingredientsList.querySelectorAll('.ingredient-row').forEach(bindIngredientRow);
   elements.stepsList.querySelectorAll('.step-card').forEach(bindStepCard);
   updateStepNumbers();

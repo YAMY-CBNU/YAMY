@@ -1,5 +1,7 @@
 (function () {
   const API_BASE = 'http://localhost:3000/api/recipes';
+
+  // DOM 요소 / DOM Elements
   const elements = {
     title: document.getElementById('recipe-title-main'),
     description: document.getElementById('recipe-description-main'),
@@ -27,8 +29,30 @@
     pauseTimerButton: document.getElementById('pause-timer'),
     resetTimerButton: document.getElementById('reset-timer'),
     notification: document.getElementById('notification'),
+    // fullscreen
+    viewAllButton: document.getElementById('view-all-btn'),
+    fsModal: document.getElementById('step-fullscreen-modal'),
+    closeFullscreenButton: document.getElementById('close-fullscreen-btn'),
+    fsSlideArea: document.getElementById('fs-slide-area'),
+    fsLeftHint: document.getElementById('fs-left-hint'),
+    fsRightHint: document.getElementById('fs-right-hint'),
+    fsStepNumber: document.getElementById('fs-step-number'),
+    fsStepTitle: document.getElementById('fs-step-title'),
+    fsStepDescription: document.getElementById('fs-step-description'),
+    fsStepImage: document.getElementById('fs-step-image'),
+    fsStepCounter: document.getElementById('fs-step-counter'),
+    fsIndicators: document.getElementById('fs-indicators'),
+    fsTimerContainer: document.getElementById('fs-timer-container'),
+    fsTimerDisplay: document.getElementById('fs-timer-display'),
+    fsTimerProgressBar: document.getElementById('fs-timer-progress-bar'),
+    fsStartTimerButton: document.getElementById('fs-start-timer'),
+    fsPauseTimerButton: document.getElementById('fs-pause-timer'),
+    fsResetTimerButton: document.getElementById('fs-reset-timer'),
+    fsPrevButton: null,
+    fsNextButton: null,
   };
 
+  // 상태 변수 / State
   let steps = [];
   let currentStepIndex = 0;
   let timerInterval = null;
@@ -36,6 +60,7 @@
   let remainingSeconds = 0;
   let timerRunning = false;
 
+  // 이미지 플레이스홀더 / Image Placeholder
   function getImagePlaceholderMarkup(label) {
     return `
       <div class="w-full h-full min-h-52 flex flex-col items-center justify-center bg-surface-container text-on-surface-variant">
@@ -61,12 +86,13 @@
         id="${key === 'finishedImage' ? 'recipe-finished-image' : 'step-image'}"
         src="${escapeHtml(src)}"
         alt="${escapeHtml(alt)}"
-        class="${key === 'finishedImage' ? 'w-full h-52 object-cover hover:scale-105 transition-transform duration-500' : 'w-full h-64 object-cover hover:scale-105 transition-transform duration-500'}"
+        class="${key === 'finishedImage' ? 'w-full h-52 object-cover hover:scale-105 transition-transform duration-500' : 'w-full h-52 md:h-[440px] object-cover hover:scale-105 transition-transform duration-500'}"
       />
     `;
     elements[key] = container.querySelector('img');
   }
 
+  // HTML 이스케이프 / Escape HTML
   function escapeHtml(value) {
     return String(value ?? '')
       .replace(/&/g, '&amp;')
@@ -76,11 +102,13 @@
       .replace(/'/g, '&#039;');
   }
 
+  // 정보 칩 / Info Chip
   function renderChip(element, icon, text) {
     if (!element) return;
     element.innerHTML = `<span class="material-symbols-outlined text-base text-primary">${icon}</span>${escapeHtml(text || '-')}`;
   }
 
+  // 카테고리 태그 / Category Tags
   function renderTags(recipe) {
     if (!elements.tags) return;
 
@@ -103,6 +131,7 @@
     )).join('');
   }
 
+  // 미준비 재료 업데이트 / Missing Ingredients
   function updateMissingIngredients() {
     if (!elements.missingIngredients || !elements.ingredientForm) return;
 
@@ -113,6 +142,7 @@
     elements.missingIngredients.textContent = missing.length > 0 ? missing.join(', ') : '없음';
   }
 
+  // 재료 목록 / Ingredients
   function renderIngredients(recipe) {
     const ingredients = Array.isArray(recipe.ingredients) ? recipe.ingredients : [];
     if (!elements.ingredientForm) return;
@@ -144,6 +174,7 @@
     updateMissingIngredients();
   }
 
+  // 조리 단계 생성 / Build Steps
   function buildSteps(recipe) {
     const recipeSteps = Array.isArray(recipe.steps) ? recipe.steps : [];
 
@@ -164,6 +195,7 @@
       }];
   }
 
+  // 단계 인디케이터 / Step Indicators
   function renderIndicators() {
     if (!elements.indicators) return;
 
@@ -179,19 +211,24 @@
     });
   }
 
+  // 타이머 포맷 / Timer Format
   function formatTimer(seconds) {
     const minutes = Math.floor(seconds / 60);
     const rest = seconds % 60;
     return `${String(minutes).padStart(2, '0')}:${String(rest).padStart(2, '0')}`;
   }
 
+  // 타이머 정지 / Stop Timer
   function stopTimer() {
     timerRunning = false;
     window.clearInterval(timerInterval);
     if (elements.startTimerButton) elements.startTimerButton.style.display = 'inline-flex';
     if (elements.pauseTimerButton) elements.pauseTimerButton.style.display = 'none';
+    if (elements.fsStartTimerButton) elements.fsStartTimerButton.style.display = 'inline-flex';
+    if (elements.fsPauseTimerButton) elements.fsPauseTimerButton.style.display = 'none';
   }
 
+  // 타이머 렌더링 / Render Timer
   function renderTimer(step) {
     stopTimer();
     totalSeconds = step.timerSeconds;
@@ -201,6 +238,7 @@
 
     if (!step.timerSeconds) {
       elements.timerContainer.style.display = 'none';
+      if (elements.fsTimerContainer) elements.fsTimerContainer.style.display = 'none';
       return;
     }
 
@@ -208,8 +246,16 @@
     elements.timerContainer.classList.remove('timer-finished');
     if (elements.timerDisplay) elements.timerDisplay.textContent = formatTimer(remainingSeconds);
     if (elements.timerProgressBar) elements.timerProgressBar.style.width = '0%';
+
+    if (elements.fsTimerContainer) {
+      elements.fsTimerContainer.style.display = 'block';
+      elements.fsTimerContainer.classList.remove('timer-finished');
+    }
+    if (elements.fsTimerDisplay) elements.fsTimerDisplay.textContent = formatTimer(remainingSeconds);
+    if (elements.fsTimerProgressBar) elements.fsTimerProgressBar.style.width = '0%';
   }
 
+  // 조리 단계 렌더링 / Render Step
   function renderStep() {
     const step = steps[currentStepIndex];
     if (!step) return;
@@ -217,7 +263,7 @@
     if (elements.stepNumber) elements.stepNumber.textContent = String(step.number);
     if (elements.stepTitle) elements.stepTitle.textContent = step.title;
     if (elements.stepDescription) elements.stepDescription.textContent = step.description;
-    setImageOrPlaceholder('stepImage', step.image, step.title, '\uB2E8\uACC4 \uC774\uBBF8\uC9C0 \uC5C6\uC74C');
+    setImageOrPlaceholder('stepImage', step.image, step.title, '단계 이미지 없음');
     if (elements.stepCounter) elements.stepCounter.textContent = `${step.number} / ${steps.length}`;
     if (elements.prevButton) elements.prevButton.disabled = currentStepIndex === 0;
     if (elements.nextButton) elements.nextButton.disabled = currentStepIndex === steps.length - 1;
@@ -227,16 +273,80 @@
     });
 
     renderTimer(step);
+
+    if (elements.fsModal && elements.fsModal.style.display === 'flex') {
+      renderFullscreenStep();
+    }
   }
 
+  // 전체화면 단계 렌더링 / Render Fullscreen Step
+  function renderFullscreenStep() {
+    const step = steps[currentStepIndex];
+    if (!step) return;
+
+    if (elements.fsStepNumber) elements.fsStepNumber.textContent = String(step.number);
+    if (elements.fsStepTitle) elements.fsStepTitle.textContent = step.title;
+    if (elements.fsStepDescription) elements.fsStepDescription.textContent = step.description;
+
+    if (elements.fsStepImage) {
+      elements.fsStepImage.src = step.image || '';
+      elements.fsStepImage.alt = step.title;
+      elements.fsStepImage.style.display = step.image ? 'block' : 'none';
+    }
+
+    if (elements.fsStepCounter) elements.fsStepCounter.textContent = `${step.number} / ${steps.length}`;
+  }
+
+  // 전체화면 열기 / Open Fullscreen
+  function openFullscreen() {
+    if (!elements.fsModal) return;
+    elements.fsModal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+
+    if (elements.fsIndicators && elements.fsIndicators.querySelectorAll('.indicator-dot').length !== steps.length) {
+      elements.fsIndicators.innerHTML = steps.map((step, index) => (
+        `<div class="indicator-dot${index === currentStepIndex ? ' active' : ''}" data-step="${step.number}"></div>`
+      )).join('');
+      elements.fsIndicators.querySelectorAll('.indicator-dot').forEach((dot, index) => {
+        dot.addEventListener('click', () => {
+          currentStepIndex = index;
+          renderStep();
+        });
+      });
+    }
+
+    renderFullscreenStep();
+
+    const step = steps[currentStepIndex];
+    if (step?.timerSeconds) {
+      if (elements.fsTimerContainer) elements.fsTimerContainer.style.display = 'block';
+      if (elements.fsTimerDisplay) elements.fsTimerDisplay.textContent = formatTimer(remainingSeconds);
+      if (elements.fsTimerProgressBar && totalSeconds > 0) {
+        elements.fsTimerProgressBar.style.width = `${((totalSeconds - remainingSeconds) / totalSeconds) * 100}%`;
+      }
+      if (timerRunning) {
+        if (elements.fsStartTimerButton) elements.fsStartTimerButton.style.display = 'none';
+        if (elements.fsPauseTimerButton) elements.fsPauseTimerButton.style.display = 'inline-flex';
+      }
+    }
+  }
+
+  // 전체화면 닫기 / Close Fullscreen
+  function closeFullscreen() {
+    if (!elements.fsModal) return;
+    elements.fsModal.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  // 레시피 렌더링 / Render Recipe
   function renderRecipe(recipe) {
     if (recipe.title) document.title = `${recipe.title} - YAMY`;
     if (elements.title) elements.title.textContent = recipe.title || '레시피';
     if (elements.description) elements.description.textContent = recipe.description || '';
-    setImageOrPlaceholder('finishedImage', recipe.thumbnailUrl, recipe.title || '\uC644\uC131 \uC774\uBBF8\uC9C0', '\uC644\uC131 \uC774\uBBF8\uC9C0 \uC5C6\uC74C');
+    setImageOrPlaceholder('finishedImage', recipe.thumbnailUrl, recipe.title || '완성 이미지', '완성 이미지 없음');
     if (elements.finishedImage) {
       if (!recipe.thumbnailUrl) {
-        setImageOrPlaceholder('finishedImage', '', recipe.title || '\uC644\uC131 \uC774\uBBF8\uC9C0', '\uC644\uC131 \uC774\uBBF8\uC9C0 \uC5C6\uC74C');
+        setImageOrPlaceholder('finishedImage', '', recipe.title || '완성 이미지', '완성 이미지 없음');
       } else {
         elements.finishedImage.src = recipe.thumbnailUrl;
       }
@@ -255,6 +365,7 @@
     renderStep();
   }
 
+  // 레시피 불러오기 / Load Recipe
   async function loadRecipe() {
     const recipeId = new URLSearchParams(window.location.search).get('id');
     if (!recipeId) return;
@@ -275,34 +386,50 @@
     }
   }
 
+  // 타이머 틱 / Timer Tick
   function tickTimer() {
     if (remainingSeconds <= 0) {
       stopTimer();
       elements.timerContainer?.classList.add('timer-finished');
+      elements.fsTimerContainer?.classList.add('timer-finished');
       elements.notification?.classList.add('show');
       window.setTimeout(() => elements.notification?.classList.remove('show'), 3000);
       return;
     }
 
     remainingSeconds -= 1;
-    if (elements.timerDisplay) elements.timerDisplay.textContent = formatTimer(remainingSeconds);
-    if (elements.timerProgressBar && totalSeconds > 0) {
-      elements.timerProgressBar.style.width = `${((totalSeconds - remainingSeconds) / totalSeconds) * 100}%`;
+    const formatted = formatTimer(remainingSeconds);
+    if (elements.timerDisplay) elements.timerDisplay.textContent = formatted;
+    if (elements.fsTimerDisplay) elements.fsTimerDisplay.textContent = formatted;
+    if (totalSeconds > 0) {
+      const w = `${((totalSeconds - remainingSeconds) / totalSeconds) * 100}%`;
+      if (elements.timerProgressBar) elements.timerProgressBar.style.width = w;
+      if (elements.fsTimerProgressBar) elements.fsTimerProgressBar.style.width = w;
     }
   }
 
-  elements.startTimerButton?.addEventListener('click', () => {
+  // 타이머 시작 / Start Timer
+  function startTimer() {
     if (timerRunning || remainingSeconds <= 0) return;
-
     timerRunning = true;
-    elements.startTimerButton.style.display = 'none';
+    if (elements.startTimerButton) elements.startTimerButton.style.display = 'none';
     if (elements.pauseTimerButton) elements.pauseTimerButton.style.display = 'inline-flex';
+    if (elements.fsStartTimerButton) elements.fsStartTimerButton.style.display = 'none';
+    if (elements.fsPauseTimerButton) elements.fsPauseTimerButton.style.display = 'inline-flex';
     timerInterval = window.setInterval(tickTimer, 1000);
+  }
+
+  // 이벤트 리스너 / Event Listeners
+  elements.startTimerButton?.addEventListener('click', startTimer);
+  elements.pauseTimerButton?.addEventListener('click', stopTimer);
+  elements.resetTimerButton?.addEventListener('click', () => {
+    const step = steps[currentStepIndex];
+    if (step) renderTimer(step);
   });
 
-  elements.pauseTimerButton?.addEventListener('click', stopTimer);
-
-  elements.resetTimerButton?.addEventListener('click', () => {
+  elements.fsStartTimerButton?.addEventListener('click', startTimer);
+  elements.fsPauseTimerButton?.addEventListener('click', stopTimer);
+  elements.fsResetTimerButton?.addEventListener('click', () => {
     const step = steps[currentStepIndex];
     if (step) renderTimer(step);
   });
@@ -320,6 +447,81 @@
       renderStep();
     }
   });
+
+  // 전체화면 클릭 이동 / Fullscreen Click Nav
+  elements.fsSlideArea?.addEventListener('click', (e) => {
+    if (e.target.closest('button, input, select, a, label')) return;
+    const rect = elements.fsSlideArea.getBoundingClientRect();
+    const isLeft = (e.clientX - rect.left) < rect.width / 2;
+    if (isLeft && currentStepIndex > 0) {
+      currentStepIndex -= 1;
+      renderStep();
+    } else if (!isLeft && currentStepIndex < steps.length - 1) {
+      currentStepIndex += 1;
+      renderStep();
+    }
+  });
+
+  // 마우스 커서 & 힌트 / Mouse Cursor & Hints
+  elements.fsSlideArea?.addEventListener('mousemove', (e) => {
+    const onInteractive = !!e.target.closest('button, input, select, a, label');
+    if (onInteractive) {
+      if (elements.fsLeftHint) elements.fsLeftHint.style.opacity = '0';
+      if (elements.fsRightHint) elements.fsRightHint.style.opacity = '0';
+      elements.fsSlideArea.style.cursor = '';
+      return;
+    }
+    const rect = elements.fsSlideArea.getBoundingClientRect();
+    const isLeft = (e.clientX - rect.left) < rect.width / 2;
+    if (isLeft) {
+      if (elements.fsLeftHint) elements.fsLeftHint.style.opacity = currentStepIndex > 0 ? '1' : '0';
+      if (elements.fsRightHint) elements.fsRightHint.style.opacity = '0';
+      elements.fsSlideArea.style.cursor = currentStepIndex > 0 ? 'pointer' : 'default';
+    } else {
+      if (elements.fsLeftHint) elements.fsLeftHint.style.opacity = '0';
+      if (elements.fsRightHint) elements.fsRightHint.style.opacity = currentStepIndex < steps.length - 1 ? '1' : '0';
+      elements.fsSlideArea.style.cursor = currentStepIndex < steps.length - 1 ? 'pointer' : 'default';
+    }
+  });
+
+  elements.fsSlideArea?.addEventListener('mouseleave', () => {
+    if (elements.fsLeftHint) elements.fsLeftHint.style.opacity = '0';
+    if (elements.fsRightHint) elements.fsRightHint.style.opacity = '0';
+    elements.fsSlideArea.style.cursor = '';
+  });
+
+  elements.viewAllButton?.addEventListener('click', openFullscreen);
+  elements.closeFullscreenButton?.addEventListener('click', closeFullscreen);
+
+  // 키보드 네비게이션 / Keyboard Nav
+  document.addEventListener('keydown', (e) => {
+    if (elements.fsModal?.style.display !== 'flex') return;
+    if (e.key === 'ArrowLeft' && currentStepIndex > 0) {
+      currentStepIndex -= 1;
+      renderStep();
+    } else if (e.key === 'ArrowRight' && currentStepIndex < steps.length - 1) {
+      currentStepIndex += 1;
+      renderStep();
+    } else if (e.key === 'Escape') {
+      closeFullscreen();
+    }
+  });
+
+  // 터치 스와이프 / Touch Swipe
+  let fsSwipeStartX = 0;
+  elements.fsModal?.addEventListener('touchstart', (e) => {
+    fsSwipeStartX = e.touches[0].clientX;
+  }, { passive: true });
+  elements.fsModal?.addEventListener('touchend', (e) => {
+    const diff = fsSwipeStartX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) < 50) return;
+    if (diff > 0 && currentStepIndex < steps.length - 1) {
+      currentStepIndex += 1;
+    } else if (diff < 0 && currentStepIndex > 0) {
+      currentStepIndex -= 1;
+    }
+    renderStep();
+  }, { passive: true });
 
   document.addEventListener('DOMContentLoaded', loadRecipe);
 })();
