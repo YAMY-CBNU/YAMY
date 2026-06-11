@@ -1,5 +1,8 @@
 (() => {
   const API_BASE = 'http://localhost:3000/api/recipes';
+  const recipeIdParam = new URLSearchParams(window.location.search).get('id');
+  let currentRecipeId = /^\d+$/.test(recipeIdParam || '') ? Number(recipeIdParam) : null;
+  let isSaving = false;
 
   const elements = {
     status: document.getElementById('editor-status'),
@@ -21,23 +24,34 @@
     addIngredientButton: document.getElementById('add-ingredient-button'),
     addStepButton: document.getElementById('add-step-button'),
     resetButton: document.getElementById('reset-editor-button'),
+    draftButton: document.getElementById('save-draft-button'),
     saveButton: document.getElementById('save-recipe-button'),
     ingredientTemplate: document.getElementById('ingredient-row-template'),
     stepTemplate: document.getElementById('step-card-template'),
   };
 
-  function setStatus(message, type = 'error') {
-    const colors = type === 'success'
-      ? 'border-green-200 bg-green-50 text-green-800'
-      : 'border-red-200 bg-red-50 text-red-800';
+  function showDraftStatus(updatedAt) {
+    const savedAt = new Date(updatedAt);
+    const formattedSavedAt = new Intl.DateTimeFormat('ko-KR', {
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+    }).format(savedAt);
 
-    elements.status.className = `mt-4 rounded-xl border px-4 py-3 text-xs font-semibold ${colors}`;
-    elements.status.textContent = message;
+    elements.status.className = 'mt-4 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm font-semibold text-green-800';
+    elements.status.textContent = `마지막 임시저장: ${formattedSavedAt}`;
     elements.status.classList.remove('hidden');
   }
 
   function hideStatus() {
     elements.status.classList.add('hidden');
+  }
+
+  function showAlert(message) {
+    window.alert(message);
   }
 
   function readFileAsDataUrl(file) {
@@ -104,7 +118,7 @@
       try {
         await onFile(file);
       } catch (error) {
-        setStatus(error.message || '이미지 업로드 중 오류가 발생했습니다.');
+        showAlert(error.message || '이미지 업로드 중 오류가 발생했습니다.');
       }
     });
   }
@@ -192,7 +206,7 @@
       try {
         await setStepImage(card, file);
       } catch (error) {
-        setStatus(error.message || '이미지 업로드 중 오류가 발생했습니다.');
+        showAlert(error.message || '이미지 업로드 중 오류가 발생했습니다.');
       }
     });
 
@@ -214,13 +228,98 @@
     updateStepNumbers();
   }
 
+  function ensureIngredientRows(count) {
+    elements.ingredientsList.innerHTML = '';
+    for (let index = 0; index < Math.max(count, 1); index += 1) {
+      addIngredientRow();
+    }
+  }
+
+  function ensureStepCards(count) {
+    elements.stepsList.innerHTML = '';
+    for (let index = 0; index < Math.max(count, 1); index += 1) {
+      addStepCard();
+    }
+  }
+
+  function populateEditor(recipe) {
+    elements.title.value = recipe.title || '';
+    elements.description.value = recipe.description || '';
+    elements.cookTime.value = recipe.cookTime || '';
+    elements.servingSize.value = recipe.servingSize || '';
+    elements.difficulty.value = recipe.difficulty || '';
+    elements.method.value = recipe.categories?.method || '';
+    elements.situation.value = recipe.categories?.situation || '';
+    elements.mainIngredient.value = recipe.categories?.mainIngredient || '';
+    elements.type.value = recipe.categories?.type || '';
+
+    const thumbnailUrl = recipe.thumbnailUrl || '';
+    elements.thumbnailDropzone.dataset.imageUrl = thumbnailUrl;
+    elements.thumbnailPreview.src = thumbnailUrl;
+    elements.thumbnailPreview.classList.toggle('hidden', !thumbnailUrl);
+    elements.thumbnailPlaceholder.classList.toggle('hidden', Boolean(thumbnailUrl));
+
+    const ingredients = Array.isArray(recipe.ingredients) ? recipe.ingredients : [];
+    ensureIngredientRows(ingredients.length);
+    elements.ingredientsList.querySelectorAll('.ingredient-row').forEach((row, index) => {
+      row.querySelector('.ingredient-name').value = ingredients[index]?.name || '';
+      row.querySelector('.ingredient-amount').value = ingredients[index]?.amount || '';
+    });
+
+    const steps = Array.isArray(recipe.steps) ? recipe.steps : [];
+    ensureStepCards(steps.length);
+    elements.stepsList.querySelectorAll('.step-card').forEach((card, index) => {
+      const step = steps[index] || {};
+      const imageUrl = step.imageUrl || '';
+      const timerSeconds = Number(step.timerSeconds) || 0;
+      card.querySelector('.step-description').value = step.description || '';
+      card.querySelector('.step-minutes').value = timerSeconds ? Math.floor(timerSeconds / 60) : '';
+      card.querySelector('.step-seconds').value = timerSeconds ? timerSeconds % 60 : '';
+      card.dataset.imageUrl = imageUrl;
+
+      const preview = card.querySelector('.step-image-preview');
+      const placeholder = card.querySelector('.step-image-placeholder');
+      preview.src = imageUrl;
+      preview.classList.toggle('hidden', !imageUrl);
+      placeholder.classList.toggle('hidden', Boolean(imageUrl));
+      card.querySelector('.timer-settings')?.classList.toggle('hidden', !timerSeconds);
+    });
+    updateStepNumbers();
+
+    if (recipe.status === 'draft' && recipe.updatedAt) {
+      showDraftStatus(recipe.updatedAt);
+    }
+  }
+
+  async function loadRecipeForEdit() {
+    if (!currentRecipeId) {
+      return;
+    }
+
+    const token = localStorage.getItem('yamy_token');
+    if (!token) {
+      throw new Error('로그인 후 임시저장한 레시피를 불러올 수 있습니다.');
+    }
+    const response = await fetch(`${API_BASE}/${currentRecipeId}/edit`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || '임시저장한 레시피를 불러오지 못했습니다.');
+    }
+
+    populateEditor(data.recipe);
+  }
+
   function gatherIngredients() {
     return Array.from(elements.ingredientsList.querySelectorAll('.ingredient-row'))
       .map((row) => ({
         name: row.querySelector('.ingredient-name')?.value.trim() || '',
         amount: row.querySelector('.ingredient-amount')?.value.trim() || '',
       }))
-      .filter((ingredient) => ingredient.name);
+      .filter((ingredient) => ingredient.name || ingredient.amount);
   }
 
   function gatherSteps() {
@@ -239,7 +338,9 @@
           timerSeconds: minutes || seconds ? (minutes * 60) + seconds : null,
         };
       })
-      .filter((step) => step.description);
+      .filter((step) => (
+        step.description || step.imageUrl || step.timerSeconds !== null
+      ));
   }
 
   function resetEditor() {
@@ -257,11 +358,14 @@
     elements.situation.value = '';
     elements.mainIngredient.value = '';
     elements.type.value = '';
+    ensureIngredientRows(1);
+    ensureStepCards(1);
     hideStatus();
   }
 
-  function buildPayload() {
+  function buildPayload(status) {
     return {
+      status,
       title: elements.title.value.trim(),
       description: elements.description.value.trim(),
       cookTime: elements.cookTime.value.trim(),
@@ -279,31 +383,52 @@
     };
   }
 
-  async function saveRecipe() {
+  async function saveRecipe(status) {
+    if (isSaving) {
+      return;
+    }
+
     const token = localStorage.getItem('yamy_token');
     if (!token) {
       throw new Error('로그인 후 레시피를 저장할 수 있습니다.');
     }
 
-    const payload = buildPayload();
-    const response = await fetch(API_BASE, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(payload),
-    });
+    isSaving = true;
+    elements.draftButton.disabled = true;
+    elements.saveButton.disabled = true;
 
-    const data = await response.json();
-    if (!response.ok) {
-      throw new Error(data.message || '레시피 저장에 실패했습니다.');
-    }
+    try {
+      const payload = buildPayload(status);
+      const response = await fetch(currentRecipeId ? `${API_BASE}/${currentRecipeId}` : API_BASE, {
+        method: currentRecipeId ? 'PATCH' : 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
 
-    setStatus('레시피가 저장되었습니다.', 'success');
-    window.setTimeout(() => {
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || '레시피 저장에 실패했습니다.');
+      }
+
+      currentRecipeId = data.recipe.id;
+      window.history.replaceState(null, '', `recipe-editor.html?id=${currentRecipeId}`);
+
+      if (status === 'draft') {
+        showDraftStatus(data.recipe.updatedAt);
+        showAlert('레시피가 임시저장되었습니다.');
+        return;
+      }
+
+      showAlert('레시피가 공개되었습니다.');
       window.location.href = `recipe-detail.html?id=${data.recipe.id}`;
-    }, 500);
+    } finally {
+      isSaving = false;
+      elements.draftButton.disabled = false;
+      elements.saveButton.disabled = false;
+    }
   }
 
   elements.ingredientsList.querySelectorAll('.ingredient-row').forEach(bindIngredientRow);
@@ -320,11 +445,10 @@
       return;
     }
 
-    hideStatus();
     try {
       await setThumbnailImage(file);
     } catch (error) {
-      setStatus(error.message || '이미지 업로드 중 오류가 발생했습니다.');
+      showAlert(error.message || '이미지 업로드 중 오류가 발생했습니다.');
     }
   });
 
@@ -333,12 +457,22 @@
   elements.addIngredientButton?.addEventListener('click', addIngredientRow);
   elements.addStepButton?.addEventListener('click', addStepCard);
   elements.resetButton?.addEventListener('click', resetEditor);
-  elements.saveButton?.addEventListener('click', async () => {
-    hideStatus();
+  elements.draftButton?.addEventListener('click', async () => {
     try {
-      await saveRecipe();
+      await saveRecipe('draft');
     } catch (error) {
-      setStatus(error.message || '레시피 저장 중 오류가 발생했습니다.');
+      showAlert(error.message || '임시저장 중 오류가 발생했습니다.');
     }
+  });
+  elements.saveButton?.addEventListener('click', async () => {
+    try {
+      await saveRecipe('published');
+    } catch (error) {
+      showAlert(error.message || '레시피 공개 중 오류가 발생했습니다.');
+    }
+  });
+
+  loadRecipeForEdit().catch((error) => {
+    showAlert(error.message || '레시피를 불러오는 중 오류가 발생했습니다.');
   });
 })();
