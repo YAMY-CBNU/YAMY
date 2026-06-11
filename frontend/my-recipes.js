@@ -72,6 +72,28 @@
     `;
   }
 
+  function createDraftCard(recipe) {
+    const title = escapeHtml(recipe.title || '제목 없는 레시피');
+    const updatedAt = escapeHtml(formatDate(recipe.updatedAt));
+    const link = `recipe-editor.html?id=${encodeURIComponent(recipe.id)}`;
+
+    return `
+      <article class="group">
+        <a href="${link}" class="block">
+          <div class="relative overflow-hidden rounded-lg aspect-[4/3] mb-2 shadow-sm bg-surface-container-lowest">
+            ${createImageMarkup(recipe, title)}
+            <div class="absolute inset-0 bg-on-surface/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+              <span class="bg-surface-container-lowest px-3 py-1.5 rounded-full text-primary font-bold text-xs shadow-md">이어 작성하기</span>
+            </div>
+            <div class="absolute top-2 left-2 bg-surface-container-high text-on-surface-variant px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-widest">임시저장</div>
+          </div>
+          <h3 class="text-sm font-bold tracking-tight mb-1 text-on-surface-variant">${title}</h3>
+          ${updatedAt ? `<span class="text-on-surface-variant text-[11px] font-medium">최근 저장 ${updatedAt}</span>` : ''}
+        </a>
+      </article>
+    `;
+  }
+
   function createAddCard() {
     return `
       <a href="recipe-editor.html" class="flex flex-col items-center justify-center border-2 border-dashed border-outline-variant/50 rounded-lg aspect-[4/3] p-4 text-center bg-surface-container/30 hover:bg-surface-container/60 hover:border-primary/40 transition-all cursor-pointer group">
@@ -103,19 +125,24 @@
     elements.publishedGrid.innerHTML = recipes.map(createRecipeCard).join('') + createAddCard();
   }
 
-  function renderDrafts() {
+  function renderDrafts(recipes) {
     if (elements.draftCount) {
-      elements.draftCount.textContent = '0';
+      elements.draftCount.textContent = String(recipes.length);
     }
 
-    if (elements.draftGrid) {
+    if (!elements.draftGrid) return;
+
+    if (recipes.length === 0) {
       elements.draftGrid.innerHTML = `
         <div class="col-span-full rounded-lg bg-surface-container/40 border border-outline-variant/40 p-8 text-center">
-          <p class="text-on-surface font-bold text-sm mb-2">임시저장된 레시피가 없습니다.</p>
-          <p class="text-on-surface-variant text-xs">현재 작성 화면은 공개 저장만 지원합니다.</p>
+          <p class="text-on-surface font-bold text-sm mb-2">임시저장한 레시피가 없습니다.</p>
+          <p class="text-on-surface-variant text-xs">작성 화면에서 임시저장하면 여기에 표시됩니다.</p>
         </div>
       `;
+      return;
     }
+
+    elements.draftGrid.innerHTML = recipes.map(createDraftCard).join('') + createAddCard();
   }
 
   async function loadMyRecipes() {
@@ -142,8 +169,9 @@
         throw new Error(data.message || '내 레시피를 불러오지 못했습니다.');
       }
 
-      renderPublished(Array.isArray(data.recipes) ? data.recipes : []);
-      renderDrafts();
+      const recipes = Array.isArray(data.recipes) ? data.recipes : [];
+      renderPublished(recipes.filter((recipe) => recipe.status !== 'draft'));
+      renderDrafts(recipes.filter((recipe) => recipe.status === 'draft'));
     } catch (error) {
       if (elements.publishedGrid) {
         elements.publishedGrid.innerHTML = `

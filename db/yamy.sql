@@ -25,7 +25,7 @@ CREATE TABLE RECIPE (
     source_url         VARCHAR(500),              -- 원본 URL
     title              VARCHAR(200) NOT NULL,
     description        TEXT,                      -- 한줄 소개
-    thumbnail_url      VARCHAR(500),
+    thumbnail_url      LONGTEXT,
     difficulty         ENUM('아무나','초급','중급','고급','신의경지'),
     serving_size       VARCHAR(20),               -- "4인분" 문자열 그대로 저장
     cook_time          VARCHAR(30),               -- "30분 이내" 문자열 그대로 저장
@@ -34,6 +34,7 @@ CREATE TABLE RECIPE (
     cat2_situation     VARCHAR(30),               -- 상황: 일상, 손님접대, 다이어트 등
     cat3_ingredient    VARCHAR(30),               -- 주재료: 돼지고기, 소고기, 채소류 등
     cat4_type          VARCHAR(30),               -- 종류: 밑반찬, 메인반찬, 국/탕 등
+    status             ENUM('draft','published') NOT NULL DEFAULT 'published',
     view_count         INT          NOT NULL DEFAULT 0,
     save_count         INT          NOT NULL DEFAULT 0,
     is_external        BOOLEAN      NOT NULL DEFAULT TRUE,
@@ -66,7 +67,7 @@ CREATE TABLE RECIPE_STEP (
     recipe_id     BIGINT  NOT NULL,
     step_order    INT     NOT NULL,
     description   TEXT    NOT NULL,              -- 조리 설명 텍스트
-    image_url     VARCHAR(500),                  -- 단계별 이미지 URL
+    image_url     LONGTEXT,                      -- 단계별 이미지 URL 또는 Data URL
     heat_level    ENUM('약불','중불','강불'),      -- 단계 텍스트에서 파싱
     timer_seconds INT,                           -- "20분" → 1200, 없으면 NULL
     tip           TEXT,                          -- 이탤릭체 보조 텍스트 (예: "돼지고기는 선호하는 부위를...")

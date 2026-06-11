@@ -52,6 +52,7 @@ function mapRecipeRecord(recipe, ingredients = [], steps = []) {
   return {
     id: recipe.recipe_id,
     authorId: recipe.author_id,
+    status: recipe.status || 'published',
     title: recipe.title,
     description: recipe.description,
     thumbnailUrl: recipe.thumbnail_url,
@@ -85,85 +86,12 @@ function mapRecipeRecord(recipe, ingredients = [], steps = []) {
   };
 }
 
-async function createRecipe(payload) {
-  const mode = await getMode();
-
-  if (mode === 'mysql') {
-    const connection = await mysqlPool.getConnection();
-
-    try {
-      await connection.beginTransaction();
-
-      const [recipeResult] = await connection.query(
-        `INSERT INTO RECIPE (
-          author_id,
-          title,
-          description,
-          thumbnail_url,
-          difficulty,
-          serving_size,
-          cook_time,
-          cat1_method,
-          cat2_situation,
-          cat3_ingredient,
-          cat4_type,
-          is_external
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, FALSE)`,
-        [
-          payload.authorId,
-          payload.title,
-          payload.description,
-          payload.thumbnailUrl,
-          payload.difficulty,
-          payload.servingSize,
-          payload.cookTime,
-          payload.categories.method,
-          payload.categories.situation,
-          payload.categories.mainIngredient,
-          payload.categories.type,
-        ]
-      );
-
-      const recipeId = recipeResult.insertId;
-
-      for (const ingredient of payload.ingredients) {
-        await connection.query(
-          'INSERT INTO RECIPE_INGREDIENT (recipe_id, name, amount) VALUES (?, ?, ?)',
-          [recipeId, ingredient.name, ingredient.amount]
-        );
-      }
-
-      for (const [index, step] of payload.steps.entries()) {
-        await connection.query(
-          `INSERT INTO RECIPE_STEP (
-            recipe_id,
-            step_order,
-            description,
-            image_url,
-            timer_seconds
-          ) VALUES (?, ?, ?, ?, ?)`,
-          [recipeId, index + 1, step.description, step.imageUrl, step.timerSeconds]
-        );
-      }
-
-      await connection.commit();
-      return findRecipeById(recipeId);
-    } catch (error) {
-      await connection.rollback();
-      throw error;
-    } finally {
-      connection.release();
-    }
-  }
-
-  const recipes = await readRecipes();
-  const nextRecipeId =
-    recipes.reduce((maxId, recipe) => Math.max(maxId, Number(recipe.recipe_id) || 0), 0) + 1;
+function buildFileRecord(recipeId, payload, createdAt) {
   const now = new Date().toISOString();
-
-  const recipeRecord = {
-    recipe_id: nextRecipeId,
+  return {
+    recipe_id: recipeId,
     author_id: payload.authorId,
+    status: payload.status,
     title: payload.title,
     description: payload.description,
     thumbnail_url: payload.thumbnailUrl,
@@ -175,7 +103,7 @@ async function createRecipe(payload) {
     cat3_ingredient: payload.categories.mainIngredient,
     cat4_type: payload.categories.type,
     is_external: false,
-    created_at: now,
+    created_at: createdAt || now,
     updated_at: now,
     ingredients: payload.ingredients.map((ingredient, index) => ({
       ingredient_id: index + 1,
@@ -193,10 +121,151 @@ async function createRecipe(payload) {
       tip: null,
     })),
   };
+}
+
+async function insertChildren(connection, recipeId, payload) {
+  for (const ingredient of payload.ingredients) {
+    await connection.query(
+      'INSERT INTO RECIPE_INGREDIENT (recipe_id, name, amount) VALUES (?, ?, ?)',
+      [recipeId, ingredient.name, ingredient.amount]
+    );
+  }
+
+  for (const [index, step] of payload.steps.entries()) {
+    await connection.query(
+      `INSERT INTO RECIPE_STEP (
+        recipe_id,
+        step_order,
+        description,
+        image_url,
+        timer_seconds
+      ) VALUES (?, ?, ?, ?, ?)`,
+      [recipeId, index + 1, step.description, step.imageUrl, step.timerSeconds]
+    );
+  }
+}
+
+async function createRecipe(payload) {
+  const mode = await getMode();
+
+  if (mode === 'mysql') {
+    const connection = await mysqlPool.getConnection();
+
+    try {
+      await connection.beginTransaction();
+      const [recipeResult] = await connection.query(
+        `INSERT INTO RECIPE (
+          author_id,
+          title,
+          description,
+          thumbnail_url,
+          difficulty,
+          serving_size,
+          cook_time,
+          cat1_method,
+          cat2_situation,
+          cat3_ingredient,
+          cat4_type,
+          status,
+          is_external
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, FALSE)`,
+        [
+          payload.authorId,
+          payload.title,
+          payload.description,
+          payload.thumbnailUrl,
+          payload.difficulty || null,
+          payload.servingSize,
+          payload.cookTime,
+          payload.categories.method,
+          payload.categories.situation,
+          payload.categories.mainIngredient,
+          payload.categories.type,
+          payload.status,
+        ]
+      );
+
+      const recipeId = recipeResult.insertId;
+      await insertChildren(connection, recipeId, payload);
+      await connection.commit();
+      return findRecipeById(recipeId);
+    } catch (error) {
+      await connection.rollback();
+      throw error;
+    } finally {
+      connection.release();
+    }
+  }
+
+  const recipes = await readRecipes();
+  const nextRecipeId =
+    recipes.reduce((maxId, recipe) => Math.max(maxId, Number(recipe.recipe_id) || 0), 0) + 1;
+  const recipeRecord = buildFileRecord(nextRecipeId, payload);
 
   recipes.push(recipeRecord);
   await writeRecipes(recipes);
+  return mapRecipeRecord(recipeRecord, recipeRecord.ingredients, recipeRecord.steps);
+}
 
+async function updateRecipe(recipeId, payload) {
+  const mode = await getMode();
+
+  if (mode === 'mysql') {
+    const connection = await mysqlPool.getConnection();
+
+    try {
+      await connection.beginTransaction();
+      await connection.query(
+        `UPDATE RECIPE SET
+          title = ?,
+          description = ?,
+          thumbnail_url = ?,
+          difficulty = ?,
+          serving_size = ?,
+          cook_time = ?,
+          cat1_method = ?,
+          cat2_situation = ?,
+          cat3_ingredient = ?,
+          cat4_type = ?,
+          status = ?
+        WHERE recipe_id = ?`,
+        [
+          payload.title,
+          payload.description,
+          payload.thumbnailUrl,
+          payload.difficulty || null,
+          payload.servingSize,
+          payload.cookTime,
+          payload.categories.method,
+          payload.categories.situation,
+          payload.categories.mainIngredient,
+          payload.categories.type,
+          payload.status,
+          recipeId,
+        ]
+      );
+      await connection.query('DELETE FROM RECIPE_INGREDIENT WHERE recipe_id = ?', [recipeId]);
+      await connection.query('DELETE FROM RECIPE_STEP WHERE recipe_id = ?', [recipeId]);
+      await insertChildren(connection, recipeId, payload);
+      await connection.commit();
+      return findRecipeById(recipeId);
+    } catch (error) {
+      await connection.rollback();
+      throw error;
+    } finally {
+      connection.release();
+    }
+  }
+
+  const recipes = await readRecipes();
+  const index = recipes.findIndex((recipe) => Number(recipe.recipe_id) === Number(recipeId));
+  if (index === -1) {
+    return null;
+  }
+
+  const recipeRecord = buildFileRecord(recipeId, payload, recipes[index].created_at);
+  recipes[index] = recipeRecord;
+  await writeRecipes(recipes);
   return mapRecipeRecord(recipeRecord, recipeRecord.ingredients, recipeRecord.steps);
 }
 
@@ -218,6 +287,7 @@ async function findRecipeById(recipeId) {
         cat2_situation,
         cat3_ingredient,
         cat4_type,
+        status,
         is_external,
         created_at,
         updated_at
@@ -228,7 +298,6 @@ async function findRecipeById(recipeId) {
     );
 
     const recipe = recipeRows[0];
-
     if (!recipe) {
       return null;
     }
@@ -240,7 +309,6 @@ async function findRecipeById(recipeId) {
        ORDER BY ingredient_id ASC`,
       [recipeId]
     );
-
     const [stepRows] = await mysqlPool.query(
       `SELECT step_id, step_order, description, image_url, timer_seconds, heat_level, tip
        FROM RECIPE_STEP
@@ -254,12 +322,9 @@ async function findRecipeById(recipeId) {
 
   const recipes = await readRecipes();
   const recipe = recipes.find((item) => Number(item.recipe_id) === Number(recipeId));
-
-  if (!recipe) {
-    return null;
-  }
-
-  return mapRecipeRecord(recipe, recipe.ingredients || [], recipe.steps || []);
+  return recipe
+    ? mapRecipeRecord(recipe, recipe.ingredients || [], recipe.steps || [])
+    : null;
 }
 
 async function listRecipesByAuthor(authorId) {
@@ -280,49 +345,30 @@ async function listRecipesByAuthor(authorId) {
         cat2_situation,
         cat3_ingredient,
         cat4_type,
+        status,
         is_external,
         created_at,
         updated_at
       FROM RECIPE
       WHERE author_id = ?
-      ORDER BY created_at DESC, recipe_id DESC`,
+      ORDER BY updated_at DESC, recipe_id DESC`,
       [authorId]
     );
 
-    const recipes = [];
-    for (const recipe of recipeRows) {
-      const [ingredientRows] = await mysqlPool.query(
-        `SELECT ingredient_id, name, amount, section
-         FROM RECIPE_INGREDIENT
-         WHERE recipe_id = ?
-         ORDER BY ingredient_id ASC`,
-        [recipe.recipe_id]
-      );
-
-      const [stepRows] = await mysqlPool.query(
-        `SELECT step_id, step_order, description, image_url, timer_seconds, heat_level, tip
-         FROM RECIPE_STEP
-         WHERE recipe_id = ?
-         ORDER BY step_order ASC`,
-        [recipe.recipe_id]
-      );
-
-      recipes.push(mapRecipeRecord(recipe, ingredientRows, stepRows));
-    }
-
-    return recipes;
+    return Promise.all(recipeRows.map((recipe) => findRecipeById(recipe.recipe_id)));
   }
 
   const recipes = await readRecipes();
   return recipes
     .filter((item) => Number(item.author_id) === Number(authorId))
-    .sort((a, b) => Number(b.recipe_id) - Number(a.recipe_id))
+    .sort((a, b) => new Date(b.updated_at || b.created_at) - new Date(a.updated_at || a.created_at))
     .map((recipe) => mapRecipeRecord(recipe, recipe.ingredients || [], recipe.steps || []));
 }
 
 module.exports = {
   getMode,
   createRecipe,
+  updateRecipe,
   findRecipeById,
   listRecipesByAuthor,
 };

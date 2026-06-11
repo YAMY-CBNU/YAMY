@@ -2,6 +2,7 @@ const recipesStore = require('../storage/recipesStore');
 const { requireAuth } = require('../utils/auth');
 
 const CATEGORY_FIELDS = ['method', 'situation', 'mainIngredient', 'type'];
+const RECIPE_STATUSES = new Set(['draft', 'published']);
 
 function normalizeText(value) {
   return String(value ?? '').trim();
@@ -10,6 +11,16 @@ function normalizeText(value) {
 function normalizeNullableText(value) {
   const text = normalizeText(value);
   return text || null;
+}
+
+function normalizeStatus(value) {
+  const status = normalizeText(value) || 'published';
+  if (!RECIPE_STATUSES.has(status)) {
+    const error = new Error('올바른 레시피 상태가 아닙니다.');
+    error.status = 400;
+    throw error;
+  }
+  return status;
 }
 
 function normalizeTimerSeconds(value) {
@@ -25,7 +36,7 @@ function normalizeTimerSeconds(value) {
   return Math.floor(number);
 }
 
-function validateCategories(categories) {
+function normalizeCategories(categories, required) {
   const normalized = {
     method: normalizeText(categories?.method),
     situation: normalizeText(categories?.situation),
@@ -33,32 +44,30 @@ function validateCategories(categories) {
     type: normalizeText(categories?.type),
   };
 
-  for (const field of CATEGORY_FIELDS) {
-    if (!normalized[field]) {
-      const error = new Error('카테고리 4가지를 모두 선택해주세요.');
-      error.status = 400;
-      throw error;
+  if (required) {
+    for (const field of CATEGORY_FIELDS) {
+      if (!normalized[field]) {
+        const error = new Error('카테고리 4가지를 모두 선택해주세요.');
+        error.status = 400;
+        throw error;
+      }
     }
   }
 
   return normalized;
 }
 
-function validateIngredients(ingredients) {
-  if (!Array.isArray(ingredients) || ingredients.length === 0) {
-    const error = new Error('재료를 한 개 이상 입력해주세요.');
-    error.status = 400;
-    throw error;
-  }
-
-  const normalized = ingredients
+function normalizeIngredients(ingredients, required) {
+  const normalized = (Array.isArray(ingredients) ? ingredients : [])
     .map((ingredient) => ({
       name: normalizeText(ingredient?.name),
       amount: normalizeText(ingredient?.amount),
     }))
-    .filter((ingredient) => ingredient.name);
+    .filter((ingredient) => (
+      required ? ingredient.name : ingredient.name || ingredient.amount
+    ));
 
-  if (normalized.length === 0) {
+  if (required && normalized.length === 0) {
     const error = new Error('재료 이름을 한 개 이상 입력해주세요.');
     error.status = 400;
     throw error;
@@ -67,14 +76,8 @@ function validateIngredients(ingredients) {
   return normalized;
 }
 
-function validateSteps(steps) {
-  if (!Array.isArray(steps) || steps.length === 0) {
-    const error = new Error('조리 단계를 한 개 이상 입력해주세요.');
-    error.status = 400;
-    throw error;
-  }
-
-  const normalized = steps
+function normalizeSteps(steps, required) {
+  const normalized = (Array.isArray(steps) ? steps : [])
     .map((step) => {
       const timerSeconds = normalizeTimerSeconds(step?.timerSeconds);
 
@@ -90,9 +93,13 @@ function validateSteps(steps) {
         timerSeconds,
       };
     })
-    .filter((step) => step.description);
+    .filter((step) => (
+      required
+        ? step.description
+        : step.description || step.imageUrl || step.timerSeconds !== null
+    ));
 
-  if (normalized.length === 0) {
+  if (required && normalized.length === 0) {
     const error = new Error('조리 설명을 한 개 이상 입력해주세요.');
     error.status = 400;
     throw error;
@@ -101,77 +108,148 @@ function validateSteps(steps) {
   return normalized;
 }
 
+function buildRecipePayload(body, authorId) {
+  const status = normalizeStatus(body.status);
+  const isPublished = status === 'published';
+  const payload = {
+    authorId,
+    status,
+    title: normalizeText(body.title),
+    description: normalizeText(body.description),
+    cookTime: normalizeText(body.cookTime),
+    servingSize: normalizeText(body.servingSize),
+    difficulty: normalizeText(body.difficulty),
+    thumbnailUrl: normalizeNullableText(body.thumbnailUrl),
+    categories: normalizeCategories(body.categories, isPublished),
+    ingredients: normalizeIngredients(body.ingredients, isPublished),
+    steps: normalizeSteps(body.steps, isPublished),
+  };
+
+  if (isPublished && !payload.title) {
+    const error = new Error('레시피 제목을 입력해주세요.');
+    error.status = 400;
+    throw error;
+  }
+
+  if (isPublished && !payload.description) {
+    const error = new Error('레시피 설명을 입력해주세요.');
+    error.status = 400;
+    throw error;
+  }
+
+  if (
+    isPublished &&
+    (!payload.cookTime || !payload.servingSize || !payload.difficulty)
+  ) {
+    const error = new Error('조리 시간, 인분, 난이도를 모두 입력해주세요.');
+    error.status = 400;
+    throw error;
+  }
+
+  return payload;
+}
+
+function parseRecipeId(value) {
+  const recipeId = Number(value);
+  if (!Number.isInteger(recipeId) || recipeId <= 0) {
+    const error = new Error('올바른 레시피 ID가 아닙니다.');
+    error.status = 400;
+    throw error;
+  }
+  return recipeId;
+}
+
+function assertOwner(recipe, userId) {
+  if (!recipe) {
+    const error = new Error('레시피를 찾을 수 없습니다.');
+    error.status = 404;
+    throw error;
+  }
+
+  if (Number(recipe.authorId) !== Number(userId)) {
+    const error = new Error('이 레시피를 수정할 권한이 없습니다.');
+    error.status = 403;
+    throw error;
+  }
+}
+
+function sendError(res, error, context, fallbackMessage) {
+  if (error.status) {
+    return res.status(error.status).json({ message: error.message });
+  }
+
+  console.error(context, error);
+  return res.status(500).json({ message: fallbackMessage });
+}
+
 exports.createRecipe = async (req, res) => {
   try {
     const auth = requireAuth(req);
-
-    const title = normalizeText(req.body.title);
-    const description = normalizeText(req.body.description);
-    const cookTime = normalizeText(req.body.cookTime);
-    const servingSize = normalizeText(req.body.servingSize);
-    const difficulty = normalizeText(req.body.difficulty);
-    const thumbnailUrl = normalizeNullableText(req.body.thumbnailUrl);
-    const categories = validateCategories(req.body.categories);
-    const ingredients = validateIngredients(req.body.ingredients);
-    const steps = validateSteps(req.body.steps);
-
-    if (!title) {
-      return res.status(400).json({ message: '레시피 제목을 입력해주세요.' });
-    }
-
-    if (!description) {
-      return res.status(400).json({ message: '레시피 설명을 입력해주세요.' });
-    }
-
-    if (!cookTime || !servingSize || !difficulty) {
-      return res.status(400).json({ message: '조리 시간, 인분, 난이도를 모두 입력해주세요.' });
-    }
-
-    const recipe = await recipesStore.createRecipe({
-      authorId: auth.userId,
-      title,
-      description,
-      cookTime,
-      servingSize,
-      difficulty,
-      thumbnailUrl,
-      categories,
-      ingredients,
-      steps,
-    });
+    const payload = buildRecipePayload(req.body, auth.userId);
+    const recipe = await recipesStore.createRecipe(payload);
 
     return res.status(201).json({
-      message: '레시피가 저장되었습니다.',
+      message: payload.status === 'draft'
+        ? '레시피가 임시저장되었습니다.'
+        : '레시피가 공개되었습니다.',
       recipe,
     });
   } catch (error) {
-    if (error.status) {
-      return res.status(error.status).json({ message: error.message });
-    }
+    return sendError(res, error, 'Create recipe error:', '레시피 저장 중 오류가 발생했습니다.');
+  }
+};
 
-    console.error('Create recipe error:', error);
-    return res.status(500).json({ message: '레시피 저장 중 오류가 발생했습니다.' });
+exports.updateRecipe = async (req, res) => {
+  try {
+    const auth = requireAuth(req);
+    const recipeId = parseRecipeId(req.params.recipeId);
+    const existingRecipe = await recipesStore.findRecipeById(recipeId);
+    assertOwner(existingRecipe, auth.userId);
+
+    const payload = buildRecipePayload(req.body, auth.userId);
+    const recipe = await recipesStore.updateRecipe(recipeId, payload);
+
+    return res.status(200).json({
+      message: payload.status === 'draft'
+        ? '레시피가 임시저장되었습니다.'
+        : '레시피가 공개되었습니다.',
+      recipe,
+    });
+  } catch (error) {
+    return sendError(res, error, 'Update recipe error:', '레시피 수정 중 오류가 발생했습니다.');
   }
 };
 
 exports.getRecipe = async (req, res) => {
   try {
-    const recipeId = Number(req.params.recipeId);
-
-    if (!Number.isInteger(recipeId) || recipeId <= 0) {
-      return res.status(400).json({ message: '올바른 레시피 ID가 아닙니다.' });
-    }
-
+    const recipeId = parseRecipeId(req.params.recipeId);
     const recipe = await recipesStore.findRecipeById(recipeId);
 
-    if (!recipe) {
+    if (!recipe || recipe.status !== 'published') {
       return res.status(404).json({ message: '레시피를 찾을 수 없습니다.' });
     }
 
     return res.status(200).json({ recipe });
   } catch (error) {
-    console.error('Get recipe error:', error);
-    return res.status(500).json({ message: '레시피 조회 중 오류가 발생했습니다.' });
+    return sendError(res, error, 'Get recipe error:', '레시피 조회 중 오류가 발생했습니다.');
+  }
+};
+
+exports.getRecipeForEdit = async (req, res) => {
+  try {
+    const auth = requireAuth(req);
+    const recipeId = parseRecipeId(req.params.recipeId);
+    const recipe = await recipesStore.findRecipeById(recipeId);
+    assertOwner(recipe, auth.userId);
+
+    return res.status(200).json({ recipe });
+  } catch (error) {
+    return sendError(
+      res,
+      error,
+      'Get recipe for edit error:',
+      '레시피 편집 정보를 불러오는 중 오류가 발생했습니다.'
+    );
   }
 };
 
@@ -179,14 +257,8 @@ exports.getMyRecipes = async (req, res) => {
   try {
     const auth = requireAuth(req);
     const recipes = await recipesStore.listRecipesByAuthor(auth.userId);
-
     return res.status(200).json({ recipes });
   } catch (error) {
-    if (error.status) {
-      return res.status(error.status).json({ message: error.message });
-    }
-
-    console.error('Get my recipes error:', error);
-    return res.status(500).json({ message: '내 레시피 조회 중 오류가 발생했습니다.' });
+    return sendError(res, error, 'Get my recipes error:', '내 레시피 조회 중 오류가 발생했습니다.');
   }
 };

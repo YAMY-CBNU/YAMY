@@ -54,6 +54,9 @@ copy .env.example .env
 
 4. Start MySQL and apply `db/yamy.sql`
 
+   If the database already exists, apply `db/migrations/20260610_add_recipe_status.sql`
+   before starting the updated server.
+
 5. Run the server
 
 ```bash
