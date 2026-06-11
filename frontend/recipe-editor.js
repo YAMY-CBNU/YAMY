@@ -30,18 +30,28 @@
     stepTemplate: document.getElementById('step-card-template'),
   };
 
-  function setStatus(message, type = 'error') {
-    const colors = type === 'success'
-      ? 'border-green-200 bg-green-50 text-green-800'
-      : 'border-red-200 bg-red-50 text-red-800';
+  function showDraftStatus(updatedAt) {
+    const savedAt = new Date(updatedAt);
+    const formattedSavedAt = new Intl.DateTimeFormat('ko-KR', {
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+    }).format(savedAt);
 
-    elements.status.className = `mt-4 rounded-xl border px-4 py-3 text-xs font-semibold ${colors}`;
-    elements.status.textContent = message;
+    elements.status.className = 'mt-4 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm font-semibold text-green-800';
+    elements.status.textContent = `마지막 임시저장: ${formattedSavedAt}`;
     elements.status.classList.remove('hidden');
   }
 
   function hideStatus() {
     elements.status.classList.add('hidden');
+  }
+
+  function showAlert(message) {
+    window.alert(message);
   }
 
   function readFileAsDataUrl(file) {
@@ -108,7 +118,7 @@
       try {
         await onFile(file);
       } catch (error) {
-        setStatus(error.message || '이미지 업로드 중 오류가 발생했습니다.');
+        showAlert(error.message || '이미지 업로드 중 오류가 발생했습니다.');
       }
     });
   }
@@ -196,7 +206,7 @@
       try {
         await setStepImage(card, file);
       } catch (error) {
-        setStatus(error.message || '이미지 업로드 중 오류가 발생했습니다.');
+        showAlert(error.message || '이미지 업로드 중 오류가 발생했습니다.');
       }
     });
 
@@ -275,6 +285,10 @@
       card.querySelector('.timer-settings')?.classList.toggle('hidden', !timerSeconds);
     });
     updateStepNumbers();
+
+    if (recipe.status === 'draft' && recipe.updatedAt) {
+      showDraftStatus(recipe.updatedAt);
+    }
   }
 
   async function loadRecipeForEdit() {
@@ -403,14 +417,13 @@
       window.history.replaceState(null, '', `recipe-editor.html?id=${currentRecipeId}`);
 
       if (status === 'draft') {
-        setStatus('레시피가 임시저장되었습니다.', 'success');
+        showDraftStatus(data.recipe.updatedAt);
+        showAlert('레시피가 임시저장되었습니다.');
         return;
       }
 
-      setStatus('레시피가 공개되었습니다.', 'success');
-      window.setTimeout(() => {
-        window.location.href = `recipe-detail.html?id=${data.recipe.id}`;
-      }, 500);
+      showAlert('레시피가 공개되었습니다.');
+      window.location.href = `recipe-detail.html?id=${data.recipe.id}`;
     } finally {
       isSaving = false;
       elements.draftButton.disabled = false;
@@ -432,11 +445,10 @@
       return;
     }
 
-    hideStatus();
     try {
       await setThumbnailImage(file);
     } catch (error) {
-      setStatus(error.message || '이미지 업로드 중 오류가 발생했습니다.');
+      showAlert(error.message || '이미지 업로드 중 오류가 발생했습니다.');
     }
   });
 
@@ -446,23 +458,21 @@
   elements.addStepButton?.addEventListener('click', addStepCard);
   elements.resetButton?.addEventListener('click', resetEditor);
   elements.draftButton?.addEventListener('click', async () => {
-    hideStatus();
     try {
       await saveRecipe('draft');
     } catch (error) {
-      setStatus(error.message || '임시저장 중 오류가 발생했습니다.');
+      showAlert(error.message || '임시저장 중 오류가 발생했습니다.');
     }
   });
   elements.saveButton?.addEventListener('click', async () => {
-    hideStatus();
     try {
       await saveRecipe('published');
     } catch (error) {
-      setStatus(error.message || '레시피 공개 중 오류가 발생했습니다.');
+      showAlert(error.message || '레시피 공개 중 오류가 발생했습니다.');
     }
   });
 
   loadRecipeForEdit().catch((error) => {
-    setStatus(error.message || '레시피를 불러오는 중 오류가 발생했습니다.');
+    showAlert(error.message || '레시피를 불러오는 중 오류가 발생했습니다.');
   });
 })();
