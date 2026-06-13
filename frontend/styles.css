@@ -201,3 +201,9 @@ h1, h2, h3 {
 #rating-input .review-rating-star {
     font-size: clamp(2.5rem, 8vw, 3.5rem);
 }
+
+.comment-compose-input {
+    min-height: 5.5rem;
+    padding-right: 5.25rem;
+    padding-bottom: 2.75rem;
+}

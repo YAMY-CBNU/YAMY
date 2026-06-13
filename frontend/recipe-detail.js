@@ -31,6 +31,9 @@
     commentSubmitButton: document.getElementById('comment-submit-button'),
     commentListCount: document.getElementById('comment-list-count'),
     commentsList: document.getElementById('comments-list'),
+    commentToggleButton: document.getElementById('comment-toggle-button'),
+    commentToggleLabel: document.getElementById('comment-toggle-label'),
+    commentToggleIcon: document.getElementById('comment-toggle-icon'),
     finishedImage: document.getElementById('recipe-finished-image'),
     finishedImageContainer: document.getElementById('recipe-finished-image')?.parentElement,
     stepNumber: document.getElementById('step-number'),
@@ -82,6 +85,7 @@
   let comments = [];
   let myRating = 0;
   let editingCommentId = null;
+  let commentsExpanded = false;
 
   function getStoredUser() {
     const rawUser = localStorage.getItem('yamy_user');
@@ -390,6 +394,19 @@
   function renderComments() {
     if (!elements.commentsList) return;
     if (elements.commentListCount) elements.commentListCount.textContent = String(comments.length);
+    const canToggle = comments.length > 3;
+
+    elements.commentToggleButton?.classList.toggle('hidden', !canToggle);
+    elements.commentToggleButton?.classList.toggle('inline-flex', canToggle);
+    elements.commentToggleButton?.setAttribute('aria-expanded', String(commentsExpanded));
+    if (elements.commentToggleLabel) {
+      elements.commentToggleLabel.textContent = commentsExpanded
+        ? '댓글 접기'
+        : `전체 댓글 보기 (${comments.length})`;
+    }
+    if (elements.commentToggleIcon) {
+      elements.commentToggleIcon.textContent = commentsExpanded ? 'expand_less' : 'expand_more';
+    }
 
     if (comments.length === 0) {
       elements.commentsList.innerHTML = `
@@ -401,7 +418,8 @@
       return;
     }
 
-    elements.commentsList.innerHTML = comments.map(createCommentMarkup).join('');
+    const visibleComments = commentsExpanded ? comments : comments.slice(0, 3);
+    elements.commentsList.innerHTML = visibleComments.map(createCommentMarkup).join('');
     elements.commentsList.querySelectorAll('[data-review-avatar]').forEach((image) => {
       image.addEventListener('error', () => {
         image.classList.add('hidden');
@@ -976,6 +994,11 @@
     saveRating(Number(button.dataset.ratingValue));
   });
   elements.commentForm?.addEventListener('submit', submitComment);
+  elements.commentToggleButton?.addEventListener('click', () => {
+    commentsExpanded = !commentsExpanded;
+    editingCommentId = null;
+    renderComments();
+  });
   elements.commentsList?.addEventListener('click', (event) => {
     const button = event.target.closest('[data-comment-action]');
     if (!button || !currentRecipe) return;
