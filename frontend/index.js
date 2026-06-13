@@ -83,6 +83,8 @@
     const title = escapeHtml(recipe.title || '제목 없는 레시피');
     const cookTime = escapeHtml(recipe.cookTime || '시간 미정');
     const difficulty = escapeHtml(recipe.difficulty || '난이도 미정');
+    const ratingAverage = Number(recipe.ratingSummary?.averageRating) || 0;
+    const ratingCount = Number(recipe.ratingSummary?.count) || 0;
     const href = `recipe-detail.html?id=${encodeURIComponent(recipe.id)}`;
 
     return `
@@ -98,7 +100,7 @@
         <a href="${href}" class="block space-y-2">
           <h3 class="text-lg font-bold group-hover:text-primary transition-colors line-clamp-1">${title}</h3>
           ${createCategoryMarkup(recipe)}
-          <p class="text-sm text-on-surface-variant flex items-center gap-3">
+          <p class="text-sm text-on-surface-variant flex flex-wrap items-center gap-3">
             <span class="flex items-center gap-1">
               <span class="material-symbols-outlined text-base">schedule</span>
               <span>${cookTime}</span>
@@ -106,6 +108,13 @@
             <span class="flex items-center gap-1">
               <span class="material-symbols-outlined text-base">bar_chart</span>
               <span>${difficulty}</span>
+            </span>
+            <span class="flex items-center gap-1" aria-label="평균 별점 ${ratingAverage.toFixed(1)}점, ${ratingCount}명 참여">
+              <span
+                class="material-symbols-outlined text-base text-amber-500"
+                style="font-variation-settings: 'FILL' 1"
+              >star</span>
+              <span>${ratingAverage.toFixed(1)} (${ratingCount})</span>
             </span>
           </p>
         </a>

@@ -4,6 +4,7 @@ const mysqlPool = require('../config/db');
 
 const DATA_DIR = path.join(__dirname, '..', 'data');
 const DATA_FILE = path.join(DATA_DIR, 'recipes.json');
+const RATINGS_DATA_FILE = path.join(DATA_DIR, 'ratings.json');
 
 let modePromise;
 
@@ -25,6 +26,16 @@ async function readRecipes() {
 async function writeRecipes(recipes) {
   await ensureDataFile();
   await fs.writeFile(DATA_FILE, JSON.stringify(recipes, null, 2), 'utf8');
+}
+
+async function readRecipeRatings() {
+  try {
+    const raw = await fs.readFile(RATINGS_DATA_FILE, 'utf8');
+    return JSON.parse(raw || '[]');
+  } catch (error) {
+    if (error.code === 'ENOENT') return [];
+    throw error;
+  }
 }
 
 async function detectMode() {
@@ -438,18 +449,48 @@ async function listPublishedRecipes(limit = 8) {
 
   if (mode === 'mysql') {
     const [recipeRows] = await mysqlPool.query(
-      `SELECT recipe_id
-       FROM RECIPE
-       WHERE status = 'published'
-       ORDER BY created_at DESC, recipe_id DESC
+      `SELECT
+        recipe.recipe_id,
+        recipe.author_id,
+        recipe.title,
+        recipe.description,
+        recipe.thumbnail_url,
+        recipe.difficulty,
+        recipe.serving_size,
+        recipe.cook_time,
+        recipe.cat1_method,
+        recipe.cat2_situation,
+        recipe.cat3_ingredient,
+        recipe.cat4_type,
+        recipe.status,
+        recipe.is_external,
+        recipe.created_at,
+        recipe.updated_at,
+        COALESCE(rating_summary.rating_count, 0) AS rating_count,
+        COALESCE(rating_summary.average_rating, 0) AS average_rating
+       FROM RECIPE recipe
+       LEFT JOIN (
+         SELECT recipe_id, COUNT(*) AS rating_count, AVG(rating) AS average_rating
+         FROM RECIPE_RATING
+         GROUP BY recipe_id
+       ) rating_summary ON rating_summary.recipe_id = recipe.recipe_id
+       WHERE recipe.status = 'published'
+       ORDER BY recipe.created_at DESC, recipe.recipe_id DESC
        LIMIT ?`,
       [safeLimit]
     );
 
-    return Promise.all(recipeRows.map((recipe) => findRecipeById(recipe.recipe_id)));
+    return recipeRows.map((recipe) => ({
+      ...mapRecipeRecord(recipe),
+      ratingSummary: {
+        count: Number(recipe.rating_count),
+        averageRating: Number(Number(recipe.average_rating).toFixed(1)),
+      },
+    }));
   }
 
   const recipes = await readRecipes();
+  const ratings = await readRecipeRatings();
   return recipes
     .filter((recipe) => (recipe.status || 'published') === 'published')
     .sort((a, b) => (
@@ -457,12 +498,27 @@ async function listPublishedRecipes(limit = 8) {
       || Number(b.recipe_id) - Number(a.recipe_id)
     ))
     .slice(0, safeLimit)
-    .map((recipe) => mapRecipeRecord(
-      recipe,
-      recipe.ingredients || [],
-      recipe.steps || [],
-      recipe.tips || []
-    ));
+    .map((recipe) => {
+      const recipeRatings = ratings.filter(
+        (rating) => Number(rating.recipe_id) === Number(recipe.recipe_id)
+      );
+      const averageRating = recipeRatings.length
+        ? recipeRatings.reduce((sum, rating) => sum + Number(rating.rating), 0) / recipeRatings.length
+        : 0;
+
+      return {
+        ...mapRecipeRecord(
+          recipe,
+          recipe.ingredients || [],
+          recipe.steps || [],
+          recipe.tips || []
+        ),
+        ratingSummary: {
+          count: recipeRatings.length,
+          averageRating: Number(averageRating.toFixed(1)),
+        },
+      };
+    });
 }
 
 module.exports = {
