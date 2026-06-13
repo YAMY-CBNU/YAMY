@@ -1,6 +1,7 @@
 (() => {
   const API_BASE = 'http://127.0.0.1:3000/api/auth';
 
+  // 상태 메시지 / Status Message
   function ensureStatusBox(form) {
     let box = form.parentElement.querySelector('[data-auth-status]');
     if (!box) {
@@ -29,6 +30,7 @@
     }
   }
 
+  // 로그인/회원가입 모드 감지 / Auth Mode
   function getAuthMode() {
     if (document.getElementById('signup-email')) {
       return 'signup';
@@ -39,6 +41,7 @@
     return null;
   }
 
+  // 로그인 / Login
   async function handleLogin(form) {
     const email = document.getElementById('login-email')?.value.trim();
     const password = document.getElementById('login-password')?.value || '';
@@ -61,6 +64,7 @@
     window.location.href = 'index.html';
   }
 
+  // 회원가입 / Signup
   async function handleSignup(form) {
     const username = document.getElementById('signup-name')?.value.trim();
     const email = document.getElementById('signup-email')?.value.trim();
@@ -93,6 +97,7 @@
     window.location.href = 'index.html';
   }
 
+  // 초기화 / Init
   document.addEventListener('DOMContentLoaded', () => {
     const form = document.querySelector('form');
     const mode = getAuthMode();

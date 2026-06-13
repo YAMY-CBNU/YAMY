@@ -1,307 +1,450 @@
-<!DOCTYPE html>
+﻿<!doctype html>
 
-<html lang="ko"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;600;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script src="tailwind-editorial.js"></script>
-<link rel="stylesheet" href="styles.css"/>
-</head>
-<body class="bg-surface text-on-surface font-body selection:bg-primary-fixed selection:text-on-primary-fixed">
-<!-- TopNavBar -->
-<nav class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl flex justify-between items-center px-4 md:px-12 h-16 md:h-24 max-w-full mx-auto border-b border-outline-variant/30">
-<div class="flex items-center gap-6 lg:gap-12">
-<a href="index.html" class="text-3xl font-extrabold text-primary font-headline tracking-tighter">YAMY</a>
-<div class="hidden md:flex items-center gap-5 lg:gap-8 font-headline tracking-tight whitespace-nowrap">
-<a class="text-on-surface-variant hover:text-primary transition-colors" href="index.html">탐색하기</a>
-<a id="nav-my-recipe" class="text-on-surface-variant hover:text-primary transition-colors" href="my-recipe.html">내 레시피</a>
-<a class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer" onclick="event.preventDefault(); window.authGuard.redirectToLoginIfNeeded() || (window.location.href='my-picks.html')">저장됨</a>
-<a id="nav-recipe-editor" class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer" onclick="event.preventDefault(); window.authGuard.redirectToLoginIfNeeded() || (window.location.href='recipe-editor.html')">레시피 작성</a>
-</div>
-</div>
-<div class="flex items-center gap-2 md:gap-3 lg:gap-6">
-<!-- 검색: lg+ 전체 입력창, lg 미만 아이콘 버튼 -->
-<button type="button" class="flex lg:hidden p-2 text-on-surface-variant hover:text-primary rounded-full hover:bg-surface-container transition-all">
-<span class="material-symbols-outlined">search</span>
-</button>
-<div class="relative hidden lg:block">
-<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
-<input class="bg-surface-container border border-outline-variant/50 rounded-full pl-11 pr-6 py-2.5 text-sm focus:ring-2 focus:ring-primary w-64 transition-all outline-none" placeholder="요리 영감 검색..." type="text"/>
-</div>
-<!-- 프로필: lg+ 텍스트+아이콘, lg 미만 아이콘 버튼 -->
-<a href="profile.html" data-profile-link class="hidden items-center rounded-full bg-surface-container text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-all font-semibold p-2 lg:px-4 lg:py-2.5">
-<span class="material-symbols-outlined lg:hidden">person</span>
-<span class="hidden lg:inline text-sm whitespace-nowrap" data-profile-text>프로필</span>
-</a>
-<!-- 로그인/아웃: styles.css에서 lg 미만 아이콘 처리 -->
-<a id="auth-action" href="login.html" class="bg-primary text-on-primary px-8 py-2.5 rounded-full font-headline font-bold text-sm hover:opacity-90 duration-150 transition-all shadow-sm whitespace-nowrap">로그인</a>
-</div>
-</nav>
-<main class="pt-20 md:pt-32 pb-32 px-6 max-w-6xl mx-auto">
-<!-- Profile Edit Section -->
-<section class="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-20">
-<!-- Left: Sidebar / Instructions (Editorial Style) -->
-<div class="lg:col-span-4 space-y-4">
-<h1 class="text-4xl font-bold tracking-tight text-primary">프로필 설정</h1>
-<p class="text-on-surface-variant leading-relaxed body-lg">
-                    닉네임과 비밀번호를 관리하여 더욱 안전하게 YAMY를 즐겨보세요.
-                </p>
-<div class="pt-8 border-t border-outline-variant/20">
-<div class="flex items-center gap-3 text-secondary font-semibold">
-<span class="material-symbols-outlined" data-icon="verified">verified</span>
-<span>프리미엄 큐레이터</span>
-</div>
-</div>
-</div>
-<!-- Right: Form -->
-<div class="lg:col-span-8 bg-surface-container-low rounded-3xl p-8 md:p-12 editorial-shadow">
-<div id="profile-status" class="mb-6 rounded-xl border px-4 py-3 text-sm font-semibold hidden"></div>
-<form id="profile-form" class="space-y-8">
-<!-- Image Upload -->
-<div class="flex flex-col md:flex-row items-center gap-8 pb-8 border-b border-outline-variant/10">
-<div class="relative group">
-<div class="w-32 h-32 rounded-3xl overflow-hidden ring-4 ring-white shadow-lg bg-white">
-</div>
-<button class="absolute -bottom-2 -right-2 bg-primary text-on-primary p-2 rounded-xl shadow-lg hover:scale-105 transition-transform" type="button">
-<span class="material-symbols-outlined text-sm" data-icon="photo_camera">photo_camera</span>
-</button>
-</div>
-<div class="text-center md:text-left space-y-1">
-<h3 class="text-lg font-bold">프로필 이미지</h3>
-<p class="text-sm text-on-surface-variant">JPG, PNG (최대 5MB)</p>
-<button class="text-primary text-sm font-bold mt-2 hover:underline" type="button">이미지 제거</button>
-</div>
-</div>
-<!-- Input Fields Grid -->
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-<div class="space-y-2">
-<label class="text-sm font-bold text-on-surface-variant ml-1">닉네임</label>
-<input id="profile-username" class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-fixed focus:bg-primary-fixed transition-all text-on-surface" type="text" required maxlength="50"/>
-</div>
-<div class="space-y-2">
-<label class="text-sm font-bold text-on-surface-variant ml-1">이메일</label>
-<input id="profile-email" class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3 text-on-surface/70 cursor-not-allowed" type="email" readonly/>
-</div>
-<div class="space-y-2">
-<label class="text-sm font-bold text-on-surface-variant ml-1">비밀번호</label>
-<input id="profile-password" class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-fixed focus:bg-primary-fixed transition-all text-on-surface" placeholder="변경할 때만 입력" type="password"/>
-</div>
-<div class="space-y-2">
-<label class="text-sm font-bold text-on-surface-variant ml-1">비밀번호 확인</label>
-<input id="profile-password-confirm" class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-fixed focus:bg-primary-fixed transition-all text-on-surface" placeholder="변경할 때만 입력" type="password"/>
-</div>
-</div>
-<div class="pt-4 flex justify-end">
-<button class="bg-gradient-to-br from-primary to-primary-container text-on-primary px-8 py-3 rounded-xl font-bold hover:scale-[1.02] active:scale-95 transition-all editorial-shadow" type="submit">
-                            정보 저장하기
-                        </button>
-</div>
-</form>
-</div>
-</section>
-<!-- Recently Viewed Recipes -->
-<section class="space-y-8">
-<div class="flex justify-between items-end">
-<div class="space-y-2">
-<span class="text-secondary font-bold text-sm tracking-widest uppercase">Your History</span>
-<h2 class="text-3xl font-bold tracking-tight">최근 본 레시피</h2>
-</div>
-<a class="text-primary font-bold flex items-center gap-1 hover:gap-2 transition-all" href="index.html">
-                    전체보기 <span class="material-symbols-outlined">chevron_right</span>
-</a>
-</div>
-<!-- Horizontal Scroll Rail -->
-<div class="flex gap-6 overflow-x-auto pb-8 scrollbar-hide -mx-6 px-6">
-<!-- Recipe Card 1 -->
-<div class="min-w-[280px] md:min-w-[320px] group cursor-pointer">
-<div class="relative h-[200px] rounded-2xl overflow-hidden mb-4 shadow-sm group-hover:shadow-xl transition-all">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="vibrant healthy salad bowl with avocado, eggs and fresh greens on a minimalist background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-d0zqGToH5ziycJ8xyxQ3uGixjK0ufhS3zkL72b1_3-2RTWUVfcICM6y2KsnnN-bHPuwrctrfOl_d6Oce6ICCOe3pbRiPgpEr-f1GUp1tRfrj-9Y_pRf-3nTCEsE7vfelPxW30gPUj0lgSsOuUpXE6oDUY-3a-OqtzoZMGUzHbahHK4oSm3Zgg_Nqxe5UyVUZnsfte491WI8fAqC7AcYK9Qv7edFXn-ktmu73Gy1KgUObG_fPQ8ok_VYQyQ_efbmejOfcRBV0pAA"/>
-<div class="absolute top-3 right-3 bg-white/90 backdrop-blur p-1.5 rounded-full text-amber-500 shadow-sm">
-<span class="material-symbols-outlined text-[20px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
-</div>
-</div>
-<div class="space-y-1">
-<h3 class="text-lg font-bold group-hover:text-primary transition-colors">신선한 아보카도 샐러드</h3>
-<p class="text-sm text-on-surface-variant flex items-center gap-3">
-<span class="flex items-center gap-1"><span class="material-symbols-outlined text-base">schedule</span><span>15</span></span>
-<span class="flex items-center gap-1"><span class="material-symbols-outlined text-base">bar_chart</span><span>초급</span></span>
-</p>
-</div>
-</div>
-<!-- Recipe Card 2 -->
-<div class="min-w-[280px] md:min-w-[320px] group cursor-pointer">
-<div class="relative h-[200px] rounded-2xl overflow-hidden mb-4 shadow-sm group-hover:shadow-xl transition-all">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="rustic tomato soup with basil garnish in a ceramic bowl with artisan bread on the side" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUtZQvtvOgRUYrJPzIYaHH8yenRiI4j-FEest9yQVtAQywJtRoGcsrMZjJxcx9EOUWsEw_AcWd3LNYeGBU5lsdPsdXObSUoTTRzPuxhYuM25wXIy3AHGcdyYG9o0hjQmiyqP7qmsvEvXD-ZMQjdRTinzlZ-TDiEReOsZIzqcQwnapGh41xNS-Oge0uzOrswt8Nd-79hj8gKcYycRJpaMeyjs_NYbstW71TuAN4uDkCVEvv8m5aNaLhv84wzteKSFv1gnyGwMGnZA8"/>
-<div class="absolute top-3 right-3 bg-white/90 backdrop-blur p-1.5 rounded-full text-amber-500/50 shadow-sm hover:text-amber-500 transition-colors">
-<span class="material-symbols-outlined text-[20px]" data-icon="star">star</span>
-</div>
-</div>
-<div class="space-y-1">
-<h3 class="text-lg font-bold group-hover:text-primary transition-colors">구운 토마토 바질 수프</h3>
-<p class="text-sm text-on-surface-variant flex items-center gap-3">
-<span class="flex items-center gap-1"><span class="material-symbols-outlined text-base">schedule</span><span>45</span></span>
-<span class="flex items-center gap-1"><span class="material-symbols-outlined text-base">bar_chart</span><span>중급</span></span>
-</p>
-</div>
-</div>
-<!-- Recipe Card 3 -->
-<div class="min-w-[280px] md:min-w-[320px] group cursor-pointer">
-<div class="relative h-[200px] rounded-2xl overflow-hidden mb-4 shadow-sm group-hover:shadow-xl transition-all">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="mediterranean Buddha bowl with chickpeas, quinoa and roasted vegetables" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxPDHM2pgA7zd4fkU1EOMNvcL_6TdCAPmYA3ThrGVLcnKqGtL5DcQ0QzxJlz-peNWRb1Lb9LLmRQma0MOUo8JExFWyQ0geRotsXFKs-z3gF2A6ayhXt7FjwbHbqE10Lq6SYkbNV5zHY7y0Y3Y456acrabSeocFTJnvLPPX_RBj1vvpaSIwQdCSrgvgO0WL8pnwWANnm9kPNxBEAiJz1MljuTqoi1qhPRZTep5RaSkZ1low7SyS4q_Wk-ewrLt27hmPXHzz38xTWJU"/>
-<div class="absolute top-3 right-3 bg-white/90 backdrop-blur p-1.5 rounded-full text-amber-500 shadow-sm">
-<span class="material-symbols-outlined text-[20px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
-</div>
-</div>
-<div class="space-y-1">
-<h3 class="text-lg font-bold group-hover:text-primary transition-colors">지중해식 곡물 볼</h3>
-<p class="text-sm text-on-surface-variant flex items-center gap-3">
-<span class="flex items-center gap-1"><span class="material-symbols-outlined text-base">schedule</span><span>25</span></span>
-<span class="flex items-center gap-1"><span class="material-symbols-outlined text-base">bar_chart</span><span>초급</span></span>
-</p>
-</div>
-</div>
-<!-- Recipe Card 4 -->
-<div class="min-w-[280px] md:min-w-[320px] group cursor-pointer">
-<div class="relative h-[200px] rounded-2xl overflow-hidden mb-4 shadow-sm group-hover:shadow-xl transition-all">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="pasta pesto with pine nuts and cherry tomatoes in a minimalist white plate" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5lq8ryzzXS2g_pNZl8rdAbZo1TxhzGQw7BhFmxEj9NWR8fww0gMwQFzBAuVQMvaVzotuGIBlyHdMqvMkFcLU38HNAymMrJ6InuDClNVYtR6WkaOzB6KU7OjU5yp4pR7-cr0B2kTWtTTXiOFUY04zoH8z3t47-dKQyUXRJToFqEXYtALu4zC0y4afpHb90Bf60GsEAIQLrFaZnnHhR2-MlEYezoJvFfryycjuWk_QXbTgwZEAqcbyyG-EJo_InDZ1nn3N_O-gDi_I"/>
-<div class="absolute top-3 right-3 bg-white/90 backdrop-blur p-1.5 rounded-full text-amber-500/50 shadow-sm hover:text-amber-500 transition-colors">
-<span class="material-symbols-outlined text-[20px]" data-icon="star">star</span>
-</div>
-</div>
-<div class="space-y-1">
-<h3 class="text-lg font-bold group-hover:text-primary transition-colors">홈메이드 페스토 파스타</h3>
-<p class="text-sm text-on-surface-variant flex items-center gap-3">
-<span class="flex items-center gap-1"><span class="material-symbols-outlined text-base">schedule</span><span>20</span></span>
-<span class="flex items-center gap-1"><span class="material-symbols-outlined text-base">bar_chart</span><span>초급</span></span>
-</p>
-</div>
-</div>
-</div>
-</section>
-</main>
-<!-- BottomNavBar (Mobile Only) -->
-<nav class="md:hidden fixed bottom-0 left-0 w-full h-20 bg-stone-50/90 backdrop-blur-xl flex justify-around items-center px-4 pb-2 z-50 rounded-t-[2rem] shadow-2xl">
-<a class="flex flex-col items-center justify-center text-stone-500 px-5 py-2 active:scale-90 transition-all hover:text-orange-700" href="index.html">
-<span class="material-symbols-outlined">explore</span>
-<span class="font-['Plus_Jakarta_Sans'] text-[11px] font-bold uppercase tracking-wider">Browse</span>
-</a>
-<a class="flex flex-col items-center justify-center text-stone-500 px-5 py-2 active:scale-90 transition-all hover:text-orange-700" href="my-recipe.html">
-<span class="material-symbols-outlined">menu_book</span>
-<span class="font-['Plus_Jakarta_Sans'] text-[11px] font-bold uppercase tracking-wider">My Recipes</span>
-</a>
-<a class="flex flex-col items-center justify-center text-stone-500 px-5 py-2 active:scale-90 transition-all hover:text-orange-700" href="my-picks.html">
-<span class="material-symbols-outlined">star</span>
-<span class="font-['Plus_Jakarta_Sans'] text-[11px] font-bold uppercase tracking-wider">Saved</span>
-</a>
-<a class="flex flex-col items-center justify-center text-stone-500 px-5 py-2 active:scale-90 transition-all hover:text-orange-700" href="recipe-editor.html">
-<span class="material-symbols-outlined">add_circle</span>
-<span class="font-['Plus_Jakarta_Sans'] text-[11px] font-bold uppercase tracking-wider">Create</span>
-</a>
-</nav>
-<script src="auth-guard.js"></script>
-<script src="profile-badge.js"></script>
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const API_BASE = 'http://localhost:3000/api/auth';
-    const token = localStorage.getItem('yamy_token');
-    const form = document.getElementById('profile-form');
-    const usernameInput = document.getElementById('profile-username');
-    const emailInput = document.getElementById('profile-email');
-    const passwordInput = document.getElementById('profile-password');
-    const passwordConfirmInput = document.getElementById('profile-password-confirm');
-    const statusBox = document.getElementById('profile-status');
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;600;700;800&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script src="tailwind-editorial.js"></script>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="bg-surface text-on-surface font-body selection:bg-primary-fixed selection:text-on-primary-fixed">
+    <!-- 상단 네비바 / TopNavBar -->
+    <nav
+      class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl flex justify-between items-center px-4 md:px-12 h-16 md:h-20 max-w-full mx-auto border-b border-outline-variant/30"
+    >
+      <div class="flex items-center gap-6 lg:gap-12">
+        <a href="index.html" class="text-3xl font-extrabold text-primary font-headline tracking-tighter">YAMY</a>
+        <div class="hidden md:flex items-center gap-5 lg:gap-8 font-headline tracking-tight whitespace-nowrap">
+          <a class="text-on-surface-variant hover:text-primary transition-colors" href="index.html">탐색하기</a>
+          <a
+            id="nav-my-recipe"
+            class="text-on-surface-variant hover:text-primary transition-colors"
+            href="my-recipe.html"
+            >내 레시피</a
+          >
+          <a
+            class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer"
+            onclick="
+              event.preventDefault();
+              window.authGuard.redirectToLoginIfNeeded() || (window.location.href = 'my-picks.html');
+            "
+            >저장됨</a
+          >
+          <a
+            id="nav-recipe-editor"
+            class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer"
+            onclick="
+              event.preventDefault();
+              window.authGuard.redirectToLoginIfNeeded() || (window.location.href = 'recipe-editor.html');
+            "
+            >레시피 작성</a
+          >
+        </div>
+      </div>
+      <div class="flex items-center gap-2 md:gap-3 lg:gap-6">
+        <!-- 검색 / Search -->
+        <button
+          type="button"
+          class="flex lg:hidden p-2 text-on-surface-variant hover:text-primary rounded-full hover:bg-surface-container transition-all"
+        >
+          <span class="material-symbols-outlined">search</span>
+        </button>
+        <div class="relative hidden lg:block">
+          <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant"
+            >search</span
+          >
+          <input
+            class="bg-surface-container border border-outline-variant/50 rounded-full pl-11 pr-6 py-2.5 text-sm focus:ring-2 focus:ring-primary w-64 transition-all outline-none"
+            placeholder="요리 영감 검색..."
+            type="text"
+          />
+        </div>
+        <!-- 프로필 / Profile -->
+        <a
+          href="profile.html"
+          data-profile-link
+          class="hidden items-center rounded-full bg-surface-container text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-all font-semibold p-2 lg:px-4 lg:py-2.5"
+        >
+          <span class="material-symbols-outlined lg:hidden">person</span>
+          <span class="hidden lg:inline text-sm whitespace-nowrap" data-profile-text>프로필</span>
+        </a>
+        <!-- 로그인/아웃 / Auth -->
+        <a
+          id="auth-action"
+          href="login.html"
+          class="bg-primary text-on-primary px-8 py-2.5 rounded-full font-headline font-bold text-sm hover:opacity-90 duration-150 transition-all shadow-sm whitespace-nowrap"
+          >로그인</a
+        >
+      </div>
+    </nav>
+    <main class="pt-20 md:pt-32 pb-32 px-6 max-w-6xl mx-auto">
+      <!-- Profile Edit Section -->
+      <section class="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-20">
+        <!-- Left: Sidebar / Instructions (Editorial Style) -->
+        <div class="lg:col-span-4 space-y-4">
+          <h1 class="text-4xl font-bold tracking-tight text-primary">프로필 설정</h1>
+          <p class="text-on-surface-variant leading-relaxed body-lg">
+            닉네임과 비밀번호를 관리하여 더욱 안전하게 YAMY를 즐겨보세요.
+          </p>
+          <div class="pt-8 border-t border-outline-variant/20">
+            <div class="flex items-center gap-3 text-secondary font-semibold">
+              <span class="material-symbols-outlined" data-icon="verified">verified</span>
+              <span>프리미엄 큐레이터</span>
+            </div>
+          </div>
+        </div>
+        <!-- Right: Form -->
+        <div class="lg:col-span-8 bg-surface-container-low rounded-3xl p-8 md:p-12 editorial-shadow">
+          <div id="profile-status" class="mb-6 rounded-xl border px-4 py-3 text-sm font-semibold hidden"></div>
+          <form id="profile-form" class="space-y-8">
+            <!-- Image Upload -->
+            <div class="flex flex-col md:flex-row items-center gap-8 pb-8 border-b border-outline-variant/10">
+              <div class="relative group">
+                <div class="w-32 h-32 rounded-3xl overflow-hidden ring-4 ring-white shadow-lg bg-white"></div>
+                <button
+                  class="absolute -bottom-2 -right-2 bg-primary text-on-primary p-2 rounded-xl shadow-lg hover:scale-105 transition-transform"
+                  type="button"
+                >
+                  <span class="material-symbols-outlined text-sm" data-icon="photo_camera">photo_camera</span>
+                </button>
+              </div>
+              <div class="text-center md:text-left space-y-1">
+                <h3 class="text-lg font-bold">프로필 이미지</h3>
+                <p class="text-sm text-on-surface-variant">JPG, PNG (최대 5MB)</p>
+                <button class="text-primary text-sm font-bold mt-2 hover:underline" type="button">이미지 제거</button>
+              </div>
+            </div>
+            <!-- Input Fields Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="space-y-2">
+                <label class="text-sm font-bold text-on-surface-variant ml-1">닉네임</label>
+                <input
+                  id="profile-username"
+                  class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-fixed focus:bg-primary-fixed transition-all text-on-surface"
+                  type="text"
+                  required
+                  maxlength="50"
+                />
+              </div>
+              <div class="space-y-2">
+                <label class="text-sm font-bold text-on-surface-variant ml-1">이메일</label>
+                <input
+                  id="profile-email"
+                  class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3 text-on-surface/70 cursor-not-allowed"
+                  type="email"
+                  readonly
+                />
+              </div>
+              <div class="space-y-2">
+                <label class="text-sm font-bold text-on-surface-variant ml-1">비밀번호</label>
+                <input
+                  id="profile-password"
+                  class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-fixed focus:bg-primary-fixed transition-all text-on-surface"
+                  placeholder="변경할 때만 입력"
+                  type="password"
+                />
+              </div>
+              <div class="space-y-2">
+                <label class="text-sm font-bold text-on-surface-variant ml-1">비밀번호 확인</label>
+                <input
+                  id="profile-password-confirm"
+                  class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-fixed focus:bg-primary-fixed transition-all text-on-surface"
+                  placeholder="변경할 때만 입력"
+                  type="password"
+                />
+              </div>
+            </div>
+            <div class="pt-4 flex justify-end">
+              <button
+                class="bg-gradient-to-br from-primary to-primary-container text-on-primary px-8 py-3 rounded-xl font-bold hover:scale-[1.02] active:scale-95 transition-all editorial-shadow"
+                type="submit"
+              >
+                정보 저장하기
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+      <!-- Recently Viewed Recipes -->
+      <section class="space-y-8">
+        <div class="flex justify-between items-end">
+          <div class="space-y-2">
+            <span class="text-secondary font-bold text-sm tracking-widest uppercase">Your History</span>
+            <h2 class="text-3xl font-bold tracking-tight">최근 본 레시피</h2>
+          </div>
+          <a class="text-primary font-bold flex items-center gap-1 hover:gap-2 transition-all" href="index.html">
+            전체보기 <span class="material-symbols-outlined">chevron_right</span>
+          </a>
+        </div>
+        <!-- Horizontal Scroll Rail -->
+        <div class="flex gap-6 overflow-x-auto pb-8 scrollbar-hide -mx-6 px-6">
+          <!-- Recipe Card 1 -->
+          <div class="min-w-[280px] md:min-w-[320px] group cursor-pointer">
+            <div
+              class="relative h-[200px] rounded-2xl overflow-hidden mb-4 shadow-sm group-hover:shadow-xl transition-all"
+            >
+              <img
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                data-alt="vibrant healthy salad bowl with avocado, eggs and fresh greens on a minimalist background"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-d0zqGToH5ziycJ8xyxQ3uGixjK0ufhS3zkL72b1_3-2RTWUVfcICM6y2KsnnN-bHPuwrctrfOl_d6Oce6ICCOe3pbRiPgpEr-f1GUp1tRfrj-9Y_pRf-3nTCEsE7vfelPxW30gPUj0lgSsOuUpXE6oDUY-3a-OqtzoZMGUzHbahHK4oSm3Zgg_Nqxe5UyVUZnsfte491WI8fAqC7AcYK9Qv7edFXn-ktmu73Gy1KgUObG_fPQ8ok_VYQyQ_efbmejOfcRBV0pAA"
+              />
+              <div class="absolute top-3 right-3 bg-white/90 backdrop-blur p-1.5 rounded-full text-amber-500 shadow-sm">
+                <span
+                  class="material-symbols-outlined text-[20px]"
+                  data-icon="star"
+                  style="font-variation-settings: &quot;FILL&quot; 1"
+                  >star</span
+                >
+              </div>
+            </div>
+            <div class="space-y-1">
+              <h3 class="text-lg font-bold group-hover:text-primary transition-colors">신선한 아보카도 샐러드</h3>
+              <p class="text-sm text-on-surface-variant flex items-center gap-3">
+                <span class="flex items-center gap-1"
+                  ><span class="material-symbols-outlined text-base">schedule</span><span>15</span></span
+                >
+                <span class="flex items-center gap-1"
+                  ><span class="material-symbols-outlined text-base">bar_chart</span><span>초급</span></span
+                >
+              </p>
+            </div>
+          </div>
+          <!-- Recipe Card 2 -->
+          <div class="min-w-[280px] md:min-w-[320px] group cursor-pointer">
+            <div
+              class="relative h-[200px] rounded-2xl overflow-hidden mb-4 shadow-sm group-hover:shadow-xl transition-all"
+            >
+              <img
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                data-alt="rustic tomato soup with basil garnish in a ceramic bowl with artisan bread on the side"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUtZQvtvOgRUYrJPzIYaHH8yenRiI4j-FEest9yQVtAQywJtRoGcsrMZjJxcx9EOUWsEw_AcWd3LNYeGBU5lsdPsdXObSUoTTRzPuxhYuM25wXIy3AHGcdyYG9o0hjQmiyqP7qmsvEvXD-ZMQjdRTinzlZ-TDiEReOsZIzqcQwnapGh41xNS-Oge0uzOrswt8Nd-79hj8gKcYycRJpaMeyjs_NYbstW71TuAN4uDkCVEvv8m5aNaLhv84wzteKSFv1gnyGwMGnZA8"
+              />
+              <div
+                class="absolute top-3 right-3 bg-white/90 backdrop-blur p-1.5 rounded-full text-amber-500/50 shadow-sm hover:text-amber-500 transition-colors"
+              >
+                <span class="material-symbols-outlined text-[20px]" data-icon="star">star</span>
+              </div>
+            </div>
+            <div class="space-y-1">
+              <h3 class="text-lg font-bold group-hover:text-primary transition-colors">구운 토마토 바질 수프</h3>
+              <p class="text-sm text-on-surface-variant flex items-center gap-3">
+                <span class="flex items-center gap-1"
+                  ><span class="material-symbols-outlined text-base">schedule</span><span>45</span></span
+                >
+                <span class="flex items-center gap-1"
+                  ><span class="material-symbols-outlined text-base">bar_chart</span><span>중급</span></span
+                >
+              </p>
+            </div>
+          </div>
+          <!-- Recipe Card 3 -->
+          <div class="min-w-[280px] md:min-w-[320px] group cursor-pointer">
+            <div
+              class="relative h-[200px] rounded-2xl overflow-hidden mb-4 shadow-sm group-hover:shadow-xl transition-all"
+            >
+              <img
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                data-alt="mediterranean Buddha bowl with chickpeas, quinoa and roasted vegetables"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxPDHM2pgA7zd4fkU1EOMNvcL_6TdCAPmYA3ThrGVLcnKqGtL5DcQ0QzxJlz-peNWRb1Lb9LLmRQma0MOUo8JExFWyQ0geRotsXFKs-z3gF2A6ayhXt7FjwbHbqE10Lq6SYkbNV5zHY7y0Y3Y456acrabSeocFTJnvLPPX_RBj1vvpaSIwQdCSrgvgO0WL8pnwWANnm9kPNxBEAiJz1MljuTqoi1qhPRZTep5RaSkZ1low7SyS4q_Wk-ewrLt27hmPXHzz38xTWJU"
+              />
+              <div class="absolute top-3 right-3 bg-white/90 backdrop-blur p-1.5 rounded-full text-amber-500 shadow-sm">
+                <span
+                  class="material-symbols-outlined text-[20px]"
+                  data-icon="star"
+                  style="font-variation-settings: &quot;FILL&quot; 1"
+                  >star</span
+                >
+              </div>
+            </div>
+            <div class="space-y-1">
+              <h3 class="text-lg font-bold group-hover:text-primary transition-colors">지중해식 곡물 볼</h3>
+              <p class="text-sm text-on-surface-variant flex items-center gap-3">
+                <span class="flex items-center gap-1"
+                  ><span class="material-symbols-outlined text-base">schedule</span><span>25</span></span
+                >
+                <span class="flex items-center gap-1"
+                  ><span class="material-symbols-outlined text-base">bar_chart</span><span>초급</span></span
+                >
+              </p>
+            </div>
+          </div>
+          <!-- Recipe Card 4 -->
+          <div class="min-w-[280px] md:min-w-[320px] group cursor-pointer">
+            <div
+              class="relative h-[200px] rounded-2xl overflow-hidden mb-4 shadow-sm group-hover:shadow-xl transition-all"
+            >
+              <img
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                data-alt="pasta pesto with pine nuts and cherry tomatoes in a minimalist white plate"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5lq8ryzzXS2g_pNZl8rdAbZo1TxhzGQw7BhFmxEj9NWR8fww0gMwQFzBAuVQMvaVzotuGIBlyHdMqvMkFcLU38HNAymMrJ6InuDClNVYtR6WkaOzB6KU7OjU5yp4pR7-cr0B2kTWtTTXiOFUY04zoH8z3t47-dKQyUXRJToFqEXYtALu4zC0y4afpHb90Bf60GsEAIQLrFaZnnHhR2-MlEYezoJvFfryycjuWk_QXbTgwZEAqcbyyG-EJo_InDZ1nn3N_O-gDi_I"
+              />
+              <div
+                class="absolute top-3 right-3 bg-white/90 backdrop-blur p-1.5 rounded-full text-amber-500/50 shadow-sm hover:text-amber-500 transition-colors"
+              >
+                <span class="material-symbols-outlined text-[20px]" data-icon="star">star</span>
+              </div>
+            </div>
+            <div class="space-y-1">
+              <h3 class="text-lg font-bold group-hover:text-primary transition-colors">홈메이드 페스토 파스타</h3>
+              <p class="text-sm text-on-surface-variant flex items-center gap-3">
+                <span class="flex items-center gap-1"
+                  ><span class="material-symbols-outlined text-base">schedule</span><span>20</span></span
+                >
+                <span class="flex items-center gap-1"
+                  ><span class="material-symbols-outlined text-base">bar_chart</span><span>초급</span></span
+                >
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <!-- 하단 네비바 / BottomNavBar -->
+    <nav
+      class="md:hidden fixed bottom-0 left-0 w-full h-20 bg-stone-50/90 backdrop-blur-xl flex justify-around items-center px-4 pb-2 z-50 rounded-t-[2rem] shadow-2xl"
+    >
+      <a
+        class="flex flex-col items-center justify-center text-stone-500 px-5 py-2 active:scale-90 transition-all hover:text-orange-700"
+        href="index.html"
+      >
+        <span class="material-symbols-outlined">explore</span>
+        <span class="font-['Plus_Jakarta_Sans'] text-[11px] font-bold uppercase tracking-wider">Browse</span>
+      </a>
+      <a
+        class="flex flex-col items-center justify-center text-stone-500 px-5 py-2 active:scale-90 transition-all hover:text-orange-700"
+        href="my-recipe.html"
+      >
+        <span class="material-symbols-outlined">menu_book</span>
+        <span class="font-['Plus_Jakarta_Sans'] text-[11px] font-bold uppercase tracking-wider">My Recipes</span>
+      </a>
+      <a
+        class="flex flex-col items-center justify-center text-stone-500 px-5 py-2 active:scale-90 transition-all hover:text-orange-700"
+        href="my-picks.html"
+      >
+        <span class="material-symbols-outlined">star</span>
+        <span class="font-['Plus_Jakarta_Sans'] text-[11px] font-bold uppercase tracking-wider">Saved</span>
+      </a>
+      <a
+        class="flex flex-col items-center justify-center text-stone-500 px-5 py-2 active:scale-90 transition-all hover:text-orange-700"
+        href="recipe-editor.html"
+      >
+        <span class="material-symbols-outlined">add_circle</span>
+        <span class="font-['Plus_Jakarta_Sans'] text-[11px] font-bold uppercase tracking-wider">Create</span>
+      </a>
+    </nav>
+    <script src="auth-guard.js"></script>
+    <script src="profile-badge.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const API_BASE = "http://localhost:3000/api/auth";
+        const token = localStorage.getItem("yamy_token");
+        const form = document.getElementById("profile-form");
+        const usernameInput = document.getElementById("profile-username");
+        const emailInput = document.getElementById("profile-email");
+        const passwordInput = document.getElementById("profile-password");
+        const passwordConfirmInput = document.getElementById("profile-password-confirm");
+        const statusBox = document.getElementById("profile-status");
 
-    function setStatus(message, type = 'error') {
-      const colors = type === 'success'
-        ? 'border-green-200 bg-green-50 text-green-800'
-        : 'border-red-200 bg-red-50 text-red-800';
-      statusBox.className = `mb-6 rounded-xl border px-4 py-3 text-sm font-semibold ${colors}`;
-      statusBox.textContent = message;
-      statusBox.classList.remove('hidden');
-    }
-
-    function setUser(user) {
-      usernameInput.value = user.username || user.name || '';
-      emailInput.value = user.email || '';
-      localStorage.setItem('yamy_user', JSON.stringify(user));
-    }
-
-    if (!token) {
-      window.location.href = 'login.html';
-      return;
-    }
-
-    try {
-      const cachedUser = JSON.parse(localStorage.getItem('yamy_user') || 'null');
-      if (cachedUser) {
-        setUser(cachedUser);
-      }
-    } catch {
-      localStorage.removeItem('yamy_user');
-    }
-
-    fetch(`${API_BASE}/me`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then(async (response) => {
-        const data = await response.json();
-        if (!response.ok) {
-          throw new Error(data.message || '사용자 정보를 불러오지 못했습니다.');
+        function setStatus(message, type = "error") {
+          const colors =
+            type === "success"
+              ? "border-green-200 bg-green-50 text-green-800"
+              : "border-red-200 bg-red-50 text-red-800";
+          statusBox.className = `mb-6 rounded-xl border px-4 py-3 text-sm font-semibold ${colors}`;
+          statusBox.textContent = message;
+          statusBox.classList.remove("hidden");
         }
-        setUser(data.user);
-      })
-      .catch((error) => {
-        setStatus(error.message || '사용자 정보를 불러오지 못했습니다.');
-      });
 
-    form.addEventListener('submit', async (event) => {
-      event.preventDefault();
+        function setUser(user) {
+          usernameInput.value = user.username || user.name || "";
+          emailInput.value = user.email || "";
+          localStorage.setItem("yamy_user", JSON.stringify(user));
+        }
 
-      const username = usernameInput.value.trim();
-      const password = passwordInput.value;
-      const passwordConfirm = passwordConfirmInput.value;
+        if (!token) {
+          window.location.href = "login.html";
+          return;
+        }
 
-      if (!username) {
-        setStatus('닉네임을 입력해 주세요.');
-        return;
-      }
+        try {
+          const cachedUser = JSON.parse(localStorage.getItem("yamy_user") || "null");
+          if (cachedUser) {
+            setUser(cachedUser);
+          }
+        } catch {
+          localStorage.removeItem("yamy_user");
+        }
 
-      if (password !== passwordConfirm) {
-        setStatus('비밀번호와 비밀번호 확인이 일치하지 않습니다.');
-        return;
-      }
+        fetch(`${API_BASE}/me`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+          .then(async (response) => {
+            const data = await response.json();
+            if (!response.ok) {
+              throw new Error(data.message || "사용자 정보를 불러오지 못했습니다.");
+            }
+            setUser(data.user);
+          })
+          .catch((error) => {
+            setStatus(error.message || "사용자 정보를 불러오지 못했습니다.");
+          });
 
-      if (password && password.length < 8) {
-        setStatus('비밀번호는 8자 이상이어야 합니다.');
-        return;
-      }
+        form.addEventListener("submit", async (event) => {
+          event.preventDefault();
 
-      try {
-        const response = await fetch(`${API_BASE}/me`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ username, password }),
+          const username = usernameInput.value.trim();
+          const password = passwordInput.value;
+          const passwordConfirm = passwordConfirmInput.value;
+
+          if (!username) {
+            setStatus("닉네임을 입력해 주세요.");
+            return;
+          }
+
+          if (password !== passwordConfirm) {
+            setStatus("비밀번호와 비밀번호 확인이 일치하지 않습니다.");
+            return;
+          }
+
+          if (password && password.length < 8) {
+            setStatus("비밀번호는 8자 이상이어야 합니다.");
+            return;
+          }
+
+          try {
+            const response = await fetch(`${API_BASE}/me`, {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({ username, password }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+              throw new Error(data.message || "프로필 저장에 실패했습니다.");
+            }
+
+            setUser(data.user);
+            passwordInput.value = "";
+            passwordConfirmInput.value = "";
+            setStatus(data.message || "프로필 정보가 저장되었습니다.", "success");
+          } catch (error) {
+            setStatus(error.message || "프로필 저장에 실패했습니다.");
+          }
         });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.message || '프로필 저장에 실패했습니다.');
-        }
-
-        setUser(data.user);
-        passwordInput.value = '';
-        passwordConfirmInput.value = '';
-        setStatus(data.message || '프로필 정보가 저장되었습니다.', 'success');
-      } catch (error) {
-        setStatus(error.message || '프로필 저장에 실패했습니다.');
-      }
-    });
-  });
-</script>
-</body></html>
+      });
+    </script>
+  </body>
+</html>

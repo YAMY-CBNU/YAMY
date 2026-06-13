@@ -167,7 +167,8 @@ h1, h2, h3 {
     color: #81766E;
 }
 
-#timer-progress-bar {
+#timer-progress-bar,
+#fs-timer-progress-bar {
     height: 100%;
     background: linear-gradient(90deg, #C05B40, #D9933D);
     border-radius: 9999px;

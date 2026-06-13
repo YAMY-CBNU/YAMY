@@ -1,277 +1,421 @@
-<!DOCTYPE html>
+﻿<!doctype html>
 <html lang="ko">
-<head>
-<meta charset="utf-8">
-<meta content="width=device-width, initial-scale=1.0" name="viewport">
-<title>YAMY - 누구나 셰프가 되는 즐거움</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
-<script src="tailwind-landing.js"></script>
-<link rel="stylesheet" href="styles.css"/>
-</head>
-<body class="bg-surface text-on-surface font-body">
-
-<!-- TopNavBar -->
-<nav class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl flex justify-between items-center px-4 md:px-12 h-16 md:h-24 max-w-full mx-auto border-b border-outline-variant/30">
-  <div class="flex items-center gap-6 lg:gap-12">
-    <a href="index.html" class="text-3xl font-extrabold text-primary font-headline tracking-tighter">YAMY</a>
-    <div class="hidden md:flex items-center gap-5 lg:gap-8 font-headline tracking-tight whitespace-nowrap">
-      <a class="text-on-surface-variant hover:text-primary transition-colors" href="index.html">탐색하기</a>
-      <a id="nav-my-recipe" class="text-on-surface-variant hover:text-primary transition-colors" href="my-recipe.html">내 레시피</a>
-      <a id="nav-my-picks" class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer" onclick="event.preventDefault(); window.authGuard.redirectToLoginIfNeeded() || (window.location.href='my-picks.html')">저장됨</a>
-      <a id="nav-recipe-editor" class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer" onclick="event.preventDefault(); window.authGuard.redirectToLoginIfNeeded() || (window.location.href='recipe-editor.html')">레시피 작성</a>
-    </div>
-  </div>
-  <div class="flex items-center gap-2 md:gap-3 lg:gap-6">
-    <!-- 검색: lg+ 전체 입력창, lg 미만 아이콘 버튼 -->
-    <button type="button" class="flex lg:hidden p-2 text-on-surface-variant hover:text-primary rounded-full hover:bg-surface-container transition-all">
-      <span class="material-symbols-outlined">search</span>
-    </button>
-    <div class="relative hidden lg:block">
-      <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
-      <input class="bg-surface-container border border-outline-variant/50 rounded-full pl-11 pr-6 py-2.5 text-sm focus:ring-2 focus:ring-primary w-64 transition-all outline-none" placeholder="요리 영감 검색..." type="text"/>
-    </div>
-    <!-- 프로필: lg+ 텍스트+아이콘, lg 미만 아이콘 버튼 -->
-    <a href="profile.html" data-profile-link class="hidden items-center rounded-full bg-surface-container text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-all font-semibold p-2 lg:px-4 lg:py-2.5">
-      <span class="material-symbols-outlined lg:hidden">person</span>
-      <span class="hidden lg:inline text-sm whitespace-nowrap" data-profile-text>프로필</span>
-    </a>
-    <!-- 로그인/아웃: styles.css에서 lg 미만 아이콘 처리 -->
-    <a id="auth-action" href="login.html" class="bg-primary text-on-primary px-8 py-2.5 rounded-full font-headline font-bold text-sm hover:opacity-90 duration-150 transition-all shadow-sm whitespace-nowrap">로그인</a>
-  </div>
-</nav>
-<nav class="hidden fixed top-0 w-full z-50 bg-[#fcf9f4]/80 dark:bg-stone-900/80 backdrop-blur-md">
-  <div class="flex justify-between items-center max-w-7xl mx-auto fluid-px h-16 sm:h-20">
-    <a href="landing.html" class="fluid-h4 font-bold text-[#9d3d1c] dark:text-[#bd5532] tracking-tighter" style="font-size: clamp(1.1rem, 2vw, 1.5rem);">YAMY</a>
-    <div class="hidden md:flex gap-8 items-center">
-      <a class="font-['Epilogue'] font-medium text-sm tracking-tight text-[#9d3d1c] font-bold border-b-2 border-[#9d3d1c] pb-1" href="index.html">탐색하기</a>
-      <a class="font-['Epilogue'] font-medium text-sm tracking-tight text-[#74593d] dark:text-stone-400 hover:text-[#9d3d1c] dark:hover:text-[#bd5532] transition-colors duration-300" href="my-picks.html">저장됨</a>
-      <a class="font-['Epilogue'] font-medium text-sm tracking-tight text-[#74593d] dark:text-stone-400 hover:text-[#9d3d1c] dark:hover:text-[#bd5532] transition-colors duration-300" href="my-recipe.html">내 레시피</a>
-      <a class="font-['Epilogue'] font-medium text-sm tracking-tight text-[#74593d] dark:text-stone-400 hover:text-[#9d3d1c] dark:hover:text-[#bd5532] transition-colors duration-300" href="recipe-editor.html">레시피 작성</a>
-    </div>
-    <div class="flex items-center gap-2 sm:gap-4">
-      <a href="index.html" class="bg-gradient-to-r from-primary to-primary-container text-on-primary px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl font-medium text-sm shadow-lg shadow-primary/10 active:scale-95 transition-transform duration-150">시작하기</a>
-    </div>
-  </div>
-</nav>
-
-<main class="pt-16 md:pt-24 overflow-x-hidden">
-  <!-- Hero Section -->
-  <section class="relative fluid-section fluid-px overflow-hidden" style="padding-top: clamp(5rem, 10vw, 8rem);">
-    <div class="max-w-7xl mx-auto grid lg:grid-cols-2 fluid-gap items-center">
-      <!-- Text Content -->
-      <div class="z-10 text-center lg:text-left">
-        <span class="inline-block px-4 py-1.5 fluid-mb-sm rounded-full bg-secondary-container text-on-secondary-container font-bold tracking-widest uppercase" style="font-size: clamp(0.65rem, 1vw, 0.75rem);">Introducing YAMY</span>
-        <h1 class="fluid-h1 font-extrabold text-on-surface tracking-tighter fluid-mb">
-          실패없는 요리,<br>
-          가장 쉬운&nbsp;<span class="inline">레시피</span><br>
-          <span class="text-primary italic">YAMY</span>
-        </h1>
-        <p class="fluid-body text-secondary max-w-lg fluid-mb leading-relaxed mx-auto lg:mx-0">
-          내가 사랑하는 레시피만 쏙쏙 골라 담고,<br>나만의 비법을 세상과 공유해 보세요.<br>요리 초보도 셰프로 만드는 스마트한 주방 어시스턴트가 찾아옵니다.
-        </p>
-        <div class="flex flex-wrap fluid-gap justify-center lg:justify-start">
-          <a href="index.html" class="fluid-btn bg-primary text-on-primary rounded-xl font-bold hover:shadow-xl transition-all">시작하기</a>
-          <a href="recipe-editor.html" class="fluid-btn bg-surface-container text-secondary rounded-xl font-bold hover:bg-surface-container-high transition-all">레시피 작성하기</a>
-        </div>
-      </div>
-      <!-- Image -->
-      <div class="relative mt-8 lg:mt-0">
-        <div class="absolute -top-10 -right-10 w-64 h-64 bg-primary-fixed opacity-20 rounded-full blur-3xl"></div>
-        <div class="rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden shadow-2xl lg:rotate-2 transition-transform hover:rotate-0 duration-700">
-          <img
-            alt="Happy cooking"
-            class="fluid-hero-img w-full"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1m40v495qLdbpUBccm7Byk8VOu0BjaWhybz4UJ9y140mqvndro4tP6w-mk2X4QKxeWH_Iplox4E0AZy2nPlJCg3C4mgSf6sblW2t_QRn2kCyDC3kgRiehI0OBZ7Xdh61D3liuVmtX8DV2BjM5MmhBeNBHnkJxZvOP2sl6Dr8EolBYA6uln1913u2K17xDZRcXXqW6Hll89EQfDnAXKmlOEXcNTLzt11s1NzKsKZxVto_N736lOI4G2mGhB-BjOsmFCRppsztjxk4"
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>YAMY 소개</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <script src="tailwind-landing.js"></script>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="bg-surface text-on-surface font-body">
+    <!-- 상단 네비바 / TopNavBar -->
+    <nav
+      class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl flex justify-between items-center px-4 md:px-12 h-16 md:h-20 max-w-full mx-auto border-b border-outline-variant/30"
+    >
+      <div class="flex items-center gap-6 lg:gap-12">
+        <a href="index.html" class="text-3xl font-extrabold text-primary font-headline tracking-tighter">YAMY</a>
+        <div class="hidden md:flex items-center gap-5 lg:gap-8 font-headline tracking-tight whitespace-nowrap">
+          <a class="text-on-surface-variant hover:text-primary transition-colors" href="index.html">탐색하기</a>
+          <a
+            id="nav-my-recipe"
+            class="text-on-surface-variant hover:text-primary transition-colors"
+            href="my-recipe.html"
+            >내 레시피</a
+          >
+          <a
+            id="nav-my-picks"
+            class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer"
+            onclick="
+              event.preventDefault();
+              window.authGuard.redirectToLoginIfNeeded() || (window.location.href = 'my-picks.html');
+            "
+            >저장됨</a
+          >
+          <a
+            id="nav-recipe-editor"
+            class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer"
+            onclick="
+              event.preventDefault();
+              window.authGuard.redirectToLoginIfNeeded() || (window.location.href = 'recipe-editor.html');
+            "
+            >레시피 작성</a
           >
         </div>
-        <!-- Glassmorphic Overlay Card -->
-        <div class="hidden sm:block absolute -bottom-6 -left-6 md:left-[-5%] p-5 bg-surface/60 backdrop-blur-xl rounded-2xl shadow-xl max-w-xs border border-white/20">
-          <div class="flex items-center gap-4 mb-3">
-            <div class="p-2 bg-primary/10 rounded-lg">
-              <span class="material-symbols-outlined text-primary">timer</span>
-            </div>
-            <span class="font-bold text-on-surface">실시간 요리 가이드</span>
-          </div>
-          <p class="text-sm text-secondary leading-snug">"이제 소금을 한 꼬집 넣어주세요. 타이머 3분 시작할게요."</p>
-        </div>
       </div>
-    </div>
-  </section>
-
-  <!-- Features Section: Bento Grid -->
-  <section class="fluid-section bg-surface-container-low">
-    <div class="max-w-7xl mx-auto fluid-px">
-      <div class="text-center fluid-mb">
-        <h2 class="fluid-h2 font-bold text-on-surface fluid-mb-sm">당신의 한 끼를 바꾸는 기술</h2>
-        <p class="fluid-body text-secondary max-w-2xl mx-auto">더 이상 요리책 앞에서 당황하지 마세요. YAMY가 제안하는 스마트한 주방 라이프.</p>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-12 fluid-gap">
-        <!-- Large Feature: Real-time Guide -->
-        <div class="md:col-span-8 bg-surface-container-lowest rounded-[1.5rem] sm:rounded-[2rem] fluid-card relative overflow-hidden group md:min-h-[400px]">
-          <div class="relative z-10">
-            <div class="w-12 h-12 bg-primary-container/10 flex items-center justify-center rounded-xl fluid-mb-sm">
-              <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">mic</span>
-            </div>
-            <h3 class="fluid-h3 font-bold fluid-mb-sm">실시간 요리 가이드</h3>
-            <p class="fluid-body text-secondary max-w-md fluid-mb">실시간 조리 단계를 안내해 요리 초보도 쉽게!<br>음성 명령으로 손을 대지 않고도 다음 단계로 넘어갈 수 있습니다.</p>
-            <ul class="space-y-3 fluid-mb">
-              <li class="flex items-center gap-2 fluid-sm font-medium text-on-surface-variant">
-                <span class="material-symbols-outlined text-sm">check_circle</span> 맞춤형 타이머 자동 설정
-              </li>
-              <li class="flex items-center gap-2 fluid-sm font-medium text-on-surface-variant">
-                <span class="material-symbols-outlined text-sm">check_circle</span> 핸즈프리 음성 명령 제어
-              </li>
-            </ul>
-          </div>
-          <img
-            alt="Tablet cooking"
-            class="hidden md:block absolute right-0 bottom-0 w-2/3 h-2/3 object-cover rounded-tl-[3rem] transition-transform duration-500 group-hover:scale-105"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZpTorghYmjQQQk3Ggu2j3dDVY1EH_0JjlfM5Zx6xmU9dYuUrWZvtQyrrbbQlQCQUrl3dO6DyuNJq2OS-p7R0sF6vgrwADod13l5kjWVOAdY49s6W-QSv0tz52s3MfujTssVA50UkaTRHL0r9ShNJj7ZvD96vAei-eWpGYH5ouB3EqlFpL-EZB2vCUQdrQuTWxfE-cP5kWjt9g3bFfWKf2J1tX_nh_zZdQecGWYCeV5sxuwS-6_RkC0LT7N-e8Tv3YCKzJEAx8nFM"
+      <div class="flex items-center gap-2 md:gap-3 lg:gap-6">
+        <!-- 검색 / Search -->
+        <button
+          type="button"
+          class="flex lg:hidden p-2 text-on-surface-variant hover:text-primary rounded-full hover:bg-surface-container transition-all"
+        >
+          <span class="material-symbols-outlined">search</span>
+        </button>
+        <div class="relative hidden lg:block">
+          <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant"
+            >search</span
           >
-          <!-- 모바일에서만 보이는 이미지 -->
-          <img
-            alt="Tablet cooking"
-            class="md:hidden w-full h-44 object-cover rounded-xl mt-4"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZpTorghYmjQQQk3Ggu2j3dDVY1EH_0JjlfM5Zx6xmU9dYuUrWZvtQyrrbbQlQCQUrl3dO6DyuNJq2OS-p7R0sF6vgrwADod13l5kjWVOAdY49s6W-QSv0tz52s3MfujTssVA50UkaTRHL0r9ShNJj7ZvD96vAei-eWpGYH5ouB3EqlFpL-EZB2vCUQdrQuTWxfE-cP5kWjt9g3bFfWKf2J1tX_nh_zZdQecGWYCeV5sxuwS-6_RkC0LT7N-e8Tv3YCKzJEAx8nFM"
-          >
-        </div>
-        <!-- Vertical Feature: Recipe Search -->
-        <div class="md:col-span-4 bg-tertiary text-on-tertiary rounded-[1.5rem] sm:rounded-[2rem] fluid-card flex flex-col justify-between group md:min-h-[400px]">
-          <div>
-            <div class="w-12 h-12 bg-white/10 flex items-center justify-center rounded-xl fluid-mb-sm">
-              <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">search</span>
-            </div>
-            <h3 class="fluid-h3 font-bold fluid-mb-sm">맞춤 레시피 검색</h3>
-            <p class="fluid-sm text-on-tertiary/80">내 냉장고 상황과 입맛에 딱 맞는 레시피를 찾아보세요. 남은 식재료만 입력하면 끝!</p>
-          </div>
-          <div class="mt-6 overflow-hidden rounded-xl">
-            <img
-              alt="Recipe search"
-              class="w-full object-cover group-hover:scale-110 transition-transform duration-500"
-              style="height: clamp(8rem, 15vw, 10rem);"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBl02ya2I-WeF_ejTgsp_XDMSq2clDkeimnaTlEXrBKCcnXXg53KDWgwatwkHy53Ah37AgSEu7aw5u2zIWCA2KDZTiF3YSLFdXqdLPs3EsWPZS4t-XW1EuDqTiClzgT_m51bbVd-G8bVfIZugoE3wp_2saJyuy-MkgGKudI_Xj4DeCOdZ4WNfS-Z8YVXmGHzHI3umwizoR9GiyitsPv5QMBdPk4vh50QORpPkWvF93RD9UH6uAekSA65HexHHt_kMc6Umg82juLn2o"
-            >
-          </div>
-        </div>
-        <!-- Small Feature: Share -->
-        <div class="md:col-span-4 bg-surface-container-lowest rounded-[1.5rem] sm:rounded-[2rem] fluid-card group">
-          <div class="w-12 h-12 bg-secondary-container/20 flex items-center justify-center rounded-xl fluid-mb-sm">
-            <span class="material-symbols-outlined text-secondary">share</span>
-          </div>
-          <h3 class="fluid-h4 font-bold fluid-mb-sm">나만의 레시피 공유</h3>
-          <p class="fluid-sm text-secondary">직접 만든 레시피를 등록하고 사람들과 공유하는 즐거움을 느껴보세요.</p>
-        </div>
-        <!-- Small Feature: Bookmark -->
-        <div class="md:col-span-4 bg-secondary text-on-secondary rounded-[1.5rem] sm:rounded-[2rem] fluid-card group">
-          <div class="w-12 h-12 bg-white/10 flex items-center justify-center rounded-xl fluid-mb-sm">
-            <span class="material-symbols-outlined">bookmark_heart</span>
-          </div>
-          <h3 class="fluid-h4 font-bold fluid-mb-sm">레시피 북마크</h3>
-          <p class="fluid-sm text-on-secondary/80">마음에 드는 레시피만 쏙쏙 골라 나만의 소중한 요리책을 만드세요.</p>
-        </div>
-        <!-- Small Feature: Shopping -->
-        <div class="md:col-span-4 bg-surface-container-lowest rounded-[1.5rem] sm:rounded-[2rem] fluid-card border border-outline-variant/15 group">
-          <div class="w-12 h-12 bg-primary-container/10 flex items-center justify-center rounded-xl fluid-mb-sm">
-            <span class="material-symbols-outlined text-primary">shopping_cart</span>
-          </div>
-          <h3 class="fluid-h4 font-bold fluid-mb-sm">간편 식재료 구매</h3>
-          <p class="fluid-sm text-secondary">부족한 재료도 앱 내에서 바로 구매할 수 있도록 최저가를 찾아드립니다.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Team Section -->
-  <section class="fluid-section fluid-px max-w-7xl mx-auto">
-    <div class="text-center fluid-mb">
-      <h2 class="fluid-h2 font-bold text-on-surface fluid-mb-sm">YAMY를 만드는 사람들</h2>
-      <p class="fluid-body text-secondary">"요리를 잘 몰라도 요리가 즐거워지는 마법, 기술로 그 답을 찾는 팀 YAMY입니다."</p>
-    </div>
-    <div class="grid grid-cols-2 md:grid-cols-4 fluid-gap">
-      <!-- Team Member 1 -->
-      <div class="text-center group">
-        <div class="fluid-photo relative fluid-mb-sm mx-auto">
-          <div class="absolute inset-0 bg-primary-container rounded-full rotate-6 group-hover:rotate-0 transition-transform duration-500"></div>
-          <img alt="Team member" class="absolute inset-0 w-full h-full object-cover rounded-full border-4 border-primary shadow-lg" src="images/HJchoi.png">
-        </div>
-        <h4 class="fluid-h4 font-bold text-on-surface">HyunJoon Choi</h4>
-        <p class="fluid-sm text-primary font-medium">Team Leader</p>
-        <p class="fluid-sm text-secondary font-medium mt-1">Full-Stack</p>
-      </div>
-      <!-- Team Member 2 -->
-      <div class="text-center group">
-        <div class="fluid-photo relative fluid-mb-sm mx-auto">
-          <div class="absolute inset-0 bg-secondary-container rounded-full -rotate-6 group-hover:rotate-0 transition-transform duration-500"></div>
-          <img alt="Team member" class="absolute inset-0 w-full h-full object-cover rounded-full border-4 border-primary shadow-lg" src="images/JWhan.png">
-        </div>
-        <h4 class="fluid-h4 font-bold text-on-surface">JeongWoo Han</h4>
-        <p class="fluid-sm text-primary font-medium">Backend</p>
-        <p class="fluid-sm text-secondary font-medium mt-1">Database</p>
-      </div>
-      <!-- Team Member 3 -->
-      <div class="text-center group">
-        <div class="fluid-photo relative fluid-mb-sm mx-auto">
-          <div class="absolute inset-0 bg-outline-variant rounded-full rotate-3 group-hover:rotate-0 transition-transform duration-500"></div>
-          <img alt="Team member" class="absolute inset-0 w-full h-full object-cover rounded-full border-4 border-primary shadow-lg" src="images/NHchoi.png">
-        </div>
-        <h4 class="fluid-h4 font-bold text-on-surface">NaHyun Choi</h4>
-        <p class="fluid-sm text-primary font-medium">Frontend</p>
-        <p class="fluid-sm text-secondary font-medium mt-1">UI/UX Design</p>
-      </div>
-      <!-- Team Member 4 -->
-      <div class="text-center group">
-        <div class="fluid-photo relative fluid-mb-sm mx-auto">
-          <div class="absolute inset-0 bg-tertiary-container rounded-full -rotate-3 group-hover:rotate-0 transition-transform duration-500"></div>
-          <img alt="Team member" class="absolute inset-0 w-full h-full object-cover rounded-full border-4 border-primary shadow-lg" src="images/Nandin.png">
-        </div>
-        <h4 class="fluid-h4 font-bold text-on-surface">Nandin-Erdene</h4>
-        <p class="fluid-sm text-primary font-medium">Frontend</p>
-        <p class="fluid-sm text-secondary font-medium mt-1">UI/UX Design</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- CTA Section -->
-  <section class="fluid-section fluid-px">
-    <div class="max-w-5xl mx-auto bg-primary rounded-[2rem] sm:rounded-[3rem] fluid-card text-center relative overflow-hidden shadow-2xl">
-      <div class="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
-        <div class="absolute -top-20 -left-20 w-80 h-80 bg-white rounded-full blur-3xl"></div>
-        <div class="absolute -bottom-20 -right-20 w-80 h-80 bg-primary-container rounded-full blur-3xl"></div>
-      </div>
-      <h2 class="fluid-h2 font-bold text-on-primary fluid-mb-sm relative z-10">지금 맛있는 여정을 시작해 보세요!</h2>
-      <p class="fluid-body text-on-primary/80 fluid-mb relative z-10 max-w-2xl mx-auto">전 세계 수천 명의 요리사가 당신과 소통하고 싶어 합니다. 지금 바로 함께 하세요.</p>
-      <form class="relative z-10 max-w-md mx-auto flex flex-col sm:flex-row fluid-gap" action="signup.html" method="get">
-        <div class="flex-grow">
           <input
-            class="fluid-body w-full px-5 py-3 rounded-xl border-none bg-surface-container-lowest/20 backdrop-blur-md text-on-primary placeholder:text-on-primary/50 focus:ring-2 focus:ring-white transition-all outline-none"
-            placeholder="이메일 주소를 입력하세요"
-            type="email"
+            class="bg-surface-container border border-outline-variant/50 rounded-full pl-11 pr-6 py-2.5 text-sm focus:ring-2 focus:ring-primary w-64 transition-all outline-none"
+            placeholder="요리 영감 검색..."
+            type="text"
+          />
+        </div>
+        <!-- 프로필 / Profile -->
+        <a
+          href="profile.html"
+          data-profile-link
+          class="hidden items-center rounded-full bg-surface-container text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-all font-semibold p-2 lg:px-4 lg:py-2.5"
+        >
+          <span class="material-symbols-outlined lg:hidden">person</span>
+          <span class="hidden lg:inline text-sm whitespace-nowrap" data-profile-text>프로필</span>
+        </a>
+        <!-- 로그인/아웃 / Auth -->
+        <a
+          id="auth-action"
+          href="login.html"
+          class="bg-primary text-on-primary px-8 py-2.5 rounded-full font-headline font-bold text-sm hover:opacity-90 duration-150 transition-all shadow-sm whitespace-nowrap"
+          >로그인</a
+        >
+      </div>
+    </nav>
+    <nav class="hidden fixed top-0 w-full z-50 bg-[#fcf9f4]/80 dark:bg-stone-900/80 backdrop-blur-md">
+      <div class="flex justify-between items-center max-w-7xl mx-auto fluid-px h-16 sm:h-20">
+        <a
+          href="landing.html"
+          class="fluid-h4 font-bold text-[#9d3d1c] dark:text-[#bd5532] tracking-tighter"
+          style="font-size: clamp(1.1rem, 2vw, 1.5rem)"
+          >YAMY</a
+        >
+        <div class="hidden md:flex gap-8 items-center">
+          <a
+            class="font-['Epilogue'] font-medium text-sm tracking-tight text-[#9d3d1c] font-bold border-b-2 border-[#9d3d1c] pb-1"
+            href="index.html"
+            >탐색하기</a
+          >
+          <a
+            class="font-['Epilogue'] font-medium text-sm tracking-tight text-[#74593d] dark:text-stone-400 hover:text-[#9d3d1c] dark:hover:text-[#bd5532] transition-colors duration-300"
+            href="my-picks.html"
+            >저장됨</a
+          >
+          <a
+            class="font-['Epilogue'] font-medium text-sm tracking-tight text-[#74593d] dark:text-stone-400 hover:text-[#9d3d1c] dark:hover:text-[#bd5532] transition-colors duration-300"
+            href="my-recipe.html"
+            >내 레시피</a
+          >
+          <a
+            class="font-['Epilogue'] font-medium text-sm tracking-tight text-[#74593d] dark:text-stone-400 hover:text-[#9d3d1c] dark:hover:text-[#bd5532] transition-colors duration-300"
+            href="recipe-editor.html"
+            >레시피 작성</a
           >
         </div>
-        <button class="fluid-btn bg-white text-primary rounded-xl font-bold hover:bg-opacity-90 transition-all shadow-lg active:scale-95 whitespace-nowrap" type="submit">지금 가입하기</button>
-      </form>
-    </div>
-  </section>
-</main>
+        <div class="flex items-center gap-2 sm:gap-4">
+          <a
+            href="index.html"
+            class="bg-gradient-to-r from-primary to-primary-container text-on-primary px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl font-medium text-sm shadow-lg shadow-primary/10 active:scale-95 transition-transform duration-150"
+            >시작하기</a
+          >
+        </div>
+      </div>
+    </nav>
 
-<!-- Footer -->
-<footer class="bg-surface-container w-full py-14 md:py-20 px-6 md:px-8 flex flex-col items-center gap-6 md:gap-8 border-t border-outline-variant/30">
-<span class="text-2xl md:text-3xl font-extrabold text-primary font-headline tracking-tighter">YAMY</span>
-<p class="text-on-surface-variant/60 text-xs text-center">© 2026 YAMY. Your Assistant for Making Yummy.</p>
-<div class="flex flex-wrap justify-center gap-6 text-sm font-semibold">
-<a class="text-on-surface-variant hover:text-primary transition-colors" href="landing.html">회사소개</a>
-<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">이용약관</a>
-<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">개인정보처리방침</a>
-<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">문의하기</a>
-</div>
-<div class="flex gap-6">
-<span class="material-symbols-outlined text-primary cursor-pointer text-2xl hover:scale-110 transition-transform">public</span>
-<span class="material-symbols-outlined text-primary cursor-pointer text-2xl hover:scale-110 transition-transform">share</span>
-</div>
-</footer>
-<script src="auth-guard.js"></script>
-<script src="profile-badge.js"></script>
-</body>
+    <main class="pt-16 md:pt-24 overflow-x-hidden">
+      <!-- 히어로 섹션 / Hero Section -->
+      <section class="relative fluid-section fluid-px overflow-hidden" style="padding-top: clamp(5rem, 10vw, 8rem)">
+        <div class="max-w-7xl mx-auto grid lg:grid-cols-2 fluid-gap items-center">
+          <!-- 텍스트 / Text Content -->
+          <div class="z-10 text-center lg:text-left">
+            <span
+              class="inline-block px-4 py-1.5 fluid-mb-sm rounded-full bg-secondary-container text-on-secondary-container font-bold tracking-widest uppercase"
+              style="font-size: clamp(0.65rem, 1vw, 0.75rem)"
+              >Introducing YAMY</span
+            >
+            <h1 class="fluid-h1 font-extrabold text-on-surface tracking-tighter fluid-mb">
+              실패없는 요리,<br />
+              가장 쉬운&nbsp;<span class="inline">레시피</span><br />
+              <span class="text-primary italic">YAMY</span>
+            </h1>
+            <p class="fluid-body text-secondary max-w-lg fluid-mb leading-relaxed mx-auto lg:mx-0">
+              내가 사랑하는 레시피만 쏙쏙 골라 담고,<br />나만의 비법을 세상과 공유해 보세요.<br />요리 초보도 셰프로
+              만드는 스마트한 주방 어시스턴트가 찾아옵니다.
+            </p>
+            <div class="flex flex-wrap fluid-gap justify-center lg:justify-start">
+              <a
+                href="index.html"
+                class="fluid-btn bg-primary text-on-primary rounded-xl font-bold hover:shadow-xl transition-all"
+                >시작하기</a
+              >
+              <a
+                href="recipe-editor.html"
+                class="fluid-btn bg-surface-container text-secondary rounded-xl font-bold hover:bg-surface-container-high transition-all"
+                >레시피 작성하기</a
+              >
+            </div>
+          </div>
+          <!-- 이미지 / Image -->
+          <div class="relative mt-8 lg:mt-0">
+            <div class="absolute -top-10 -right-10 w-64 h-64 bg-primary-fixed opacity-20 rounded-full blur-3xl"></div>
+            <div
+              class="rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden shadow-2xl lg:rotate-2 transition-transform hover:rotate-0 duration-700"
+            >
+              <img
+                alt="Happy cooking"
+                class="fluid-hero-img w-full"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1m40v495qLdbpUBccm7Byk8VOu0BjaWhybz4UJ9y140mqvndro4tP6w-mk2X4QKxeWH_Iplox4E0AZy2nPlJCg3C4mgSf6sblW2t_QRn2kCyDC3kgRiehI0OBZ7Xdh61D3liuVmtX8DV2BjM5MmhBeNBHnkJxZvOP2sl6Dr8EolBYA6uln1913u2K17xDZRcXXqW6Hll89EQfDnAXKmlOEXcNTLzt11s1NzKsKZxVto_N736lOI4G2mGhB-BjOsmFCRppsztjxk4"
+              />
+            </div>
+            <!-- 글래스 카드 / Glass Card -->
+            <div
+              class="hidden sm:block absolute -bottom-6 -left-6 md:left-[-5%] p-5 bg-surface/60 backdrop-blur-xl rounded-2xl shadow-xl max-w-xs border border-white/20"
+            >
+              <div class="flex items-center gap-4 mb-3">
+                <div class="p-2 bg-primary/10 rounded-lg">
+                  <span class="material-symbols-outlined text-primary">timer</span>
+                </div>
+                <span class="font-bold text-on-surface">실시간 요리 가이드</span>
+              </div>
+              <p class="text-sm text-secondary leading-snug">
+                "이제 소금을 한 꼬집 넣어주세요. 타이머 3분 시작할게요."
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 기능 섹션 / Features -->
+      <section class="fluid-section bg-surface-container-low">
+        <div class="max-w-7xl mx-auto fluid-px">
+          <div class="text-center fluid-mb">
+            <h2 class="fluid-h2 font-bold text-on-surface fluid-mb-sm">당신의 한 끼를 바꾸는 기술</h2>
+            <p class="fluid-body text-secondary max-w-2xl mx-auto">
+              더 이상 요리책 앞에서 당황하지 마세요. YAMY가 제안하는 스마트한 주방 라이프.
+            </p>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-12 fluid-gap">
+            <!-- 가이드 기능 / Realtime Guide -->
+            <div
+              class="md:col-span-8 bg-surface-container-lowest rounded-[1.5rem] sm:rounded-[2rem] fluid-card relative overflow-hidden group md:min-h-[400px]"
+            >
+              <div class="relative z-10">
+                <div class="w-12 h-12 bg-primary-container/10 flex items-center justify-center rounded-xl fluid-mb-sm">
+                  <span
+                    class="material-symbols-outlined text-primary"
+                    style="font-variation-settings: &quot;FILL&quot; 1"
+                    >mic</span
+                  >
+                </div>
+                <h3 class="fluid-h3 font-bold fluid-mb-sm">실시간 요리 가이드</h3>
+                <p class="fluid-body text-secondary max-w-md fluid-mb">
+                  실시간 조리 단계를 안내해 요리 초보도 쉽게!<br />음성 명령으로 손을 대지 않고도 다음 단계로 넘어갈 수
+                  있습니다.
+                </p>
+                <ul class="space-y-3 fluid-mb">
+                  <li class="flex items-center gap-2 fluid-sm font-medium text-on-surface-variant">
+                    <span class="material-symbols-outlined text-sm">check_circle</span> 맞춤형 타이머 자동 설정
+                  </li>
+                  <li class="flex items-center gap-2 fluid-sm font-medium text-on-surface-variant">
+                    <span class="material-symbols-outlined text-sm">check_circle</span> 핸즈프리 음성 명령 제어
+                  </li>
+                </ul>
+              </div>
+              <img
+                alt="Tablet cooking"
+                class="hidden md:block absolute right-0 bottom-0 w-2/3 h-2/3 object-cover rounded-tl-[3rem] transition-transform duration-500 group-hover:scale-105"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZpTorghYmjQQQk3Ggu2j3dDVY1EH_0JjlfM5Zx6xmU9dYuUrWZvtQyrrbbQlQCQUrl3dO6DyuNJq2OS-p7R0sF6vgrwADod13l5kjWVOAdY49s6W-QSv0tz52s3MfujTssVA50UkaTRHL0r9ShNJj7ZvD96vAei-eWpGYH5ouB3EqlFpL-EZB2vCUQdrQuTWxfE-cP5kWjt9g3bFfWKf2J1tX_nh_zZdQecGWYCeV5sxuwS-6_RkC0LT7N-e8Tv3YCKzJEAx8nFM"
+              />
+              <!-- 모바일 이미지 / Mobile Image -->
+              <img
+                alt="Tablet cooking"
+                class="md:hidden w-full h-44 object-cover rounded-xl mt-4"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZpTorghYmjQQQk3Ggu2j3dDVY1EH_0JjlfM5Zx6xmU9dYuUrWZvtQyrrbbQlQCQUrl3dO6DyuNJq2OS-p7R0sF6vgrwADod13l5kjWVOAdY49s6W-QSv0tz52s3MfujTssVA50UkaTRHL0r9ShNJj7ZvD96vAei-eWpGYH5ouB3EqlFpL-EZB2vCUQdrQuTWxfE-cP5kWjt9g3bFfWKf2J1tX_nh_zZdQecGWYCeV5sxuwS-6_RkC0LT7N-e8Tv3YCKzJEAx8nFM"
+              />
+            </div>
+            <!-- 검색 기능 / Recipe Search -->
+            <div
+              class="md:col-span-4 bg-tertiary text-on-tertiary rounded-[1.5rem] sm:rounded-[2rem] fluid-card flex flex-col justify-between group md:min-h-[400px]"
+            >
+              <div>
+                <div class="w-12 h-12 bg-white/10 flex items-center justify-center rounded-xl fluid-mb-sm">
+                  <span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 1"
+                    >search</span
+                  >
+                </div>
+                <h3 class="fluid-h3 font-bold fluid-mb-sm">맞춤 레시피 검색</h3>
+                <p class="fluid-sm text-on-tertiary/80">
+                  내 냉장고 상황과 입맛에 딱 맞는 레시피를 찾아보세요. 남은 식재료만 입력하면 끝!
+                </p>
+              </div>
+              <div class="mt-6 overflow-hidden rounded-xl">
+                <img
+                  alt="Recipe search"
+                  class="w-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  style="height: clamp(8rem, 15vw, 10rem)"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuBl02ya2I-WeF_ejTgsp_XDMSq2clDkeimnaTlEXrBKCcnXXg53KDWgwatwkHy53Ah37AgSEu7aw5u2zIWCA2KDZTiF3YSLFdXqdLPs3EsWPZS4t-XW1EuDqTiClzgT_m51bbVd-G8bVfIZugoE3wp_2saJyuy-MkgGKudI_Xj4DeCOdZ4WNfS-Z8YVXmGHzHI3umwizoR9GiyitsPv5QMBdPk4vh50QORpPkWvF93RD9UH6uAekSA65HexHHt_kMc6Umg82juLn2o"
+                />
+              </div>
+            </div>
+            <!-- 공유 기능 / Share -->
+            <div class="md:col-span-4 bg-surface-container-lowest rounded-[1.5rem] sm:rounded-[2rem] fluid-card group">
+              <div class="w-12 h-12 bg-secondary-container/20 flex items-center justify-center rounded-xl fluid-mb-sm">
+                <span class="material-symbols-outlined text-secondary">share</span>
+              </div>
+              <h3 class="fluid-h4 font-bold fluid-mb-sm">나만의 레시피 공유</h3>
+              <p class="fluid-sm text-secondary">직접 만든 레시피를 등록하고 사람들과 공유하는 즐거움을 느껴보세요.</p>
+            </div>
+            <!-- 북마크 기능 / Bookmark -->
+            <div
+              class="md:col-span-4 bg-secondary text-on-secondary rounded-[1.5rem] sm:rounded-[2rem] fluid-card group"
+            >
+              <div class="w-12 h-12 bg-white/10 flex items-center justify-center rounded-xl fluid-mb-sm">
+                <span class="material-symbols-outlined">bookmark_heart</span>
+              </div>
+              <h3 class="fluid-h4 font-bold fluid-mb-sm">레시피 북마크</h3>
+              <p class="fluid-sm text-on-secondary/80">
+                마음에 드는 레시피만 쏙쏙 골라 나만의 소중한 요리책을 만드세요.
+              </p>
+            </div>
+            <!-- 쇼핑 기능 / Shopping -->
+            <div
+              class="md:col-span-4 bg-surface-container-lowest rounded-[1.5rem] sm:rounded-[2rem] fluid-card border border-outline-variant/15 group"
+            >
+              <div class="w-12 h-12 bg-primary-container/10 flex items-center justify-center rounded-xl fluid-mb-sm">
+                <span class="material-symbols-outlined text-primary">shopping_cart</span>
+              </div>
+              <h3 class="fluid-h4 font-bold fluid-mb-sm">간편 식재료 구매</h3>
+              <p class="fluid-sm text-secondary">
+                부족한 재료도 앱 내에서 바로 구매할 수 있도록 최저가를 찾아드립니다.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 팀 섹션 / Team -->
+      <section class="fluid-section fluid-px max-w-7xl mx-auto">
+        <div class="text-center fluid-mb">
+          <h2 class="fluid-h2 font-bold text-on-surface fluid-mb-sm">YAMY를 만드는 사람들</h2>
+          <p class="fluid-body text-secondary">
+            "요리를 잘 몰라도 요리가 즐거워지는 마법, 기술로 그 답을 찾는 팀 YAMY입니다."
+          </p>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 fluid-gap">
+          <!-- 팀원 1 / Team Member 1 -->
+          <div class="text-center group">
+            <div class="fluid-photo relative fluid-mb-sm mx-auto">
+              <div
+                class="absolute inset-0 bg-primary-container rounded-full rotate-6 group-hover:rotate-0 transition-transform duration-500"
+              ></div>
+              <img
+                alt="Team member"
+                class="absolute inset-0 w-full h-full object-cover rounded-full border-4 border-primary shadow-lg"
+                src="images/HJchoi.png"
+              />
+            </div>
+            <h4 class="fluid-h4 font-bold text-on-surface">HyunJoon Choi</h4>
+            <p class="fluid-sm text-primary font-medium">Team Leader</p>
+            <p class="fluid-sm text-secondary font-medium mt-1">Full-Stack</p>
+          </div>
+          <!-- 팀원 2 / Team Member 2 -->
+          <div class="text-center group">
+            <div class="fluid-photo relative fluid-mb-sm mx-auto">
+              <div
+                class="absolute inset-0 bg-secondary-container rounded-full -rotate-6 group-hover:rotate-0 transition-transform duration-500"
+              ></div>
+              <img
+                alt="Team member"
+                class="absolute inset-0 w-full h-full object-cover rounded-full border-4 border-primary shadow-lg"
+                src="images/JWhan.png"
+              />
+            </div>
+            <h4 class="fluid-h4 font-bold text-on-surface">JeongWoo Han</h4>
+            <p class="fluid-sm text-primary font-medium">Backend</p>
+            <p class="fluid-sm text-secondary font-medium mt-1">Database</p>
+          </div>
+          <!-- 팀원 3 / Team Member 3 -->
+          <div class="text-center group">
+            <div class="fluid-photo relative fluid-mb-sm mx-auto">
+              <div
+                class="absolute inset-0 bg-outline-variant rounded-full rotate-3 group-hover:rotate-0 transition-transform duration-500"
+              ></div>
+              <img
+                alt="Team member"
+                class="absolute inset-0 w-full h-full object-cover rounded-full border-4 border-primary shadow-lg"
+                src="images/NHchoi.png"
+              />
+            </div>
+            <h4 class="fluid-h4 font-bold text-on-surface">NaHyun Choi</h4>
+            <p class="fluid-sm text-primary font-medium">Frontend</p>
+            <p class="fluid-sm text-secondary font-medium mt-1">UI/UX Design</p>
+          </div>
+          <!-- 팀원 4 / Team Member 4 -->
+          <div class="text-center group">
+            <div class="fluid-photo relative fluid-mb-sm mx-auto">
+              <div
+                class="absolute inset-0 bg-tertiary-container rounded-full -rotate-3 group-hover:rotate-0 transition-transform duration-500"
+              ></div>
+              <img
+                alt="Team member"
+                class="absolute inset-0 w-full h-full object-cover rounded-full border-4 border-primary shadow-lg"
+                src="images/Nandin.png"
+              />
+            </div>
+            <h4 class="fluid-h4 font-bold text-on-surface">Nandin-Erdene</h4>
+            <p class="fluid-sm text-primary font-medium">Frontend</p>
+            <p class="fluid-sm text-secondary font-medium mt-1">UI/UX Design</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA 섹션 / CTA -->
+      <section class="fluid-section fluid-px">
+        <div
+          class="max-w-5xl mx-auto bg-primary rounded-[2rem] sm:rounded-[3rem] fluid-card text-center relative overflow-hidden shadow-2xl"
+        >
+          <div class="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
+            <div class="absolute -top-20 -left-20 w-80 h-80 bg-white rounded-full blur-3xl"></div>
+            <div class="absolute -bottom-20 -right-20 w-80 h-80 bg-primary-container rounded-full blur-3xl"></div>
+          </div>
+          <h2 class="fluid-h2 font-bold text-on-primary fluid-mb-sm relative z-10">
+            지금 맛있는 여정을 시작해 보세요!
+          </h2>
+          <p class="fluid-body text-on-primary/80 fluid-mb relative z-10 max-w-2xl mx-auto">
+            전 세계 수천 명의 요리사가 당신과 소통하고 싶어 합니다. 지금 바로 함께 하세요.
+          </p>
+          <form
+            class="relative z-10 max-w-md mx-auto flex flex-col sm:flex-row fluid-gap"
+            action="signup.html"
+            method="get"
+          >
+            <div class="flex-grow">
+              <input
+                class="fluid-body w-full px-5 py-3 rounded-xl border-none bg-surface-container-lowest/20 backdrop-blur-md text-on-primary placeholder:text-on-primary/50 focus:ring-2 focus:ring-white transition-all outline-none"
+                placeholder="이메일 주소를 입력하세요"
+                type="email"
+              />
+            </div>
+            <button
+              class="fluid-btn bg-white text-primary rounded-xl font-bold hover:bg-opacity-90 transition-all shadow-lg active:scale-95 whitespace-nowrap"
+              type="submit"
+            >
+              지금 가입하기
+            </button>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <!-- ?명꽣 / Footer -->
+    <div id="site-footer"></div>
+    <script src="footer-component.js"></script>
+    <script src="auth-guard.js"></script>
+    <script src="profile-badge.js"></script>
+  </body>
 </html>
