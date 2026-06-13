@@ -22,13 +22,16 @@
     type: document.getElementById('category-type'),
     ingredientsList: document.getElementById('ingredients-list'),
     stepsList: document.getElementById('steps-list'),
+    tipsList: document.getElementById('tips-list'),
     addIngredientButton: document.getElementById('add-ingredient-button'),
     addStepButton: document.getElementById('add-step-button'),
+    addTipButton: document.getElementById('add-tip-button'),
     resetButton: document.getElementById('reset-editor-button'),
     draftButton: document.getElementById('save-draft-button'),
     saveButton: document.getElementById('save-recipe-button'),
     ingredientTemplate: document.getElementById('ingredient-row-template'),
     stepTemplate: document.getElementById('step-card-template'),
+    tipTemplate: document.getElementById('tip-row-template'),
   };
 
   // 상태 메시지 / Draft Status
@@ -237,6 +240,24 @@
     updateStepNumbers();
   }
 
+  function bindTipRow(row) {
+    row.querySelector('.remove-tip')?.addEventListener('click', () => {
+      const rows = elements.tipsList.querySelectorAll('.tip-row');
+      if (rows.length <= 1) {
+        row.querySelector('.tip-content').value = '';
+        return;
+      }
+      row.remove();
+    });
+  }
+
+  function addTipRow() {
+    const fragment = elements.tipTemplate.content.cloneNode(true);
+    const row = fragment.querySelector('.tip-row');
+    bindTipRow(row);
+    elements.tipsList.appendChild(fragment);
+  }
+
   function ensureIngredientRows(count) {
     elements.ingredientsList.innerHTML = '';
     for (let index = 0; index < Math.max(count, 1); index += 1) {
@@ -248,6 +269,13 @@
     elements.stepsList.innerHTML = '';
     for (let index = 0; index < Math.max(count, 1); index += 1) {
       addStepCard();
+    }
+  }
+
+  function ensureTipRows(count) {
+    elements.tipsList.innerHTML = '';
+    for (let index = 0; index < Math.max(count, 1); index += 1) {
+      addTipRow();
     }
   }
 
@@ -295,6 +323,12 @@
       card.querySelector('.timer-settings')?.classList.toggle('hidden', !timerSeconds);
     });
     updateStepNumbers();
+
+    const tips = Array.isArray(recipe.tips) ? recipe.tips : [];
+    ensureTipRows(tips.length);
+    elements.tipsList.querySelectorAll('.tip-row').forEach((row, index) => {
+      row.querySelector('.tip-content').value = tips[index] || '';
+    });
 
     if (recipe.status === 'draft' && recipe.updatedAt) {
       showDraftStatus(recipe.updatedAt);
@@ -356,6 +390,12 @@
       ));
   }
 
+  function gatherTips() {
+    return Array.from(elements.tipsList.querySelectorAll('.tip-content'))
+      .map((textarea) => textarea.value.trim())
+      .filter(Boolean);
+  }
+
   // 에디터 초기화 / Reset Editor
   function resetEditor() {
     elements.title.value = '';
@@ -374,6 +414,7 @@
     elements.type.value = '';
     ensureIngredientRows(1);
     ensureStepCards(1);
+    ensureTipRows(1);
     hideStatus();
   }
 
@@ -395,6 +436,7 @@
       },
       ingredients: gatherIngredients(),
       steps: gatherSteps(),
+      tips: gatherTips(),
     };
   }
 
@@ -450,6 +492,7 @@
   // 이벤트 리스너 / Event Listeners
   elements.ingredientsList.querySelectorAll('.ingredient-row').forEach(bindIngredientRow);
   elements.stepsList.querySelectorAll('.step-card').forEach(bindStepCard);
+  elements.tipsList.querySelectorAll('.tip-row').forEach(bindTipRow);
   updateStepNumbers();
 
   elements.thumbnailDropzone?.addEventListener('click', () => {
@@ -473,6 +516,7 @@
 
   elements.addIngredientButton?.addEventListener('click', addIngredientRow);
   elements.addStepButton?.addEventListener('click', addStepCard);
+  elements.addTipButton?.addEventListener('click', addTipRow);
   elements.resetButton?.addEventListener('click', resetEditor);
   elements.draftButton?.addEventListener('click', async () => {
     try {

@@ -77,6 +77,12 @@ function normalizeIngredients(ingredients, required) {
   return normalized;
 }
 
+function normalizeTips(tips) {
+  return (Array.isArray(tips) ? tips : [])
+    .map(normalizeText)
+    .filter(Boolean);
+}
+
 function normalizeSteps(steps, required) {
   const normalized = (Array.isArray(steps) ? steps : [])
     .map((step) => {
@@ -124,6 +130,7 @@ function buildRecipePayload(body, authorId) {
     categories: normalizeCategories(body.categories, isPublished),
     ingredients: normalizeIngredients(body.ingredients, isPublished),
     steps: normalizeSteps(body.steps, isPublished),
+    tips: normalizeTips(body.tips),
   };
 
   if (isPublished && !payload.title) {

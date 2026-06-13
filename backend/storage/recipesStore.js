@@ -48,7 +48,11 @@ async function getMode() {
   return modePromise;
 }
 
-function mapRecipeRecord(recipe, ingredients = [], steps = []) {
+function mapRecipeRecord(recipe, ingredients = [], steps = [], tips = []) {
+  const mappedTips = tips.length > 0
+    ? tips.map((tip) => (typeof tip === 'string' ? tip : tip.content)).filter(Boolean)
+    : steps.map((step) => step.tip).filter(Boolean);
+
   return {
     id: recipe.recipe_id,
     authorId: recipe.author_id,
@@ -79,8 +83,8 @@ function mapRecipeRecord(recipe, ingredients = [], steps = []) {
       imageUrl: step.image_url,
       timerSeconds: step.timer_seconds,
       heatLevel: step.heat_level,
-      tip: step.tip,
     })),
+    tips: mappedTips,
     createdAt: recipe.created_at,
     updatedAt: recipe.updated_at,
   };
@@ -118,7 +122,11 @@ function buildFileRecord(recipeId, payload, createdAt) {
       image_url: step.imageUrl,
       timer_seconds: step.timerSeconds,
       heat_level: null,
-      tip: null,
+    })),
+    tips: payload.tips.map((tip, index) => ({
+      tip_id: index + 1,
+      tip_order: index + 1,
+      content: tip,
     })),
   };
 }
@@ -141,6 +149,13 @@ async function insertChildren(connection, recipeId, payload) {
         timer_seconds
       ) VALUES (?, ?, ?, ?, ?)`,
       [recipeId, index + 1, step.description, step.imageUrl, step.timerSeconds]
+    );
+  }
+
+  for (const [index, tip] of payload.tips.entries()) {
+    await connection.query(
+      'INSERT INTO RECIPE_TIP (recipe_id, tip_order, content) VALUES (?, ?, ?)',
+      [recipeId, index + 1, tip]
     );
   }
 }
@@ -204,7 +219,12 @@ async function createRecipe(payload) {
 
   recipes.push(recipeRecord);
   await writeRecipes(recipes);
-  return mapRecipeRecord(recipeRecord, recipeRecord.ingredients, recipeRecord.steps);
+  return mapRecipeRecord(
+    recipeRecord,
+    recipeRecord.ingredients,
+    recipeRecord.steps,
+    recipeRecord.tips
+  );
 }
 
 async function updateRecipe(recipeId, payload) {
@@ -246,6 +266,7 @@ async function updateRecipe(recipeId, payload) {
       );
       await connection.query('DELETE FROM RECIPE_INGREDIENT WHERE recipe_id = ?', [recipeId]);
       await connection.query('DELETE FROM RECIPE_STEP WHERE recipe_id = ?', [recipeId]);
+      await connection.query('DELETE FROM RECIPE_TIP WHERE recipe_id = ?', [recipeId]);
       await insertChildren(connection, recipeId, payload);
       await connection.commit();
       return findRecipeById(recipeId);
@@ -266,7 +287,12 @@ async function updateRecipe(recipeId, payload) {
   const recipeRecord = buildFileRecord(recipeId, payload, recipes[index].created_at);
   recipes[index] = recipeRecord;
   await writeRecipes(recipes);
-  return mapRecipeRecord(recipeRecord, recipeRecord.ingredients, recipeRecord.steps);
+  return mapRecipeRecord(
+    recipeRecord,
+    recipeRecord.ingredients,
+    recipeRecord.steps,
+    recipeRecord.tips
+  );
 }
 
 async function deleteRecipe(recipeId) {
@@ -340,14 +366,26 @@ async function findRecipeById(recipeId) {
        ORDER BY step_order ASC`,
       [recipeId]
     );
+    const [tipRows] = await mysqlPool.query(
+      `SELECT tip_id, tip_order, content
+       FROM RECIPE_TIP
+       WHERE recipe_id = ?
+       ORDER BY tip_order ASC, tip_id ASC`,
+      [recipeId]
+    );
 
-    return mapRecipeRecord(recipe, ingredientRows, stepRows);
+    return mapRecipeRecord(recipe, ingredientRows, stepRows, tipRows);
   }
 
   const recipes = await readRecipes();
   const recipe = recipes.find((item) => Number(item.recipe_id) === Number(recipeId));
   return recipe
-    ? mapRecipeRecord(recipe, recipe.ingredients || [], recipe.steps || [])
+    ? mapRecipeRecord(
+      recipe,
+      recipe.ingredients || [],
+      recipe.steps || [],
+      recipe.tips || []
+    )
     : null;
 }
 
@@ -386,7 +424,12 @@ async function listRecipesByAuthor(authorId) {
   return recipes
     .filter((item) => Number(item.author_id) === Number(authorId))
     .sort((a, b) => new Date(b.updated_at || b.created_at) - new Date(a.updated_at || a.created_at))
-    .map((recipe) => mapRecipeRecord(recipe, recipe.ingredients || [], recipe.steps || []));
+    .map((recipe) => mapRecipeRecord(
+      recipe,
+      recipe.ingredients || [],
+      recipe.steps || [],
+      recipe.tips || []
+    ));
 }
 
 module.exports = {

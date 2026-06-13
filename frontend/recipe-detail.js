@@ -17,6 +17,8 @@
     saveRecipeLabel: document.getElementById('save-recipe-label'),
     ingredientForm: document.getElementById('ingredient-form'),
     missingIngredients: document.getElementById('missing-ingredients'),
+    cookingTipsSection: document.getElementById('cooking-tips-section'),
+    cookingTipsList: document.getElementById('cooking-tips-list'),
     finishedImage: document.getElementById('recipe-finished-image'),
     finishedImageContainer: document.getElementById('recipe-finished-image')?.parentElement,
     stepNumber: document.getElementById('step-number'),
@@ -292,6 +294,23 @@
     updateMissingIngredients();
   }
 
+  // Cooking Tips
+  function renderCookingTips(recipe) {
+    if (!elements.cookingTipsSection || !elements.cookingTipsList) return;
+
+    const tips = (Array.isArray(recipe.tips) ? recipe.tips : [])
+      .map((tip) => String(tip || '').trim())
+      .filter(Boolean);
+
+    elements.cookingTipsSection.classList.toggle('hidden', tips.length === 0);
+    elements.cookingTipsList.innerHTML = tips.map((tip) => `
+      <li class="flex items-start gap-3 text-base text-on-surface-variant leading-relaxed">
+        <span class="material-symbols-outlined text-tertiary mt-0.5 flex-shrink-0">check_circle</span>
+        <span>${escapeHtml(tip)}</span>
+      </li>
+    `).join('');
+  }
+
   // 조리 단계 생성 / Build Steps
   function buildSteps(recipe) {
     const recipeSteps = Array.isArray(recipe.steps) ? recipe.steps : [];
@@ -480,6 +499,7 @@
     renderChip(elements.difficultyChip, 'signal_cellular_alt', `난이도: ${recipe.difficulty || '-'}`);
     renderChip(elements.servingChip, 'group', recipe.servingSize || '-');
     renderIngredients(recipe);
+    renderCookingTips(recipe);
 
     currentStepIndex = 0;
     buildSteps(recipe);

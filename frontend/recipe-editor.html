@@ -538,6 +538,35 @@
         </button>
       </section>
 
+      <!-- 요리 팁 / Cooking Tips -->
+      <section class="mb-12">
+        <h2 class="font-headline text-lg font-bold mb-3">요리 팁</h2>
+        <div class="space-y-3" id="tips-list">
+          <div class="flex items-start gap-3 bg-tertiary-container/20 border border-tertiary/20 rounded-xl p-4 tip-row">
+            <span class="material-symbols-outlined text-tertiary mt-2">tips_and_updates</span>
+            <textarea
+              class="flex-1 bg-transparent border-none rounded-lg p-2 min-h-24 text-sm focus:ring-2 focus:ring-tertiary/30 tip-content"
+              placeholder="레시피를 더 맛있게 만드는 팁을 입력해 주세요. (선택)"
+            ></textarea>
+            <button class="text-outline-variant hover:text-error remove-tip" type="button" aria-label="요리 팁 삭제">
+              <span class="material-symbols-outlined text-xl" data-icon="delete">delete</span>
+            </button>
+          </div>
+        </div>
+        <button
+          class="w-full mt-3 py-2.5 border-2 border-dashed border-tertiary/30 rounded-xl text-on-surface-variant font-bold text-sm flex items-center justify-center gap-1.5 hover:bg-tertiary-container/20 hover:border-tertiary/50 transition-all group"
+          id="add-tip-button"
+          type="button"
+        >
+          <span
+            class="material-symbols-outlined text-tertiary text-base group-hover:rotate-90 transition-transform"
+            data-icon="add_circle"
+            >add_circle</span
+          >
+          <span>요리 팁 추가하기</span>
+        </button>
+      </section>
+
       <!-- 최종 액션 / Actions -->
       <div class="flex gap-2 justify-end items-center py-5 border-t border-outline-variant/10">
         <button
@@ -686,6 +715,19 @@
             </div>
           </div>
         </div>
+      </div>
+    </template>
+
+    <template id="tip-row-template">
+      <div class="flex items-start gap-3 bg-tertiary-container/20 border border-tertiary/20 rounded-xl p-4 tip-row">
+        <span class="material-symbols-outlined text-tertiary mt-2">tips_and_updates</span>
+        <textarea
+          class="flex-1 bg-transparent border-none rounded-lg p-2 min-h-24 text-sm focus:ring-2 focus:ring-tertiary/30 tip-content"
+          placeholder="레시피를 더 맛있게 만드는 팁을 입력해 주세요. (선택)"
+        ></textarea>
+        <button class="text-outline-variant hover:text-error remove-tip" type="button" aria-label="요리 팁 삭제">
+          <span class="material-symbols-outlined text-xl" data-icon="delete">delete</span>
+        </button>
       </div>
     </template>
 

@@ -76,6 +76,18 @@ CREATE TABLE RECIPE_STEP (
 );
 
 -- =====================
+-- RECIPE_TIP
+-- =====================
+CREATE TABLE RECIPE_TIP (
+    tip_id        BIGINT NOT NULL AUTO_INCREMENT,
+    recipe_id     BIGINT NOT NULL,
+    tip_order     INT NOT NULL,
+    content       TEXT NOT NULL,
+    PRIMARY KEY (tip_id),
+    FOREIGN KEY (recipe_id) REFERENCES RECIPE(recipe_id) ON DELETE CASCADE
+);
+
+-- =====================
 -- SAVED_RECIPE
 -- =====================
 CREATE TABLE SAVED_RECIPE (
@@ -98,4 +110,5 @@ CREATE INDEX idx_recipe_cat4      ON RECIPE(cat4_type);
 CREATE INDEX idx_recipe_cat2      ON RECIPE(cat2_situation);
 CREATE INDEX idx_step_recipe_order ON RECIPE_STEP(recipe_id, step_order);
 CREATE INDEX idx_ingredient_recipe ON RECIPE_INGREDIENT(recipe_id);
+CREATE INDEX idx_tip_recipe_order  ON RECIPE_TIP(recipe_id, tip_order);
 CREATE INDEX idx_saved_user       ON SAVED_RECIPE(user_id);
