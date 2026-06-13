@@ -432,6 +432,39 @@ async function listRecipesByAuthor(authorId) {
     ));
 }
 
+async function listPublishedRecipes(limit = 8) {
+  const mode = await getMode();
+  const safeLimit = Math.min(Math.max(Number(limit) || 8, 1), 20);
+
+  if (mode === 'mysql') {
+    const [recipeRows] = await mysqlPool.query(
+      `SELECT recipe_id
+       FROM RECIPE
+       WHERE status = 'published'
+       ORDER BY created_at DESC, recipe_id DESC
+       LIMIT ?`,
+      [safeLimit]
+    );
+
+    return Promise.all(recipeRows.map((recipe) => findRecipeById(recipe.recipe_id)));
+  }
+
+  const recipes = await readRecipes();
+  return recipes
+    .filter((recipe) => (recipe.status || 'published') === 'published')
+    .sort((a, b) => (
+      new Date(b.created_at || 0) - new Date(a.created_at || 0)
+      || Number(b.recipe_id) - Number(a.recipe_id)
+    ))
+    .slice(0, safeLimit)
+    .map((recipe) => mapRecipeRecord(
+      recipe,
+      recipe.ingredients || [],
+      recipe.steps || [],
+      recipe.tips || []
+    ));
+}
+
 module.exports = {
   getMode,
   createRecipe,
@@ -439,4 +472,5 @@ module.exports = {
   deleteRecipe,
   findRecipeById,
   listRecipesByAuthor,
+  listPublishedRecipes,
 };

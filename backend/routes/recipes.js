@@ -6,6 +6,7 @@ const commentsController = require('../controllers/commentsController');
 
 const router = express.Router();
 
+router.get('/', recipesController.getPublishedRecipes);
 router.get('/mine', recipesController.getMyRecipes);
 router.get('/saved', savedRecipesController.getSavedRecipes);
 router.post('/', recipesController.createRecipe);
