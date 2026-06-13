@@ -12,6 +12,9 @@
     ownerActions: document.getElementById('recipe-owner-actions'),
     editRecipeButton: document.getElementById('edit-recipe-button'),
     deleteRecipeButton: document.getElementById('delete-recipe-button'),
+    saveRecipeButton: document.getElementById('save-recipe-button'),
+    saveRecipeIcon: document.getElementById('save-recipe-icon'),
+    saveRecipeLabel: document.getElementById('save-recipe-label'),
     ingredientForm: document.getElementById('ingredient-form'),
     missingIngredients: document.getElementById('missing-ingredients'),
     finishedImage: document.getElementById('recipe-finished-image'),
@@ -61,6 +64,7 @@
   let remainingSeconds = 0;
   let timerRunning = false;
   let currentRecipe = null;
+  let isRecipeSaved = false;
 
   function getStoredUser() {
     const rawUser = localStorage.getItem('yamy_user');
@@ -89,6 +93,88 @@
 
     if (isOwner && elements.editRecipeButton) {
       elements.editRecipeButton.href = `recipe-editor.html?id=${encodeURIComponent(recipe.id)}`;
+    }
+  }
+
+  function renderSaveButton(saved) {
+    isRecipeSaved = saved;
+    if (!elements.saveRecipeButton) return;
+
+    elements.saveRecipeButton.setAttribute('aria-pressed', String(saved));
+    elements.saveRecipeButton.title = saved ? '저장된 레시피에서 삭제' : '레시피 저장';
+    elements.saveRecipeButton.classList.toggle('bg-primary', saved);
+    elements.saveRecipeButton.classList.toggle('text-on-primary', saved);
+    elements.saveRecipeButton.classList.toggle('bg-surface-container', !saved);
+    elements.saveRecipeButton.classList.toggle('text-primary', !saved);
+
+    if (elements.saveRecipeIcon) {
+      elements.saveRecipeIcon.style.fontVariationSettings = saved ? "'FILL' 1" : "'FILL' 0";
+    }
+    if (elements.saveRecipeLabel) {
+      elements.saveRecipeLabel.textContent = saved ? '저장됨' : '레시피 저장';
+    }
+  }
+
+  async function loadSavedState(recipeId) {
+    const token = localStorage.getItem('yamy_token');
+    if (!token) {
+      renderSaveButton(false);
+      return;
+    }
+
+    const response = await fetch(`${API_BASE}/${encodeURIComponent(recipeId)}/saved`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const data = await response.json();
+
+    if (response.status === 401) {
+      localStorage.removeItem('yamy_token');
+      localStorage.removeItem('yamy_user');
+      renderSaveButton(false);
+      return;
+    }
+
+    if (!response.ok) {
+      throw new Error(data.message || '저장 상태를 불러오지 못했습니다.');
+    }
+
+    renderSaveButton(Boolean(data.saved));
+  }
+
+  async function toggleSavedRecipe() {
+    if (!currentRecipe || !elements.saveRecipeButton) return;
+
+    const token = localStorage.getItem('yamy_token');
+    if (!token) {
+      const returnUrl = `${window.location.pathname.split('/').pop() || 'recipe-detail.html'}${window.location.search}`;
+      window.location.href = `login.html?returnUrl=${encodeURIComponent(returnUrl)}`;
+      return;
+    }
+
+    elements.saveRecipeButton.disabled = true;
+    try {
+      const response = await fetch(
+        `${API_BASE}/${encodeURIComponent(currentRecipe.id)}/saved`,
+        {
+          method: isRecipeSaved ? 'DELETE' : 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || '레시피 저장 상태를 변경하지 못했습니다.');
+      }
+
+      renderSaveButton(Boolean(data.saved));
+    } catch (error) {
+      window.alert(error.message || '레시피 저장 중 오류가 발생했습니다.');
+    } finally {
+      elements.saveRecipeButton.disabled = false;
     }
   }
 
@@ -374,6 +460,7 @@
   // 레시피 렌더링 / Render Recipe
   function renderRecipe(recipe) {
     currentRecipe = recipe;
+    if (elements.saveRecipeButton) elements.saveRecipeButton.disabled = false;
     if (recipe.title) document.title = `${recipe.title} - YAMY`;
     if (elements.title) elements.title.textContent = recipe.title || '레시피';
     if (elements.description) elements.description.textContent = recipe.description || '';
@@ -414,6 +501,12 @@
       }
 
       renderRecipe(data.recipe);
+      try {
+        await loadSavedState(data.recipe.id);
+      } catch (savedStateError) {
+        console.error('Load saved recipe status error:', savedStateError);
+        renderSaveButton(false);
+      }
     } catch (error) {
       if (elements.description) {
         elements.description.textContent = error.message;
@@ -503,6 +596,7 @@
     if (step) renderTimer(step);
   });
   elements.deleteRecipeButton?.addEventListener('click', deleteCurrentRecipe);
+  elements.saveRecipeButton?.addEventListener('click', toggleSavedRecipe);
 
   elements.prevButton?.addEventListener('click', () => {
     if (currentStepIndex > 0) {

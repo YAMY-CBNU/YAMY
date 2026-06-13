@@ -41,6 +41,14 @@
     return null;
   }
 
+  function getReturnUrl() {
+    const returnUrl = new URLSearchParams(window.location.search).get('returnUrl');
+    if (!returnUrl || returnUrl.startsWith('//') || /^[a-z][a-z\d+.-]*:/i.test(returnUrl)) {
+      return 'index.html';
+    }
+    return returnUrl;
+  }
+
   // 로그인 / Login
   async function handleLogin(form) {
     const email = document.getElementById('login-email')?.value.trim();
@@ -61,7 +69,7 @@
 
     localStorage.setItem('yamy_token', data.token);
     localStorage.setItem('yamy_user', JSON.stringify(data.user));
-    window.location.href = 'index.html';
+    window.location.href = getReturnUrl();
   }
 
   // 회원가입 / Signup
