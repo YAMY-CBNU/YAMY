@@ -174,3 +174,30 @@ h1, h2, h3 {
     border-radius: 9999px;
     transition: width 1s linear;
 }
+
+.review-rating-star {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: #C9C5B4;
+    font-size: 2rem;
+    line-height: 1;
+    padding: 0.15rem;
+    cursor: pointer;
+    transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.review-rating-star:hover,
+.review-rating-star:focus-visible {
+    color: #D9933D;
+    transform: scale(1.08);
+    outline: none;
+}
+
+.review-rating-star.is-active {
+    color: #D9933D;
+}
+
+#rating-input .review-rating-star {
+    font-size: clamp(2.5rem, 8vw, 3.5rem);
+}

@@ -102,6 +102,38 @@ CREATE TABLE SAVED_RECIPE (
 );
 
 -- =====================
+-- RECIPE_RATING
+-- =====================
+CREATE TABLE RECIPE_RATING (
+    rating_id  BIGINT   NOT NULL AUTO_INCREMENT,
+    recipe_id  BIGINT   NOT NULL,
+    user_id    BIGINT   NOT NULL,
+    rating     TINYINT  NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (rating_id),
+    UNIQUE KEY uq_rating_user_recipe (user_id, recipe_id),
+    CONSTRAINT chk_recipe_rating CHECK (rating BETWEEN 1 AND 5),
+    FOREIGN KEY (user_id)   REFERENCES USER(user_id)     ON DELETE CASCADE,
+    FOREIGN KEY (recipe_id) REFERENCES RECIPE(recipe_id) ON DELETE CASCADE
+);
+
+-- =====================
+-- RECIPE_COMMENT
+-- =====================
+CREATE TABLE RECIPE_COMMENT (
+    comment_id BIGINT        NOT NULL AUTO_INCREMENT,
+    recipe_id  BIGINT        NOT NULL,
+    user_id    BIGINT        NOT NULL,
+    content    VARCHAR(1000) NOT NULL,
+    created_at DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (comment_id),
+    FOREIGN KEY (user_id)   REFERENCES USER(user_id)     ON DELETE CASCADE,
+    FOREIGN KEY (recipe_id) REFERENCES RECIPE(recipe_id) ON DELETE CASCADE
+);
+
+-- =====================
 -- INDEX
 -- =====================
 CREATE INDEX idx_recipe_external  ON RECIPE(external_recipe_id);
@@ -112,3 +144,6 @@ CREATE INDEX idx_step_recipe_order ON RECIPE_STEP(recipe_id, step_order);
 CREATE INDEX idx_ingredient_recipe ON RECIPE_INGREDIENT(recipe_id);
 CREATE INDEX idx_tip_recipe_order  ON RECIPE_TIP(recipe_id, tip_order);
 CREATE INDEX idx_saved_user       ON SAVED_RECIPE(user_id);
+CREATE INDEX idx_rating_recipe     ON RECIPE_RATING(recipe_id);
+CREATE INDEX idx_comment_recipe_created ON RECIPE_COMMENT(recipe_id, created_at);
+CREATE INDEX idx_comment_user      ON RECIPE_COMMENT(user_id);

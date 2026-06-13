@@ -55,7 +55,7 @@ copy .env.example .env
 4. Start MySQL and apply `db/yamy.sql`
 
    If the database already exists, apply `db/migrations/20260610_add_recipe_status.sql`
-   before starting the updated server.
+   and the newer migration files before starting the updated server.
 
 5. Run the server
 
@@ -70,4 +70,19 @@ npm run dev
 - `POST /api/auth/login`
   - body: `{ "email": "user@example.com", "password": "password123" }`
 - `GET /api/auth/me`
+  - header: `Authorization: Bearer <token>`
+- `GET /api/recipes/:recipeId/ratings`
+- `GET /api/recipes/:recipeId/ratings/me`
+  - header: `Authorization: Bearer <token>`
+- `PUT /api/recipes/:recipeId/ratings/me`
+  - header: `Authorization: Bearer <token>`
+  - body: `{ "rating": 5 }`
+- `GET /api/recipes/:recipeId/comments`
+- `POST /api/recipes/:recipeId/comments`
+  - header: `Authorization: Bearer <token>`
+  - body: `{ "content": "맛있어요!" }`
+- `PATCH /api/recipes/:recipeId/comments/:commentId`
+  - header: `Authorization: Bearer <token>`
+  - body: `{ "content": "수정한 댓글" }`
+- `DELETE /api/recipes/:recipeId/comments/:commentId`
   - header: `Authorization: Bearer <token>`

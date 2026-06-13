@@ -1,5 +1,7 @@
 const recipesStore = require('../storage/recipesStore');
 const savedRecipesStore = require('../storage/savedRecipesStore');
+const ratingsStore = require('../storage/ratingsStore');
+const commentsStore = require('../storage/commentsStore');
 const { requireAuth } = require('../utils/auth');
 
 const CATEGORY_FIELDS = ['method', 'situation', 'mainIngredient', 'type'];
@@ -244,6 +246,13 @@ exports.deleteRecipe = async (req, res) => {
       await savedRecipesStore.removeAllForRecipe(recipeId);
     } catch (cleanupError) {
       console.error('Delete saved recipe records error:', cleanupError);
+    }
+
+    try {
+      await ratingsStore.removeAllForRecipe(recipeId);
+      await commentsStore.removeAllForRecipe(recipeId);
+    } catch (cleanupError) {
+      console.error('Delete recipe feedback records error:', cleanupError);
     }
 
     return res.status(200).json({ message: '레시피가 삭제되었습니다.' });

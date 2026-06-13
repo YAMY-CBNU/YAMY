@@ -19,6 +19,18 @@
     missingIngredients: document.getElementById('missing-ingredients'),
     cookingTipsSection: document.getElementById('cooking-tips-section'),
     cookingTipsList: document.getElementById('cooking-tips-list'),
+    ratingInput: document.getElementById('rating-input'),
+    ratingStatus: document.getElementById('rating-status'),
+    ratingSummaryAverage: document.getElementById('rating-summary-average'),
+    ratingSummaryCount: document.getElementById('rating-summary-count'),
+    commentForm: document.getElementById('comment-form'),
+    commentLoginPrompt: document.getElementById('comment-login-prompt'),
+    commentLoginLink: document.getElementById('comment-login-link'),
+    commentContent: document.getElementById('comment-content'),
+    commentFormStatus: document.getElementById('comment-form-status'),
+    commentSubmitButton: document.getElementById('comment-submit-button'),
+    commentListCount: document.getElementById('comment-list-count'),
+    commentsList: document.getElementById('comments-list'),
     finishedImage: document.getElementById('recipe-finished-image'),
     finishedImageContainer: document.getElementById('recipe-finished-image')?.parentElement,
     stepNumber: document.getElementById('step-number'),
@@ -67,6 +79,9 @@
   let timerRunning = false;
   let currentRecipe = null;
   let isRecipeSaved = false;
+  let comments = [];
+  let myRating = 0;
+  let editingCommentId = null;
 
   function getStoredUser() {
     const rawUser = localStorage.getItem('yamy_user');
@@ -220,6 +235,330 @@
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#039;');
+  }
+
+  function setRatingButtons(container, rating) {
+    container?.querySelectorAll('[data-rating-value]').forEach((button) => {
+      const active = Number(button.dataset.ratingValue) <= Number(rating);
+      button.classList.toggle('is-active', active);
+      button.setAttribute('aria-pressed', String(active));
+    });
+  }
+
+  function updateFeedbackAuth() {
+    const loggedIn = Boolean(localStorage.getItem('yamy_token') && getStoredUser());
+    elements.commentForm?.classList.toggle('hidden', !loggedIn);
+    elements.commentLoginPrompt?.classList.toggle('hidden', loggedIn);
+
+    if (elements.commentLoginLink) {
+      const returnUrl = `${window.location.pathname.split('/').pop() || 'recipe-detail.html'}${window.location.search}`;
+      elements.commentLoginLink.href = `login.html?returnUrl=${encodeURIComponent(returnUrl)}`;
+    }
+  }
+
+  function setStatus(element, message, isError = false) {
+    if (!element) return;
+    element.textContent = message;
+    element.classList.toggle('text-red-700', isError);
+    element.classList.toggle('text-on-surface-variant', !isError);
+  }
+
+  function formatCommentDate(value) {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return '';
+    return date.toLocaleDateString('ko-KR', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    });
+  }
+
+  function getAuthorInitial(nickname) {
+    return String(nickname || '?').trim().charAt(0).toUpperCase() || '?';
+  }
+
+  function createAvatarMarkup(author) {
+    const nickname = escapeHtml(author?.nickname || '알 수 없는 사용자');
+    const initial = escapeHtml(getAuthorInitial(author?.nickname));
+    const imageUrl = author?.profileImageUrl;
+
+    if (!imageUrl) {
+      return `
+        <div class="w-11 h-11 shrink-0 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-extrabold">
+          ${initial}
+        </div>
+      `;
+    }
+
+    return `
+      <div class="w-11 h-11 shrink-0 rounded-full overflow-hidden bg-primary-container">
+        <img
+          data-review-avatar
+          class="w-full h-full object-cover"
+          src="${escapeHtml(imageUrl)}"
+          alt="${nickname} 프로필"
+        />
+        <span
+          data-review-avatar-fallback
+          class="hidden w-full h-full items-center justify-center font-extrabold text-on-primary-container"
+        >${initial}</span>
+      </div>
+    `;
+  }
+
+  function createCommentEditorMarkup(comment) {
+    return `
+      <div class="mt-4 rounded-xl bg-surface-container p-4">
+        <textarea
+          data-comment-edit-content
+          maxlength="1000"
+          rows="4"
+          class="w-full resize-y rounded-xl border-outline-variant/50 bg-surface-container-lowest focus:border-primary focus:ring-primary"
+        >${escapeHtml(comment.content)}</textarea>
+        <div class="flex justify-end gap-2 mt-3">
+          <button
+            type="button"
+            data-comment-action="cancel"
+            class="rounded-full px-4 py-2 text-sm font-bold text-on-surface-variant hover:bg-surface-container-highest"
+          >취소</button>
+          <button
+            type="button"
+            data-comment-action="save"
+            class="rounded-full bg-primary px-4 py-2 text-sm font-bold text-on-primary hover:opacity-90"
+          >수정 완료</button>
+        </div>
+      </div>
+    `;
+  }
+
+  function createCommentMarkup(comment) {
+    const storedUser = getStoredUser();
+    const isOwner = Boolean(
+      localStorage.getItem('yamy_token')
+      && storedUser
+      && Number(storedUser.id) === Number(comment.author?.id)
+    );
+    const edited = comment.updatedAt
+      && comment.createdAt
+      && new Date(comment.updatedAt).getTime() > new Date(comment.createdAt).getTime();
+
+    return `
+      <article class="py-6" data-comment-id="${escapeHtml(comment.id)}">
+        <div class="flex items-start gap-3">
+          ${createAvatarMarkup(comment.author)}
+          <div class="min-w-0 flex-1">
+            <div class="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+                  <strong class="text-sm text-on-surface">${escapeHtml(comment.author?.nickname || '알 수 없는 사용자')}</strong>
+                  <span class="text-xs text-on-surface-variant">
+                    ${escapeHtml(formatCommentDate(comment.createdAt))}${edited ? ' · 수정됨' : ''}
+                  </span>
+                </div>
+              </div>
+              ${isOwner ? `
+                <div class="flex items-center gap-1">
+                  <button
+                    type="button"
+                    data-comment-action="edit"
+                    class="rounded-full px-3 py-1.5 text-xs font-bold text-on-surface-variant hover:bg-surface-container hover:text-primary"
+                  >수정</button>
+                  <button
+                    type="button"
+                    data-comment-action="delete"
+                    class="rounded-full px-3 py-1.5 text-xs font-bold text-red-700 hover:bg-red-50"
+                  >삭제</button>
+                </div>
+              ` : ''}
+            </div>
+            ${editingCommentId === comment.id
+              ? createCommentEditorMarkup(comment)
+              : `<p class="mt-3 whitespace-pre-wrap break-words text-sm md:text-base leading-relaxed text-on-surface-variant">${escapeHtml(comment.content)}</p>`}
+          </div>
+        </div>
+      </article>
+    `;
+  }
+
+  function renderRatingSummary(summary) {
+    const count = Number(summary?.count) || 0;
+    const averageRating = Number(summary?.averageRating) || 0;
+    if (elements.ratingSummaryAverage) elements.ratingSummaryAverage.textContent = averageRating.toFixed(1);
+    if (elements.ratingSummaryCount) elements.ratingSummaryCount.textContent = `(${count}명 참여)`;
+  }
+
+  function renderComments() {
+    if (!elements.commentsList) return;
+    if (elements.commentListCount) elements.commentListCount.textContent = String(comments.length);
+
+    if (comments.length === 0) {
+      elements.commentsList.innerHTML = `
+        <div class="py-12 text-center">
+          <span class="material-symbols-outlined text-4xl text-primary/40">rate_review</span>
+          <p class="mt-2 text-on-surface-variant">첫 번째 댓글을 남겨 보세요.</p>
+        </div>
+      `;
+      return;
+    }
+
+    elements.commentsList.innerHTML = comments.map(createCommentMarkup).join('');
+    elements.commentsList.querySelectorAll('[data-review-avatar]').forEach((image) => {
+      image.addEventListener('error', () => {
+        image.classList.add('hidden');
+        const fallback = image.nextElementSibling;
+        fallback?.classList.remove('hidden');
+        fallback?.classList.add('flex');
+      }, { once: true });
+    });
+  }
+
+  async function parseFeedbackResponse(response, fallbackMessage) {
+    const data = await response.json();
+    if (response.status === 401) {
+      localStorage.removeItem('yamy_token');
+      localStorage.removeItem('yamy_user');
+      updateFeedbackAuth();
+    }
+    if (!response.ok) {
+      throw new Error(data.message || fallbackMessage);
+    }
+    return data;
+  }
+
+  async function loadRating(recipeId) {
+    const summaryResponse = await fetch(`${API_BASE}/${encodeURIComponent(recipeId)}/ratings`);
+    const summaryData = await parseFeedbackResponse(summaryResponse, '별점을 불러오지 못했습니다.');
+    renderRatingSummary(summaryData.summary);
+
+    const token = localStorage.getItem('yamy_token');
+    if (!token) {
+      myRating = 0;
+      setRatingButtons(elements.ratingInput, 0);
+      return;
+    }
+
+    const myResponse = await fetch(`${API_BASE}/${encodeURIComponent(recipeId)}/ratings/me`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const myData = await parseFeedbackResponse(myResponse, '내 별점을 불러오지 못했습니다.');
+    myRating = Number(myData.rating) || 0;
+    setRatingButtons(elements.ratingInput, myRating);
+    setStatus(
+      elements.ratingStatus,
+      myRating ? `내가 남긴 별점: ${myRating}점` : '별을 선택하면 바로 저장됩니다.'
+    );
+  }
+
+  async function saveRating(rating) {
+    if (!currentRecipe) return;
+    const token = localStorage.getItem('yamy_token');
+    if (!token) {
+      const returnUrl = `${window.location.pathname.split('/').pop() || 'recipe-detail.html'}${window.location.search}`;
+      window.location.href = `login.html?returnUrl=${encodeURIComponent(returnUrl)}`;
+      return;
+    }
+
+    setRatingButtons(elements.ratingInput, rating);
+    setStatus(elements.ratingStatus, '별점을 저장하는 중입니다.');
+    try {
+      const response = await fetch(`${API_BASE}/${encodeURIComponent(currentRecipe.id)}/ratings/me`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ rating }),
+      });
+      const data = await parseFeedbackResponse(response, '별점을 저장하지 못했습니다.');
+      myRating = data.rating;
+      renderRatingSummary(data.summary);
+      setStatus(elements.ratingStatus, `${myRating}점이 저장되었습니다.`);
+    } catch (error) {
+      setRatingButtons(elements.ratingInput, myRating);
+      setStatus(elements.ratingStatus, error.message, true);
+    }
+  }
+
+  async function loadComments(recipeId) {
+    const response = await fetch(`${API_BASE}/${encodeURIComponent(recipeId)}/comments`);
+    const data = await parseFeedbackResponse(response, '댓글을 불러오지 못했습니다.');
+    comments = Array.isArray(data.comments) ? data.comments : [];
+    renderComments();
+  }
+
+  async function submitComment(event) {
+    event.preventDefault();
+    if (!currentRecipe || !elements.commentContent || !elements.commentSubmitButton) return;
+    const content = elements.commentContent.value.trim();
+    if (!content) {
+      setStatus(elements.commentFormStatus, '댓글 내용을 입력해 주세요.', true);
+      return;
+    }
+
+    elements.commentSubmitButton.disabled = true;
+    setStatus(elements.commentFormStatus, '댓글을 등록하는 중입니다.');
+    try {
+      const response = await fetch(`${API_BASE}/${encodeURIComponent(currentRecipe.id)}/comments`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('yamy_token') || ''}`,
+        },
+        body: JSON.stringify({ content }),
+      });
+      await parseFeedbackResponse(response, '댓글을 등록하지 못했습니다.');
+      elements.commentContent.value = '';
+      setStatus(elements.commentFormStatus, '댓글이 등록되었습니다.');
+      await loadComments(currentRecipe.id);
+    } catch (error) {
+      setStatus(elements.commentFormStatus, error.message, true);
+    } finally {
+      elements.commentSubmitButton.disabled = false;
+    }
+  }
+
+  async function saveEditedComment(commentId, article) {
+    const content = article.querySelector('[data-comment-edit-content]')?.value.trim();
+    if (!content) {
+      window.alert('댓글 내용을 입력해 주세요.');
+      return;
+    }
+
+    const saveButton = article.querySelector('[data-comment-action="save"]');
+    if (saveButton) saveButton.disabled = true;
+    try {
+      const response = await fetch(`${API_BASE}/${encodeURIComponent(currentRecipe.id)}/comments/${encodeURIComponent(commentId)}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('yamy_token') || ''}`,
+        },
+        body: JSON.stringify({ content }),
+      });
+      await parseFeedbackResponse(response, '댓글을 수정하지 못했습니다.');
+      editingCommentId = null;
+      await loadComments(currentRecipe.id);
+    } catch (error) {
+      window.alert(error.message);
+      if (saveButton) saveButton.disabled = false;
+    }
+  }
+
+  async function deleteComment(commentId, button) {
+    if (!window.confirm('이 댓글을 삭제하시겠습니까?')) return;
+    button.disabled = true;
+    try {
+      const response = await fetch(`${API_BASE}/${encodeURIComponent(currentRecipe.id)}/comments/${encodeURIComponent(commentId)}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${localStorage.getItem('yamy_token') || ''}` },
+      });
+      await parseFeedbackResponse(response, '댓글을 삭제하지 못했습니다.');
+      if (editingCommentId === commentId) editingCommentId = null;
+      await loadComments(currentRecipe.id);
+    } catch (error) {
+      window.alert(error.message);
+      button.disabled = false;
+    }
   }
 
   // 정보 칩 / Info Chip
@@ -527,6 +866,20 @@
         console.error('Load saved recipe status error:', savedStateError);
         renderSaveButton(false);
       }
+      try {
+        await Promise.all([
+          loadRating(data.recipe.id),
+          loadComments(data.recipe.id),
+        ]);
+      } catch (feedbackError) {
+        console.error('Load recipe feedback error:', feedbackError);
+        setStatus(elements.ratingStatus, feedbackError.message, true);
+        if (elements.commentsList) {
+          elements.commentsList.innerHTML = `
+            <p class="py-10 text-center text-red-700">${escapeHtml(feedbackError.message)}</p>
+          `;
+        }
+      }
     } catch (error) {
       if (elements.description) {
         elements.description.textContent = error.message;
@@ -617,6 +970,40 @@
   });
   elements.deleteRecipeButton?.addEventListener('click', deleteCurrentRecipe);
   elements.saveRecipeButton?.addEventListener('click', toggleSavedRecipe);
+  elements.ratingInput?.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-rating-value]');
+    if (!button) return;
+    saveRating(Number(button.dataset.ratingValue));
+  });
+  elements.commentForm?.addEventListener('submit', submitComment);
+  elements.commentsList?.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-comment-action]');
+    if (!button || !currentRecipe) return;
+
+    const article = button.closest('[data-comment-id]');
+    const commentId = Number(article?.dataset.commentId);
+    const comment = comments.find((item) => Number(item.id) === commentId);
+    if (!article || !comment) return;
+
+    const action = button.dataset.commentAction;
+    if (action === 'edit') {
+      editingCommentId = comment.id;
+      renderComments();
+      return;
+    }
+    if (action === 'cancel') {
+      editingCommentId = null;
+      renderComments();
+      return;
+    }
+    if (action === 'save') {
+      saveEditedComment(comment.id, article);
+      return;
+    }
+    if (action === 'delete') {
+      deleteComment(comment.id, button);
+    }
+  });
 
   elements.prevButton?.addEventListener('click', () => {
     if (currentStepIndex > 0) {
@@ -707,5 +1094,9 @@
     renderStep();
   }, { passive: true });
 
-  document.addEventListener('DOMContentLoaded', loadRecipe);
+  document.addEventListener('DOMContentLoaded', () => {
+    updateFeedbackAuth();
+    setRatingButtons(elements.ratingInput, 0);
+    loadRecipe();
+  });
 })();
