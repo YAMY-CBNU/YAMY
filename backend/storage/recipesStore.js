@@ -269,6 +269,30 @@ async function updateRecipe(recipeId, payload) {
   return mapRecipeRecord(recipeRecord, recipeRecord.ingredients, recipeRecord.steps);
 }
 
+async function deleteRecipe(recipeId) {
+  const mode = await getMode();
+
+  if (mode === 'mysql') {
+    const [result] = await mysqlPool.query(
+      'DELETE FROM RECIPE WHERE recipe_id = ?',
+      [recipeId]
+    );
+    return result.affectedRows > 0;
+  }
+
+  const recipes = await readRecipes();
+  const remainingRecipes = recipes.filter(
+    (recipe) => Number(recipe.recipe_id) !== Number(recipeId)
+  );
+
+  if (remainingRecipes.length === recipes.length) {
+    return false;
+  }
+
+  await writeRecipes(remainingRecipes);
+  return true;
+}
+
 async function findRecipeById(recipeId) {
   const mode = await getMode();
 
@@ -369,6 +393,7 @@ module.exports = {
   getMode,
   createRecipe,
   updateRecipe,
+  deleteRecipe,
   findRecipeById,
   listRecipesByAuthor,
 };

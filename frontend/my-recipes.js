@@ -60,12 +60,37 @@
     const link = escapeHtml(getRecipeLink(recipe));
 
     return `
-      <article class="group">
-        <a href="${link}" class="block">
-          <div class="relative overflow-hidden rounded-lg aspect-[4/3] mb-2 shadow-sm bg-surface-container-lowest">
+      <article class="group" data-recipe-id="${escapeHtml(recipe.id)}">
+        <div class="relative overflow-hidden rounded-lg aspect-[4/3] mb-2 shadow-sm bg-surface-container-lowest">
+          <a href="${link}" class="absolute inset-0 block">
             ${createImageMarkup(recipe, title)}
             <div class="absolute top-2 left-2 bg-primary/90 text-on-primary px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-widest">공개</div>
+          </a>
+          <div class="absolute inset-0 bg-on-surface/50 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3 pointer-events-none">
+            <button
+              type="button"
+              data-recipe-action="edit"
+              data-recipe-id="${escapeHtml(recipe.id)}"
+              class="pointer-events-auto bg-surface-container-lowest p-2.5 rounded-full text-on-surface hover:text-primary shadow-md transition-colors"
+              aria-label="${title} 수정"
+              title="수정"
+            >
+              <span class="material-symbols-outlined text-lg">edit</span>
+            </button>
+            <button
+              type="button"
+              data-recipe-action="delete"
+              data-recipe-id="${escapeHtml(recipe.id)}"
+              data-recipe-title="${title}"
+              class="pointer-events-auto bg-surface-container-lowest p-2.5 rounded-full text-on-surface hover:text-error shadow-md transition-colors"
+              aria-label="${title} 삭제"
+              title="삭제"
+            >
+              <span class="material-symbols-outlined text-lg">delete</span>
+            </button>
           </div>
+        </div>
+        <a href="${link}" class="block">
           <h3 class="text-sm font-bold tracking-tight mb-1 group-hover:text-primary transition-colors">${title}</h3>
           <div class="flex flex-wrap items-center gap-3 text-on-surface-variant text-[11px] font-medium">
             <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">schedule</span>${cookTime}</span>
@@ -84,15 +109,37 @@
     const link = `recipe-editor.html?id=${encodeURIComponent(recipe.id)}`;
 
     return `
-      <article class="group">
-        <a href="${link}" class="block">
-          <div class="relative overflow-hidden rounded-lg aspect-[4/3] mb-2 shadow-sm bg-surface-container-lowest">
+      <article class="group" data-recipe-id="${escapeHtml(recipe.id)}">
+        <div class="relative overflow-hidden rounded-lg aspect-[4/3] mb-2 shadow-sm bg-surface-container-lowest">
+          <a href="${link}" class="absolute inset-0 block">
             ${createImageMarkup(recipe, title)}
-            <div class="absolute inset-0 bg-on-surface/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-              <span class="bg-surface-container-lowest px-3 py-1.5 rounded-full text-primary font-bold text-xs shadow-md">이어 작성하기</span>
-            </div>
             <div class="absolute top-2 left-2 bg-surface-container-high text-on-surface-variant px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-widest">임시저장</div>
+          </a>
+          <div class="absolute inset-0 bg-on-surface/50 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3 pointer-events-none">
+            <button
+              type="button"
+              data-recipe-action="edit"
+              data-recipe-id="${escapeHtml(recipe.id)}"
+              class="pointer-events-auto bg-surface-container-lowest p-2.5 rounded-full text-on-surface hover:text-primary shadow-md transition-colors"
+              aria-label="${title} 이어서 작성"
+              title="수정"
+            >
+              <span class="material-symbols-outlined text-lg">edit</span>
+            </button>
+            <button
+              type="button"
+              data-recipe-action="delete"
+              data-recipe-id="${escapeHtml(recipe.id)}"
+              data-recipe-title="${title}"
+              class="pointer-events-auto bg-surface-container-lowest p-2.5 rounded-full text-on-surface hover:text-error shadow-md transition-colors"
+              aria-label="${title} 삭제"
+              title="삭제"
+            >
+              <span class="material-symbols-outlined text-lg">delete</span>
+            </button>
           </div>
+        </div>
+        <a href="${link}" class="block">
           <h3 class="text-sm font-bold tracking-tight mb-1 text-on-surface-variant">${title}</h3>
           ${updatedAt ? `<span class="text-on-surface-variant text-[11px] font-medium">최근 저장 ${updatedAt}</span>` : ''}
         </a>
@@ -193,6 +240,59 @@
       }
     }
   }
+
+  async function deleteRecipe(recipeId, recipeTitle) {
+    if (!window.confirm(`"${recipeTitle || '이 레시피'}"를 삭제하시겠습니까?\n삭제한 레시피는 복구할 수 없습니다.`)) {
+      return;
+    }
+
+    const token = localStorage.getItem('yamy_token');
+    if (!token) {
+      window.authGuard?.redirectToLoginIfNeeded();
+      return;
+    }
+
+    const response = await fetch(`${API_BASE}/${encodeURIComponent(recipeId)}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || '레시피를 삭제하지 못했습니다.');
+    }
+
+    await loadMyRecipes();
+  }
+
+  document.addEventListener('click', async (event) => {
+    const actionButton = event.target.closest?.('[data-recipe-action]');
+    if (!actionButton) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    const recipeId = actionButton.dataset.recipeId;
+    if (!recipeId) return;
+
+    if (actionButton.dataset.recipeAction === 'edit') {
+      window.location.href = `recipe-editor.html?id=${encodeURIComponent(recipeId)}`;
+      return;
+    }
+
+    if (actionButton.dataset.recipeAction === 'delete') {
+      actionButton.disabled = true;
+      try {
+        await deleteRecipe(recipeId, actionButton.dataset.recipeTitle);
+      } catch (error) {
+        window.alert(error.message || '레시피 삭제 중 오류가 발생했습니다.');
+      } finally {
+        actionButton.disabled = false;
+      }
+    }
+  });
 
   document.addEventListener('DOMContentLoaded', loadMyRecipes);
 })();

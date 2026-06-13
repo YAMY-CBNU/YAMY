@@ -98,6 +98,24 @@
       <!-- 레시피 정보 / Recipe Info -->
       <section class="mb-12">
         <div id="recipe-tags" class="flex flex-wrap gap-2 mb-5"></div>
+        <div id="recipe-owner-actions" class="hidden flex-wrap items-center gap-2 mb-5">
+          <a
+            id="edit-recipe-button"
+            href="#"
+            class="inline-flex items-center gap-1.5 rounded-full bg-surface-container px-4 py-2 text-sm font-bold text-on-surface-variant hover:bg-primary hover:text-on-primary transition-colors"
+          >
+            <span class="material-symbols-outlined text-lg">edit</span>
+            수정
+          </a>
+          <button
+            id="delete-recipe-button"
+            type="button"
+            class="inline-flex items-center gap-1.5 rounded-full border border-red-200 bg-red-50 px-4 py-2 text-sm font-bold text-red-700 hover:bg-red-700 hover:text-white transition-colors"
+          >
+            <span class="material-symbols-outlined text-lg">delete</span>
+            삭제
+          </button>
+        </div>
         <h1 id="recipe-title-main" class="text-5xl font-headline font-extrabold text-on-surface tracking-tight mb-5">
           라면 끓이기
         </h1>
@@ -190,16 +208,13 @@
           </button>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-10 items-start md:items-center min-h-0 md:min-h-[500px] mb-5 md:mb-10">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-10 items-start min-h-0 md:min-h-[500px] mb-5 md:mb-10">
           <div>
-            <div class="flex items-center gap-2 md:gap-4 mb-3 md:mb-6">
-              <div
-                id="step-number"
-                class="w-10 h-10 md:w-14 md:h-14 rounded-full bg-primary text-on-primary font-headline font-extrabold text-lg md:text-2xl flex items-center justify-center shadow-md shadow-primary/20 flex-shrink-0"
-              >
-                1
-              </div>
-              <h3 id="step-title" class="font-headline font-bold text-xl md:text-3xl text-on-surface"></h3>
+            <div
+              id="step-number"
+              class="w-8 h-8 md:w-10 md:h-10 mb-3 md:mb-5 rounded-full bg-primary text-on-primary font-headline font-extrabold text-sm md:text-lg flex items-center justify-center shadow-md shadow-primary/20"
+            >
+              1
             </div>
             <p id="step-description" class="text-on-surface-variant leading-relaxed text-sm md:text-lg mb-4 md:mb-7"></p>
 
@@ -396,16 +411,13 @@
           <span class="material-symbols-outlined text-5xl text-on-surface/20">arrow_forward_ios</span>
         </div>
 
-        <div class="w-full px-5 md:px-16 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-12 items-center py-4 md:py-8">
+        <div class="w-full px-5 md:px-16 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-12 items-start py-4 md:py-8">
           <div>
-            <div class="flex items-center gap-3 md:gap-5 mb-3 md:mb-7">
-              <div
-                id="fs-step-number"
-                class="w-11 h-11 md:w-16 md:h-16 rounded-full bg-primary text-on-primary font-headline font-extrabold text-xl md:text-3xl flex items-center justify-center shadow-lg shadow-primary/25 flex-shrink-0"
-              >
-                1
-              </div>
-              <h3 id="fs-step-title" class="font-headline font-bold text-2xl md:text-4xl text-on-surface"></h3>
+            <div
+              id="fs-step-number"
+              class="w-9 h-9 md:w-11 md:h-11 mb-3 md:mb-5 rounded-full bg-primary text-on-primary font-headline font-extrabold text-base md:text-xl flex items-center justify-center shadow-lg shadow-primary/25"
+            >
+              1
             </div>
             <p id="fs-step-description" class="text-on-surface-variant leading-relaxed text-sm md:text-xl mb-4 md:mb-8"></p>
             <div

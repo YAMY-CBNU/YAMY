@@ -9,12 +9,14 @@
     cookTimeChip: document.getElementById('recipe-cook-time-chip'),
     difficultyChip: document.getElementById('recipe-difficulty-chip'),
     servingChip: document.getElementById('recipe-serving-chip'),
+    ownerActions: document.getElementById('recipe-owner-actions'),
+    editRecipeButton: document.getElementById('edit-recipe-button'),
+    deleteRecipeButton: document.getElementById('delete-recipe-button'),
     ingredientForm: document.getElementById('ingredient-form'),
     missingIngredients: document.getElementById('missing-ingredients'),
     finishedImage: document.getElementById('recipe-finished-image'),
     finishedImageContainer: document.getElementById('recipe-finished-image')?.parentElement,
     stepNumber: document.getElementById('step-number'),
-    stepTitle: document.getElementById('step-title'),
     stepDescription: document.getElementById('step-description'),
     stepImage: document.getElementById('step-image'),
     stepImageContainer: document.getElementById('step-image')?.parentElement,
@@ -37,7 +39,6 @@
     fsLeftHint: document.getElementById('fs-left-hint'),
     fsRightHint: document.getElementById('fs-right-hint'),
     fsStepNumber: document.getElementById('fs-step-number'),
-    fsStepTitle: document.getElementById('fs-step-title'),
     fsStepDescription: document.getElementById('fs-step-description'),
     fsStepImage: document.getElementById('fs-step-image'),
     fsStepCounter: document.getElementById('fs-step-counter'),
@@ -59,6 +60,37 @@
   let totalSeconds = 0;
   let remainingSeconds = 0;
   let timerRunning = false;
+  let currentRecipe = null;
+
+  function getStoredUser() {
+    const rawUser = localStorage.getItem('yamy_user');
+    if (!rawUser) return null;
+
+    try {
+      return JSON.parse(rawUser);
+    } catch {
+      return null;
+    }
+  }
+
+  function renderOwnerActions(recipe) {
+    if (!elements.ownerActions) return;
+
+    const user = getStoredUser();
+    const isOwner = Boolean(
+      localStorage.getItem('yamy_token')
+      && user
+      && Number(user.id) === Number(recipe.authorId)
+      && !recipe.isExternal
+    );
+
+    elements.ownerActions.classList.toggle('hidden', !isOwner);
+    elements.ownerActions.classList.toggle('flex', isOwner);
+
+    if (isOwner && elements.editRecipeButton) {
+      elements.editRecipeButton.href = `recipe-editor.html?id=${encodeURIComponent(recipe.id)}`;
+    }
+  }
 
   // 이미지 플레이스홀더 / Image Placeholder
   function getImagePlaceholderMarkup(label) {
@@ -181,14 +213,12 @@
     steps = recipeSteps.length > 0
       ? recipeSteps.map((step, index) => ({
         number: index + 1,
-        title: `${index + 1}단계`,
         description: step.description || '',
         image: step.imageUrl || recipe.thumbnailUrl || '',
         timerSeconds: Number(step.timerSeconds) || 0,
       }))
       : [{
         number: 1,
-        title: '조리 과정',
         description: recipe.description || '등록된 조리 단계가 없습니다.',
         image: recipe.thumbnailUrl || '',
         timerSeconds: 0,
@@ -267,9 +297,8 @@
     if (!step) return;
 
     if (elements.stepNumber) elements.stepNumber.textContent = String(step.number);
-    if (elements.stepTitle) elements.stepTitle.textContent = step.title;
     if (elements.stepDescription) elements.stepDescription.textContent = step.description;
-    setImageOrPlaceholder('stepImage', step.image, step.title, '단계 이미지 없음');
+    setImageOrPlaceholder('stepImage', step.image, `${step.number}번째 조리 단계`, '단계 이미지 없음');
     if (elements.stepCounter) elements.stepCounter.textContent = `${step.number} / ${steps.length}`;
     if (elements.prevButton) elements.prevButton.disabled = currentStepIndex === 0;
     if (elements.nextButton) elements.nextButton.disabled = currentStepIndex === steps.length - 1;
@@ -289,12 +318,11 @@
     if (!step) return;
 
     if (elements.fsStepNumber) elements.fsStepNumber.textContent = String(step.number);
-    if (elements.fsStepTitle) elements.fsStepTitle.textContent = step.title;
     if (elements.fsStepDescription) elements.fsStepDescription.textContent = step.description;
 
     if (elements.fsStepImage) {
       elements.fsStepImage.src = step.image || '';
-      elements.fsStepImage.alt = step.title;
+      elements.fsStepImage.alt = `${step.number}번째 조리 단계`;
       elements.fsStepImage.style.display = step.image ? 'block' : 'none';
     }
 
@@ -345,6 +373,7 @@
 
   // 레시피 렌더링 / Render Recipe
   function renderRecipe(recipe) {
+    currentRecipe = recipe;
     if (recipe.title) document.title = `${recipe.title} - YAMY`;
     if (elements.title) elements.title.textContent = recipe.title || '레시피';
     if (elements.description) elements.description.textContent = recipe.description || '';
@@ -359,6 +388,7 @@
     }
 
     renderTags(recipe);
+    renderOwnerActions(recipe);
     renderChip(elements.cookTimeChip, 'schedule', `소요 시간: ${recipe.cookTime || '-'}`);
     renderChip(elements.difficultyChip, 'signal_cellular_alt', `난이도: ${recipe.difficulty || '-'}`);
     renderChip(elements.servingChip, 'group', recipe.servingSize || '-');
@@ -388,6 +418,40 @@
       if (elements.description) {
         elements.description.textContent = error.message;
       }
+    }
+  }
+
+  async function deleteCurrentRecipe() {
+    if (!currentRecipe) return;
+    if (!window.confirm(`"${currentRecipe.title || '이 레시피'}"를 삭제하시겠습니까?\n삭제한 레시피는 복구할 수 없습니다.`)) {
+      return;
+    }
+
+    const token = localStorage.getItem('yamy_token');
+    if (!token) {
+      window.authGuard?.redirectToLoginIfNeeded();
+      return;
+    }
+
+    elements.deleteRecipeButton.disabled = true;
+
+    try {
+      const response = await fetch(`${API_BASE}/${encodeURIComponent(currentRecipe.id)}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || '레시피를 삭제하지 못했습니다.');
+      }
+
+      window.location.href = 'my-recipe.html';
+    } catch (error) {
+      window.alert(error.message || '레시피 삭제 중 오류가 발생했습니다.');
+      elements.deleteRecipeButton.disabled = false;
     }
   }
 
@@ -438,6 +502,7 @@
     const step = steps[currentStepIndex];
     if (step) renderTimer(step);
   });
+  elements.deleteRecipeButton?.addEventListener('click', deleteCurrentRecipe);
 
   elements.prevButton?.addEventListener('click', () => {
     if (currentStepIndex > 0) {

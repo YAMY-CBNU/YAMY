@@ -167,7 +167,7 @@ function assertOwner(recipe, userId) {
   }
 
   if (Number(recipe.authorId) !== Number(userId)) {
-    const error = new Error('이 레시피를 수정할 권한이 없습니다.');
+    const error = new Error('이 레시피를 관리할 권한이 없습니다.');
     error.status = 403;
     throw error;
   }
@@ -217,6 +217,24 @@ exports.updateRecipe = async (req, res) => {
     });
   } catch (error) {
     return sendError(res, error, 'Update recipe error:', '레시피 수정 중 오류가 발생했습니다.');
+  }
+};
+
+exports.deleteRecipe = async (req, res) => {
+  try {
+    const auth = requireAuth(req);
+    const recipeId = parseRecipeId(req.params.recipeId);
+    const existingRecipe = await recipesStore.findRecipeById(recipeId);
+    assertOwner(existingRecipe, auth.userId);
+
+    const deleted = await recipesStore.deleteRecipe(recipeId);
+    if (!deleted) {
+      return res.status(404).json({ message: '레시피를 찾을 수 없습니다.' });
+    }
+
+    return res.status(200).json({ message: '레시피가 삭제되었습니다.' });
+  } catch (error) {
+    return sendError(res, error, 'Delete recipe error:', '레시피 삭제 중 오류가 발생했습니다.');
   }
 };
 
