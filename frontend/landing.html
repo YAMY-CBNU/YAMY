@@ -389,25 +389,20 @@
           <p class="fluid-body text-on-primary/80 fluid-mb relative z-10 max-w-2xl mx-auto">
             전 세계 수천 명의 요리사가 당신과 소통하고 싶어 합니다. 지금 바로 함께 하세요.
           </p>
-          <form
-            class="relative z-10 max-w-md mx-auto flex flex-col sm:flex-row fluid-gap"
-            action="signup.html"
-            method="get"
-          >
-            <div class="flex-grow">
-              <input
-                class="fluid-body w-full px-5 py-3 rounded-xl border-none bg-surface-container-lowest/20 backdrop-blur-md text-on-primary placeholder:text-on-primary/50 focus:ring-2 focus:ring-white transition-all outline-none"
-                placeholder="이메일 주소를 입력하세요"
-                type="email"
-              />
-            </div>
-            <button
-              class="fluid-btn bg-white text-primary rounded-xl font-bold hover:bg-opacity-90 transition-all shadow-lg active:scale-95 whitespace-nowrap"
-              type="submit"
+          <div class="relative z-10 mx-auto flex max-w-md flex-col justify-center fluid-gap sm:flex-row">
+            <a
+              href="login.html"
+              class="fluid-btn rounded-xl border border-white/70 bg-white/10 font-bold text-on-primary backdrop-blur-md transition-all hover:bg-white/20 active:scale-95 whitespace-nowrap"
+            >
+              로그인하기
+            </a>
+            <a
+              href="signup.html"
+              class="fluid-btn rounded-xl bg-white font-bold text-primary shadow-lg transition-all hover:bg-opacity-90 active:scale-95 whitespace-nowrap"
             >
               지금 가입하기
-            </button>
-          </form>
+            </a>
+          </div>
         </div>
       </section>
     </main>
