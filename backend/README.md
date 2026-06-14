@@ -54,8 +54,9 @@ copy .env.example .env
 
 4. Start MySQL and apply `db/yamy.sql`
 
-   If the database already exists, apply `db/migrations/20260610_add_recipe_status.sql`
-   and the newer migration files before starting the updated server.
+   If you are preserving an existing `nahyun_FE` database, apply all files in
+   `db/migrations` in date order. See `LOCAL_SETUP.md` for the exact order and
+   CSV import steps.
 
 5. Run the server
 

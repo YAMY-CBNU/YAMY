@@ -3,6 +3,7 @@
 YAMY는 레시피 탐색, 상세 레시피, 로그인/회원가입, 내 레시피, 저장 목록, 프로필, 레시피 작성 화면을 담은 프로젝트입니다.
 
 ---
+
 ## 🎨 UI/UX 와이어프레임
 
 👉 https://stitch.withgoogle.com/projects/9786636202094233003
@@ -11,6 +12,7 @@ YAMY는 레시피 탐색, 상세 레시피, 로그인/회원가입, 내 레시�
 - 프론트엔드 개발 전 UI 구조 참고용으로 제작되었습니다.
 
 ---
+
 ## 📂 프로젝트 구조
 
 ```text
@@ -30,6 +32,7 @@ YAMY/
 │  └─ yamy.sql
 └─ README.md
 ```
+
 ---
 
 ## 📄 주요 페이지 설명
@@ -38,7 +41,6 @@ YAMY/
 - **frontend/landing.html**: 서비스 소개 랜딩 페이지
 - **frontend/login.html**: 로그인 페이지
 - **frontend/signup.html**: 회원가입 페이지
-- **frontend/ramen.html**: 라면 레시피 상세 페이지
 - **frontend/recipe-editor.html**: 레시피 작성 페이지
 - **frontend/my-recipe.html**: 내 레시피 목록 페이지
 - **frontend/my-picks.html**: 내가 저장한 레시피 페이지
@@ -60,11 +62,12 @@ YAMY/
 우리 프로젝트는 파트별로 브랜치를 나누어 작업한 뒤, 검토를 거쳐 `main`에 합치는 방식으로 진행합니다.
 
 ### 1. 역할 및 작업 영역
-| 파트 | 담당 폴더 | 브랜치 접두어 |
-| :--- | :--- | :--- |
-| **Frontend** | frontend/ | feat/fe- |
-| **Backend** | backend/ | feat/be- |
-| **Database** | db/ | feat/db- |
+
+| 파트         | 담당 폴더 | 브랜치 접두어 |
+| :----------- | :-------- | :------------ |
+| **Frontend** | frontend/ | feat/fe-      |
+| **Backend**  | backend/  | feat/be-      |
+| **Database** | db/       | feat/db-      |
 
 ### 2. 작업 순서 (Git Workflow)
 
@@ -89,6 +92,7 @@ YAMY/
    - 팀원의 확인을 받은 후 main 브랜치에 병합합니다.
 
 ### ⚠️ 주의사항
+
 - **직접 Push 금지**: main 브랜치에 직접 푸시하지 않습니다. 반드시 PR을 거쳐야 합니다.
 - **영역 준수**: 가급적 본인이 담당한 폴더 내의 파일만 수정하여 충돌(Conflict)을 방지합니다.
 - **커밋 메시지**: feat:, fix:, docs:, style: 등 접두사를 활용해 주세요.
