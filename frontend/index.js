@@ -2,8 +2,16 @@
   const API_BASE = 'http://localhost:3000/api/recipes';
   const RECENT_API_URL = `${API_BASE}?limit=8`;
   const POPULAR_API_URL = `${API_BASE}/popular?limit=8`;
+  const RECOMMENDATIONS_API_URL = `${API_BASE}/recommendations?limit=12`;
+  const recommendedRecipeLink = document.getElementById('recommended-recipe-link');
+  const recommendedRecipeImage = document.getElementById('recommended-recipe-image');
+  const recommendedRecipeTitle = document.getElementById('recommended-recipe-title');
+  const recommendedRecipeDescription = document.getElementById('recommended-recipe-description');
   const popularRecipesList = document.getElementById('popular-recipes-list');
   const recentRecipesList = document.getElementById('recent-recipes-list');
+  let recommendedRecipes = [];
+  let recommendedRecipeIndex = 0;
+  let recommendationTimer = null;
   let popularRecipes = [];
   let recentRecipes = [];
   let savedRecipeIds = new Set();
@@ -138,6 +146,96 @@
     }
 
     container.innerHTML = recipes.map(createRecipeCard).join('');
+  }
+
+  function truncateRecommendationDescription(value, maxLength = 60) {
+    const description = String(value || '').trim();
+    if (!description) return '자세한 조리법을 확인해 보세요.';
+    if (description.length <= maxLength) return description;
+    return `${description.slice(0, maxLength).trimEnd()}... 더보기`;
+  }
+
+  function renderRecommendedRecipe(recipe, animate = false) {
+    if (
+      !recommendedRecipeLink
+      || !recommendedRecipeImage
+      || !recommendedRecipeTitle
+      || !recommendedRecipeDescription
+      || !recipe
+    ) {
+      return;
+    }
+
+    const updateContent = () => {
+      recommendedRecipeLink.href = `recipe-detail.html?id=${encodeURIComponent(recipe.id)}`;
+      recommendedRecipeLink.setAttribute(
+        'aria-label',
+        `${recipe.title || '추천 레시피'} 상세 보기`
+      );
+      recommendedRecipeImage.src = recipe.thumbnailUrl;
+      recommendedRecipeImage.alt = recipe.title || '오늘의 추천 레시피';
+      recommendedRecipeTitle.textContent = recipe.title || '오늘의 추천 레시피';
+      recommendedRecipeDescription.textContent = truncateRecommendationDescription(recipe.description);
+      recommendedRecipeLink.classList.remove('is-changing');
+    };
+
+    if (!animate) {
+      updateContent();
+      return;
+    }
+
+    recommendedRecipeLink.classList.add('is-changing');
+    window.setTimeout(updateContent, 300);
+  }
+
+  function scheduleNextRecommendation() {
+    window.clearTimeout(recommendationTimer);
+
+    if (recommendedRecipes.length < 2 || document.hidden) {
+      return;
+    }
+
+    recommendationTimer = window.setTimeout(() => {
+      recommendedRecipeIndex = (recommendedRecipeIndex + 1) % recommendedRecipes.length;
+      const recipe = recommendedRecipes[recommendedRecipeIndex];
+      const image = new Image();
+
+      image.onload = () => {
+        renderRecommendedRecipe(recipe, true);
+        scheduleNextRecommendation();
+      };
+      image.onerror = () => {
+        scheduleNextRecommendation();
+      };
+      image.src = recipe.thumbnailUrl;
+    }, 5000);
+  }
+
+  async function loadRecommendedRecipes() {
+    if (!recommendedRecipeLink) return;
+
+    try {
+      const response = await fetch(RECOMMENDATIONS_API_URL);
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || '오늘의 추천 레시피를 불러오지 못했습니다.');
+      }
+
+      recommendedRecipes = (Array.isArray(data.recipes) ? data.recipes : [])
+        .filter((recipe) => recipe?.id && recipe?.thumbnailUrl);
+
+      if (recommendedRecipes.length === 0) {
+        throw new Error('표시할 추천 레시피가 없습니다.');
+      }
+
+      recommendedRecipeIndex = 0;
+      renderRecommendedRecipe(recommendedRecipes[0]);
+      scheduleNextRecommendation();
+    } catch (error) {
+      recommendedRecipeLink.removeAttribute('href');
+      recommendedRecipeTitle.textContent = '오늘의 추천 레시피';
+      recommendedRecipeDescription.textContent = error.message;
+    }
   }
 
   function renderRecipeSections() {
@@ -277,7 +375,16 @@
   popularRecipesList?.addEventListener('click', handleRecipeListClick);
   recentRecipesList?.addEventListener('click', handleRecipeListClick);
 
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      window.clearTimeout(recommendationTimer);
+      return;
+    }
+    scheduleNextRecommendation();
+  });
+
   document.addEventListener('DOMContentLoaded', () => {
+    loadRecommendedRecipes();
     loadPopularRecipes();
     loadRecentRecipes();
   });

@@ -90,29 +90,37 @@
     <main class="pt-20 md:pt-32 pb-32 overflow-x-hidden max-w-7xl mx-auto">
       <!-- 히어로 섹션 / Hero Section -->
       <section class="px-4 md:px-8 mb-16 md:mb-24">
-        <div class="relative rounded-2xl overflow-hidden group shadow-lg h-72 sm:h-96 md:h-[550px]">
+        <a
+          id="recommended-recipe-link"
+          class="relative block rounded-2xl overflow-hidden group shadow-lg h-72 sm:h-96 md:h-[550px] bg-surface-container"
+          aria-label="오늘의 추천 레시피 보기"
+        >
           <img
-            class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-            data-alt="Gourmet roasted lamb chops"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJVuqypwNHV4hx8MiUWKljawG_lBCbP-ihQi_kH_LWEPFfC5bHgjkqOMI3xSEB-TwkYTXaKDhguZhyrVeVhvcLPQOYUrRKAiV7Jtz4vPOdRM_Q9YOn8YaKynJ0TRICOiSjBaAjllYujyjZ0sGPmBrKcUxKxaimd2yY_rDLqocOTaYilHPWtstfdO2j2aGHg2q12FlKcmDcv0OaHTn4fZnT3pHqNgJqLEj8cYD-GwqcBE_nGyxYa2CRz6-R0Egh9oj5PYIqfYrXLL8"
+            id="recommended-recipe-image"
+            class="recommended-recipe-transition w-full h-full object-cover group-hover:scale-105"
+            alt=""
           />
           <div
             class="absolute inset-0 bg-gradient-to-t from-on-background/90 via-on-background/20 to-transparent flex flex-col justify-end p-12"
           >
-            <span
-              class="bg-secondary text-on-secondary px-5 py-1.5 rounded-full text-[10px] font-bold w-fit mb-4 md:mb-6 font-headline uppercase tracking-widest"
-              >에디터의 선택</span
-            >
-            <h1
-              class="text-white text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-headline font-extrabold tracking-tighter mb-3 md:mb-6 leading-tight"
-            >
-              슬로우 로스트 지중해식 양고기
-            </h1>
-            <p class="text-white/90 max-w-xl font-body leading-relaxed text-lg hidden sm:block">
-              허브를 듬뿍 넣은 시그니처 슬로우 로스팅 기법으로 입안에서 살살 녹는 양고기 요리의 비결을 확인해보세요.
-            </p>
+            <div id="recommended-recipe-content" class="recommended-recipe-transition">
+              <span
+                class="bg-secondary text-on-secondary px-5 py-1.5 rounded-full text-[10px] font-bold w-fit mb-4 md:mb-6 font-headline uppercase tracking-widest inline-block"
+                >오늘의 추천</span
+              >
+              <h1
+                id="recommended-recipe-title"
+                class="text-white text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-headline font-extrabold tracking-tighter mb-3 md:mb-6 leading-tight line-clamp-2"
+              >
+                추천 레시피를 불러오는 중입니다
+              </h1>
+              <p
+                id="recommended-recipe-description"
+                class="text-white/90 max-w-xl font-body leading-relaxed text-lg hidden sm:block line-clamp-2"
+              ></p>
+            </div>
           </div>
-        </div>
+        </a>
       </section>
       <!-- 인기 레시피 / Popular Now -->
       <section class="mb-16 md:mb-24">

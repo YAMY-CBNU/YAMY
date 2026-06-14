@@ -57,6 +57,7 @@ function toUserRow(user) {
     email: user.email,
     password_hash: user.password_hash,
     profile_image_url: user.profile_image_url || null,
+    role: user.role || 'user',
     created_at: user.created_at,
     updated_at: user.updated_at,
   };
@@ -67,7 +68,7 @@ async function findByEmailOrUsername(email, username) {
 
   if (mode === 'mysql') {
     const [rows] = await mysqlPool.query(
-      'SELECT user_id, username, email, password_hash, profile_image_url, created_at, updated_at FROM `USER` WHERE email = ? OR username = ? LIMIT 1',
+      'SELECT user_id, username, email, password_hash, profile_image_url, role, created_at, updated_at FROM `USER` WHERE email = ? OR username = ? LIMIT 1',
       [email, username]
     );
     return rows[0] || null;
@@ -82,7 +83,7 @@ async function findByEmail(email) {
 
   if (mode === 'mysql') {
     const [rows] = await mysqlPool.query(
-      'SELECT user_id, username, email, password_hash, profile_image_url, created_at, updated_at FROM `USER` WHERE email = ? LIMIT 1',
+      'SELECT user_id, username, email, password_hash, profile_image_url, role, created_at, updated_at FROM `USER` WHERE email = ? LIMIT 1',
       [email]
     );
     return rows[0] || null;
@@ -97,7 +98,7 @@ async function findByUsername(username) {
 
   if (mode === 'mysql') {
     const [rows] = await mysqlPool.query(
-      'SELECT user_id, username, email, password_hash, profile_image_url, created_at, updated_at FROM `USER` WHERE username = ? LIMIT 1',
+      'SELECT user_id, username, email, password_hash, profile_image_url, role, created_at, updated_at FROM `USER` WHERE username = ? LIMIT 1',
       [username]
     );
     return rows[0] || null;
@@ -112,7 +113,7 @@ async function findById(userId) {
 
   if (mode === 'mysql') {
     const [rows] = await mysqlPool.query(
-      'SELECT user_id, username, email, password_hash, profile_image_url, created_at, updated_at FROM `USER` WHERE user_id = ? LIMIT 1',
+      'SELECT user_id, username, email, password_hash, profile_image_url, role, created_at, updated_at FROM `USER` WHERE user_id = ? LIMIT 1',
       [userId]
     );
     return rows[0] || null;
@@ -169,7 +170,7 @@ async function createUser({ username, email, passwordHash }) {
     );
 
     const [rows] = await mysqlPool.query(
-      'SELECT user_id, username, email, password_hash, profile_image_url, created_at, updated_at FROM `USER` WHERE user_id = ? LIMIT 1',
+      'SELECT user_id, username, email, password_hash, profile_image_url, role, created_at, updated_at FROM `USER` WHERE user_id = ? LIMIT 1',
       [result.insertId]
     );
 
@@ -185,12 +186,70 @@ async function createUser({ username, email, passwordHash }) {
     email,
     password_hash: passwordHash,
     profile_image_url: null,
+    role: 'user',
     created_at: now,
     updated_at: now,
   });
   users.push(newUser);
   await writeUsers(users);
   return newUser;
+}
+
+async function createOrUpdateAdmin({ username, email, passwordHash }) {
+  const mode = await getMode();
+
+  if (mode === 'mysql') {
+    await mysqlPool.query(
+      `INSERT INTO \`USER\` (username, email, password_hash, role)
+       VALUES (?, ?, ?, 'admin')
+       ON DUPLICATE KEY UPDATE
+         username = VALUES(username),
+         password_hash = VALUES(password_hash),
+         role = 'admin'`,
+      [username, email, passwordHash]
+    );
+    return findByEmail(email);
+  }
+
+  const users = await readUsers();
+  const existingIndex = users.findIndex((user) => user.email === email);
+  const now = new Date().toISOString();
+
+  if (existingIndex >= 0) {
+    users[existingIndex] = {
+      ...users[existingIndex],
+      username,
+      password_hash: passwordHash,
+      role: 'admin',
+      updated_at: now,
+    };
+    await writeUsers(users);
+    return users[existingIndex];
+  }
+
+  if (users.some((user) => user.username === username)) {
+    const error = new Error('The admin username is already in use.');
+    error.code = 'USERNAME_EXISTS';
+    throw error;
+  }
+
+  const nextId = users.reduce(
+    (maxId, user) => Math.max(maxId, Number(user.user_id) || 0),
+    0
+  ) + 1;
+  const admin = toUserRow({
+    user_id: nextId,
+    username,
+    email,
+    password_hash: passwordHash,
+    profile_image_url: null,
+    role: 'admin',
+    created_at: now,
+    updated_at: now,
+  });
+  users.push(admin);
+  await writeUsers(users);
+  return admin;
 }
 
 async function createPasswordHash(password) {
@@ -204,6 +263,7 @@ module.exports = {
   findByUsername,
   findById,
   createUser,
+  createOrUpdateAdmin,
   updateUser,
   createPasswordHash,
 };

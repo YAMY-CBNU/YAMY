@@ -114,3 +114,15 @@ node scripts/import-recipes-from-csv.js --csv-dir C:\path\to\csv
 The command uses MySQL when the configured database is available and otherwise
 stores recipes in `backend/data/recipes.json`. Re-running the command updates
 existing external recipes by `external_recipe_id` instead of creating duplicates.
+
+## Administrator Account
+
+Create or reset an administrator account:
+
+```bash
+npm run create:admin -- --username "YAMY관리자" --email "admin@example.com" --password "strong-password"
+```
+
+The password must be at least 12 characters. The command adds the `USER.role`
+column when needed and saves the account with the `admin` role. Administrators
+can edit or delete every recipe and every comment from the recipe detail page.

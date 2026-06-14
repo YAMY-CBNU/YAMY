@@ -650,6 +650,50 @@ async function listRecipesByAuthor(authorId) {
     ));
 }
 
+async function listAllRecipes() {
+  const mode = await getMode();
+
+  if (mode === 'mysql') {
+    const [recipeRows] = await mysqlPool.query(
+      `SELECT
+        recipe_id,
+        author_id,
+        external_recipe_id,
+        source_url,
+        title,
+        description,
+        thumbnail_url,
+        difficulty,
+        serving_size,
+        cook_time,
+        cat1_method,
+        cat2_situation,
+        cat3_ingredient,
+        cat4_type,
+        status,
+        is_external,
+        created_at,
+        updated_at
+       FROM RECIPE
+       ORDER BY updated_at DESC, recipe_id DESC`
+    );
+    return recipeRows.map((recipe) => mapRecipeRecord(recipe));
+  }
+
+  const recipes = await readRecipes();
+  return recipes
+    .sort((a, b) => (
+      new Date(b.updated_at || b.created_at) - new Date(a.updated_at || a.created_at)
+      || Number(b.recipe_id) - Number(a.recipe_id)
+    ))
+    .map((recipe) => mapRecipeRecord(
+      recipe,
+      recipe.ingredients || [],
+      recipe.steps || [],
+      recipe.tips || []
+    ));
+}
+
 async function listPublishedRecipes(limit = 8) {
   const mode = await getMode();
   const safeLimit = Math.min(Math.max(Number(limit) || 8, 1), 20);
@@ -827,6 +871,69 @@ async function listPopularRecipes(limit = 8) {
     }));
 }
 
+function shuffle(items) {
+  const shuffled = [...items];
+
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    const randomIndex = Math.floor(Math.random() * (index + 1));
+    [shuffled[index], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[index]];
+  }
+
+  return shuffled;
+}
+
+async function listRandomPublishedRecipes(limit = 12) {
+  const mode = await getMode();
+  const safeLimit = Math.min(Math.max(Number(limit) || 12, 1), 20);
+
+  if (mode === 'mysql') {
+    const [recipeRows] = await mysqlPool.query(
+      `SELECT
+        recipe_id,
+        author_id,
+        external_recipe_id,
+        source_url,
+        title,
+        description,
+        thumbnail_url,
+        difficulty,
+        serving_size,
+        cook_time,
+        cat1_method,
+        cat2_situation,
+        cat3_ingredient,
+        cat4_type,
+        status,
+        is_external,
+        created_at,
+        updated_at
+       FROM RECIPE
+       WHERE status = 'published'
+         AND thumbnail_url IS NOT NULL
+         AND TRIM(thumbnail_url) <> ''
+       ORDER BY RAND()
+       LIMIT ?`,
+      [safeLimit]
+    );
+    return recipeRows.map((recipe) => mapRecipeRecord(recipe));
+  }
+
+  const recipes = await readRecipes();
+  return shuffle(
+    recipes.filter((recipe) => (
+      (recipe.status || 'published') === 'published'
+      && String(recipe.thumbnail_url || '').trim()
+    ))
+  )
+    .slice(0, safeLimit)
+    .map((recipe) => mapRecipeRecord(
+      recipe,
+      recipe.ingredients || [],
+      recipe.steps || [],
+      recipe.tips || []
+    ));
+}
+
 module.exports = {
   getMode,
   createRecipe,
@@ -834,7 +941,9 @@ module.exports = {
   deleteRecipe,
   findRecipeById,
   listRecipesByAuthor,
+  listAllRecipes,
   listPublishedRecipes,
   listPopularRecipes,
+  listRandomPublishedRecipes,
   importExternalRecipes,
 };

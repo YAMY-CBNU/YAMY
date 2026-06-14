@@ -36,14 +36,17 @@ async function requirePublishedRecipe(recipeId) {
   }
 }
 
-async function requireOwnedComment(commentId, recipeId, userId) {
+async function requireManageableComment(commentId, recipeId, auth) {
   const comment = await commentsStore.findById(commentId);
   if (!comment || Number(comment.recipeId) !== Number(recipeId)) {
     const error = new Error('댓글을 찾을 수 없습니다.');
     error.status = 404;
     throw error;
   }
-  if (Number(comment.author.id) !== Number(userId)) {
+  if (
+    auth.role !== 'admin'
+    && Number(comment.author.id) !== Number(auth.userId)
+  ) {
     const error = new Error('자신이 작성한 댓글만 수정하거나 삭제할 수 있습니다.');
     error.status = 403;
     throw error;
@@ -88,7 +91,7 @@ exports.updateComment = async (req, res) => {
     const auth = requireAuth(req);
     const recipeId = parseId(req.params.recipeId, '레시피');
     const commentId = parseId(req.params.commentId, '댓글');
-    await requireOwnedComment(commentId, recipeId, auth.userId);
+    await requireManageableComment(commentId, recipeId, auth);
     const comment = await commentsStore.updateComment(
       commentId,
       normalizeContent(req.body.content)
@@ -104,7 +107,7 @@ exports.deleteComment = async (req, res) => {
     const auth = requireAuth(req);
     const recipeId = parseId(req.params.recipeId, '레시피');
     const commentId = parseId(req.params.commentId, '댓글');
-    await requireOwnedComment(commentId, recipeId, auth.userId);
+    await requireManageableComment(commentId, recipeId, auth);
     await commentsStore.deleteComment(commentId);
     return res.status(200).json({ message: '댓글이 삭제되었습니다.' });
   } catch (error) {

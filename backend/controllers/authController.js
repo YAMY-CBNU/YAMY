@@ -22,6 +22,7 @@ function createToken(user) {
       userId: user.user_id,
       email: user.email,
       username: user.username,
+      role: user.role || 'user',
     },
     JWT_SECRET,
     { expiresIn: '1d' }
@@ -34,6 +35,7 @@ function safeUserRow(row) {
     username: row.username,
     email: row.email,
     profileImageUrl: row.profile_image_url,
+    role: row.role || 'user',
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };

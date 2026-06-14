@@ -59,6 +59,15 @@ h1, h2, h3 {
     background: linear-gradient(135deg, #C05B40 0%, #D9933D 100%);
 }
 
+.recommended-recipe-transition {
+    opacity: 1;
+    transition: opacity 300ms ease, transform 700ms ease;
+}
+
+#recommended-recipe-link.is-changing .recommended-recipe-transition {
+    opacity: 0;
+}
+
 .recent-recipe-card {
     width: 280px;
     flex: 0 0 280px;

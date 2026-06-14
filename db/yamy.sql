@@ -10,6 +10,7 @@ CREATE TABLE USER (
     email             VARCHAR(100) NOT NULL UNIQUE,
     password_hash     VARCHAR(255) NOT NULL,
     profile_image_url VARCHAR(500),
+    role              ENUM('user', 'admin') NOT NULL DEFAULT 'user',
     created_at        DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at        DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (user_id)

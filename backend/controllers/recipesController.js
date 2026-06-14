@@ -117,9 +117,10 @@ function normalizeSteps(steps, required) {
   return normalized;
 }
 
-function buildRecipePayload(body, authorId) {
+function buildRecipePayload(body, authorId, options = {}) {
   const status = normalizeStatus(body.status);
   const isPublished = status === 'published';
+  const requiresCompleteRecipe = isPublished && !options.allowIncomplete;
   const payload = {
     authorId,
     status,
@@ -129,9 +130,9 @@ function buildRecipePayload(body, authorId) {
     servingSize: normalizeText(body.servingSize),
     difficulty: normalizeText(body.difficulty),
     thumbnailUrl: normalizeNullableText(body.thumbnailUrl),
-    categories: normalizeCategories(body.categories, isPublished),
-    ingredients: normalizeIngredients(body.ingredients, isPublished),
-    steps: normalizeSteps(body.steps, isPublished),
+    categories: normalizeCategories(body.categories, requiresCompleteRecipe),
+    ingredients: normalizeIngredients(body.ingredients, requiresCompleteRecipe),
+    steps: normalizeSteps(body.steps, requiresCompleteRecipe),
     tips: normalizeTips(body.tips),
   };
 
@@ -141,14 +142,14 @@ function buildRecipePayload(body, authorId) {
     throw error;
   }
 
-  if (isPublished && !payload.description) {
+  if (requiresCompleteRecipe && !payload.description) {
     const error = new Error('레시피 설명을 입력해주세요.');
     error.status = 400;
     throw error;
   }
 
   if (
-    isPublished &&
+    requiresCompleteRecipe &&
     (!payload.cookTime || !payload.servingSize || !payload.difficulty)
   ) {
     const error = new Error('조리 시간, 인분, 난이도를 모두 입력해주세요.');
@@ -169,14 +170,17 @@ function parseRecipeId(value) {
   return recipeId;
 }
 
-function assertOwner(recipe, userId) {
+function assertCanManageRecipe(recipe, auth) {
   if (!recipe) {
     const error = new Error('레시피를 찾을 수 없습니다.');
     error.status = 404;
     throw error;
   }
 
-  if (Number(recipe.authorId) !== Number(userId)) {
+  if (
+    auth.role !== 'admin'
+    && Number(recipe.authorId) !== Number(auth.userId)
+  ) {
     const error = new Error('이 레시피를 관리할 권한이 없습니다.');
     error.status = 403;
     throw error;
@@ -214,9 +218,11 @@ exports.updateRecipe = async (req, res) => {
     const auth = requireAuth(req);
     const recipeId = parseRecipeId(req.params.recipeId);
     const existingRecipe = await recipesStore.findRecipeById(recipeId);
-    assertOwner(existingRecipe, auth.userId);
+    assertCanManageRecipe(existingRecipe, auth);
 
-    const payload = buildRecipePayload(req.body, auth.userId);
+    const payload = buildRecipePayload(req.body, auth.userId, {
+      allowIncomplete: auth.role === 'admin',
+    });
     const recipe = await recipesStore.updateRecipe(recipeId, payload);
 
     return res.status(200).json({
@@ -235,7 +241,7 @@ exports.deleteRecipe = async (req, res) => {
     const auth = requireAuth(req);
     const recipeId = parseRecipeId(req.params.recipeId);
     const existingRecipe = await recipesStore.findRecipeById(recipeId);
-    assertOwner(existingRecipe, auth.userId);
+    assertCanManageRecipe(existingRecipe, auth);
 
     const deleted = await recipesStore.deleteRecipe(recipeId);
     if (!deleted) {
@@ -281,7 +287,7 @@ exports.getRecipeForEdit = async (req, res) => {
     const auth = requireAuth(req);
     const recipeId = parseRecipeId(req.params.recipeId);
     const recipe = await recipesStore.findRecipeById(recipeId);
-    assertOwner(recipe, auth.userId);
+    assertCanManageRecipe(recipe, auth);
 
     return res.status(200).json({ recipe });
   } catch (error) {
@@ -297,7 +303,9 @@ exports.getRecipeForEdit = async (req, res) => {
 exports.getMyRecipes = async (req, res) => {
   try {
     const auth = requireAuth(req);
-    const recipes = await recipesStore.listRecipesByAuthor(auth.userId);
+    const recipes = auth.role === 'admin'
+      ? await recipesStore.listAllRecipes()
+      : await recipesStore.listRecipesByAuthor(auth.userId);
     return res.status(200).json({ recipes });
   } catch (error) {
     return sendError(res, error, 'Get my recipes error:', '내 레시피 조회 중 오류가 발생했습니다.');
@@ -336,6 +344,24 @@ exports.getPopularRecipes = async (req, res) => {
       error,
       'Get popular recipes error:',
       '인기 레시피를 불러오는 중 오류가 발생했습니다.'
+    );
+  }
+};
+
+exports.getRecommendedRecipes = async (req, res) => {
+  try {
+    const requestedLimit = Number(req.query.limit);
+    const limit = Number.isInteger(requestedLimit) && requestedLimit > 0
+      ? Math.min(requestedLimit, 20)
+      : 12;
+    const recipes = await recipesStore.listRandomPublishedRecipes(limit);
+    return res.status(200).json({ recipes });
+  } catch (error) {
+    return sendError(
+      res,
+      error,
+      'Get recommended recipes error:',
+      '오늘의 추천 레시피를 불러오는 중 오류가 발생했습니다.'
     );
   }
 };

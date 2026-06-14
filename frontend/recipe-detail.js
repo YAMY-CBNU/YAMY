@@ -102,11 +102,17 @@
     if (!elements.ownerActions) return;
 
     const user = getStoredUser();
+    const isAdmin = user?.role === 'admin';
     const isOwner = Boolean(
       localStorage.getItem('yamy_token')
       && user
-      && Number(user.id) === Number(recipe.authorId)
-      && !recipe.isExternal
+      && (
+        isAdmin
+        || (
+          Number(user.id) === Number(recipe.authorId)
+          && !recipe.isExternal
+        )
+      )
     );
 
     elements.ownerActions.classList.toggle('hidden', !isOwner);
@@ -337,10 +343,14 @@
 
   function createCommentMarkup(comment) {
     const storedUser = getStoredUser();
+    const isAdmin = storedUser?.role === 'admin';
     const isOwner = Boolean(
       localStorage.getItem('yamy_token')
       && storedUser
-      && Number(storedUser.id) === Number(comment.author?.id)
+      && (
+        isAdmin
+        || Number(storedUser.id) === Number(comment.author?.id)
+      )
     );
     const edited = comment.updatedAt
       && comment.createdAt
