@@ -1,7 +1,10 @@
 (function () {
   const API_BASE = 'http://localhost:3000/api/recipes';
-  const API_URL = `${API_BASE}?limit=8`;
+  const RECENT_API_URL = `${API_BASE}?limit=8`;
+  const POPULAR_API_URL = `${API_BASE}/popular?limit=8`;
+  const popularRecipesList = document.getElementById('popular-recipes-list');
   const recentRecipesList = document.getElementById('recent-recipes-list');
+  let popularRecipes = [];
   let recentRecipes = [];
   let savedRecipeIds = new Set();
 
@@ -122,9 +125,28 @@
     `;
   }
 
+  function renderRecipeList(container, recipes, emptyMessage) {
+    if (!container) return;
+
+    if (recipes.length === 0) {
+      container.innerHTML = `
+        <div class="min-w-full rounded-2xl bg-surface-container px-6 py-10 text-center text-on-surface-variant">
+          ${escapeHtml(emptyMessage)}
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = recipes.map(createRecipeCard).join('');
+  }
+
+  function renderRecipeSections() {
+    renderRecipeList(popularRecipesList, popularRecipes, '표시할 인기 레시피가 없습니다.');
+    renderRecipeList(recentRecipesList, recentRecipes, '아직 공개된 레시피가 없습니다.');
+  }
+
   function renderRecentRecipes() {
-    if (!recentRecipesList) return;
-    recentRecipesList.innerHTML = recentRecipes.map(createRecipeCard).join('');
+    renderRecipeList(recentRecipesList, recentRecipes, '아직 공개된 레시피가 없습니다.');
   }
 
   async function loadSavedRecipeIds() {
@@ -156,7 +178,7 @@
     if (!recentRecipesList) return;
 
     try {
-      const response = await fetch(API_URL);
+      const response = await fetch(RECENT_API_URL);
       const data = await response.json();
       if (!response.ok) {
         throw new Error(data.message || '최근 레시피를 불러오지 못했습니다.');
@@ -176,6 +198,28 @@
       renderRecentRecipes();
     } catch (error) {
       recentRecipesList.innerHTML = `
+        <div class="min-w-full rounded-2xl bg-error-container px-6 py-10 text-center text-on-error-container">
+          ${escapeHtml(error.message)}
+        </div>
+      `;
+    }
+  }
+
+  async function loadPopularRecipes() {
+    if (!popularRecipesList) return;
+
+    try {
+      const response = await fetch(POPULAR_API_URL);
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || '인기 레시피를 불러오지 못했습니다.');
+      }
+
+      popularRecipes = Array.isArray(data.recipes) ? data.recipes : [];
+      await loadSavedRecipeIds();
+      renderRecipeList(popularRecipesList, popularRecipes, '표시할 인기 레시피가 없습니다.');
+    } catch (error) {
+      popularRecipesList.innerHTML = `
         <div class="min-w-full rounded-2xl bg-error-container px-6 py-10 text-center text-on-error-container">
           ${escapeHtml(error.message)}
         </div>
@@ -215,20 +259,26 @@
       } else {
         savedRecipeIds.delete(numericRecipeId);
       }
-      renderRecentRecipes();
+      renderRecipeSections();
     } catch (error) {
       window.alert(error.message);
       button.disabled = false;
     }
   }
 
-  recentRecipesList?.addEventListener('click', (event) => {
+  function handleRecipeListClick(event) {
     const button = event.target.closest('[data-save-recipe]');
     if (!button) return;
     event.preventDefault();
     event.stopPropagation();
     toggleSavedRecipe(button.dataset.saveRecipe, button);
-  });
+  }
 
-  document.addEventListener('DOMContentLoaded', loadRecentRecipes);
+  popularRecipesList?.addEventListener('click', handleRecipeListClick);
+  recentRecipesList?.addEventListener('click', handleRecipeListClick);
+
+  document.addEventListener('DOMContentLoaded', () => {
+    loadPopularRecipes();
+    loadRecentRecipes();
+  });
 })();

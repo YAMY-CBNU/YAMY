@@ -321,3 +321,21 @@ exports.getPublishedRecipes = async (req, res) => {
     );
   }
 };
+
+exports.getPopularRecipes = async (req, res) => {
+  try {
+    const requestedLimit = Number(req.query.limit);
+    const limit = Number.isInteger(requestedLimit) && requestedLimit > 0
+      ? Math.min(requestedLimit, 20)
+      : 8;
+    const recipes = await recipesStore.listPopularRecipes(limit);
+    return res.status(200).json({ recipes });
+  } catch (error) {
+    return sendError(
+      res,
+      error,
+      'Get popular recipes error:',
+      '인기 레시피를 불러오는 중 오류가 발생했습니다.'
+    );
+  }
+};

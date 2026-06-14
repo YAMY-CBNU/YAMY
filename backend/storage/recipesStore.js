@@ -730,6 +730,103 @@ async function listPublishedRecipes(limit = 8) {
     });
 }
 
+async function listPopularRecipes(limit = 8) {
+  const mode = await getMode();
+  const safeLimit = Math.min(Math.max(Number(limit) || 8, 1), 20);
+
+  if (mode === 'mysql') {
+    const [recipeRows] = await mysqlPool.query(
+      `SELECT
+        recipe.recipe_id,
+        recipe.author_id,
+        recipe.external_recipe_id,
+        recipe.source_url,
+        recipe.title,
+        recipe.description,
+        recipe.thumbnail_url,
+        recipe.difficulty,
+        recipe.serving_size,
+        recipe.cook_time,
+        recipe.cat1_method,
+        recipe.cat2_situation,
+        recipe.cat3_ingredient,
+        recipe.cat4_type,
+        recipe.status,
+        recipe.is_external,
+        recipe.created_at,
+        recipe.updated_at,
+        COALESCE(rating_summary.rating_count, 0) AS rating_count,
+        COALESCE(rating_summary.average_rating, 0) AS average_rating
+       FROM RECIPE recipe
+       LEFT JOIN (
+         SELECT recipe_id, COUNT(*) AS rating_count, AVG(rating) AS average_rating
+         FROM RECIPE_RATING
+         GROUP BY recipe_id
+       ) rating_summary ON rating_summary.recipe_id = recipe.recipe_id
+       WHERE recipe.status = 'published'
+       ORDER BY
+         average_rating DESC,
+         rating_count DESC,
+         recipe.created_at DESC,
+         recipe.recipe_id DESC
+       LIMIT ?`,
+      [safeLimit]
+    );
+
+    return recipeRows.map((recipe) => ({
+      ...mapRecipeRecord(recipe),
+      ratingSummary: {
+        count: Number(recipe.rating_count),
+        averageRating: Number(Number(recipe.average_rating).toFixed(1)),
+      },
+    }));
+  }
+
+  const recipes = await readRecipes();
+  const ratings = await readRecipeRatings();
+  const ratingSummaries = new Map();
+
+  for (const rating of ratings) {
+    const recipeId = Number(rating.recipe_id);
+    const summary = ratingSummaries.get(recipeId) || { count: 0, total: 0 };
+    summary.count += 1;
+    summary.total += Number(rating.rating);
+    ratingSummaries.set(recipeId, summary);
+  }
+
+  return recipes
+    .filter((recipe) => (recipe.status || 'published') === 'published')
+    .map((recipe) => {
+      const summary = ratingSummaries.get(Number(recipe.recipe_id)) || { count: 0, total: 0 };
+      const averageRating = summary.count ? summary.total / summary.count : 0;
+
+      return {
+        recipe,
+        sortAverageRating: averageRating,
+        ratingSummary: {
+          count: summary.count,
+          averageRating: Number(averageRating.toFixed(1)),
+        },
+      };
+    })
+    .sort((left, right) => (
+      right.sortAverageRating - left.sortAverageRating
+      || right.ratingSummary.count - left.ratingSummary.count
+      || new Date(right.recipe.created_at || 0) - new Date(left.recipe.created_at || 0)
+      || Number(right.recipe.recipe_id) - Number(left.recipe.recipe_id)
+    ))
+    .slice(0, safeLimit)
+    .map(({ recipe, ratingSummary }) => ({
+      ...mapRecipeRecord(
+        recipe,
+        recipe.ingredients || [],
+        recipe.steps || [],
+        recipe.tips || []
+      ),
+      ratingSummary,
+    }));
+}
+
 module.exports = {
   getMode,
   createRecipe,
@@ -738,5 +835,6 @@ module.exports = {
   findRecipeById,
   listRecipesByAuthor,
   listPublishedRecipes,
+  listPopularRecipes,
   importExternalRecipes,
 };
