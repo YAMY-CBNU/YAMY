@@ -774,6 +774,131 @@ async function listPublishedRecipes(limit = 8) {
     });
 }
 
+function parseCookTimeMinutes(value) {
+  const cookTime = String(value || '').trim();
+  if (!cookTime || cookTime.includes('이상')) return null;
+
+  const hourMatch = cookTime.match(/(\d+(?:\.\d+)?)\s*시간/);
+  const minuteMatch = cookTime.match(/(\d+)\s*분/);
+  if (!hourMatch && !minuteMatch) return null;
+
+  const hours = hourMatch ? Number(hourMatch[1]) : 0;
+  const minutes = minuteMatch ? Number(minuteMatch[1]) : 0;
+  const totalMinutes = (hours * 60) + minutes;
+
+  return Number.isFinite(totalMinutes) && totalMinutes > 0 ? totalMinutes : null;
+}
+
+async function listQuickRecipes(limit = 8, maxMinutes = 15) {
+  const mode = await getMode();
+  const safeLimit = Math.min(Math.max(Number(limit) || 8, 1), 20);
+  const safeMaxMinutes = Math.min(Math.max(Number(maxMinutes) || 15, 1), 180);
+
+  if (mode === 'mysql') {
+    const [recipeRows] = await mysqlPool.query(
+      `SELECT
+        recipe.recipe_id,
+        recipe.author_id,
+        recipe.external_recipe_id,
+        recipe.source_url,
+        recipe.title,
+        recipe.description,
+        recipe.thumbnail_url,
+        recipe.difficulty,
+        recipe.serving_size,
+        recipe.cook_time,
+        recipe.cat1_method,
+        recipe.cat2_situation,
+        recipe.cat3_ingredient,
+        recipe.cat4_type,
+        recipe.status,
+        recipe.is_external,
+        recipe.created_at,
+        recipe.updated_at,
+        COALESCE(rating_summary.rating_count, 0) AS rating_count,
+        COALESCE(rating_summary.average_rating, 0) AS average_rating
+       FROM RECIPE recipe
+       LEFT JOIN (
+         SELECT recipe_id, COUNT(*) AS rating_count, AVG(rating) AS average_rating
+         FROM RECIPE_RATING
+         GROUP BY recipe_id
+       ) rating_summary ON rating_summary.recipe_id = recipe.recipe_id
+       WHERE recipe.status = 'published'
+         AND recipe.cook_time IS NOT NULL
+         AND TRIM(recipe.cook_time) <> ''`
+    );
+
+    return recipeRows
+      .map((recipe) => ({
+        recipe,
+        cookTimeMinutes: parseCookTimeMinutes(recipe.cook_time),
+      }))
+      .filter((item) => (
+        item.cookTimeMinutes !== null
+        && item.cookTimeMinutes <= safeMaxMinutes
+      ))
+      .sort((left, right) => (
+        left.cookTimeMinutes - right.cookTimeMinutes
+        || new Date(right.recipe.created_at || 0) - new Date(left.recipe.created_at || 0)
+        || Number(right.recipe.recipe_id) - Number(left.recipe.recipe_id)
+      ))
+      .slice(0, safeLimit)
+      .map(({ recipe }) => ({
+        ...mapRecipeRecord(recipe),
+        ratingSummary: {
+          count: Number(recipe.rating_count),
+          averageRating: Number(Number(recipe.average_rating).toFixed(1)),
+        },
+      }));
+  }
+
+  const recipes = await readRecipes();
+  const ratings = await readRecipeRatings();
+  const ratingSummaries = new Map();
+
+  for (const rating of ratings) {
+    const recipeId = Number(rating.recipe_id);
+    const summary = ratingSummaries.get(recipeId) || { count: 0, total: 0 };
+    summary.count += 1;
+    summary.total += Number(rating.rating);
+    ratingSummaries.set(recipeId, summary);
+  }
+
+  return recipes
+    .filter((recipe) => (recipe.status || 'published') === 'published')
+    .map((recipe) => ({
+      recipe,
+      cookTimeMinutes: parseCookTimeMinutes(recipe.cook_time),
+    }))
+    .filter((item) => (
+      item.cookTimeMinutes !== null
+      && item.cookTimeMinutes <= safeMaxMinutes
+    ))
+    .sort((left, right) => (
+      left.cookTimeMinutes - right.cookTimeMinutes
+      || new Date(right.recipe.created_at || 0) - new Date(left.recipe.created_at || 0)
+      || Number(right.recipe.recipe_id) - Number(left.recipe.recipe_id)
+    ))
+    .slice(0, safeLimit)
+    .map(({ recipe }) => {
+      const summary = ratingSummaries.get(Number(recipe.recipe_id)) || { count: 0, total: 0 };
+      const averageRating = summary.count ? summary.total / summary.count : 0;
+
+      return {
+        ...mapRecipeRecord(
+          recipe,
+          recipe.ingredients || [],
+          recipe.steps || [],
+          recipe.tips || []
+        ),
+        ratingSummary: {
+          count: summary.count,
+          averageRating: Number(averageRating.toFixed(1)),
+        },
+      };
+    });
+}
+
 async function listPopularRecipes(limit = 8) {
   const mode = await getMode();
   const safeLimit = Math.min(Math.max(Number(limit) || 8, 1), 20);
@@ -1108,6 +1233,7 @@ module.exports = {
   listRecipesByAuthor,
   listAllRecipes,
   listPublishedRecipes,
+  listQuickRecipes,
   listPopularRecipes,
   listRandomPublishedRecipes,
   searchPublishedRecipes,

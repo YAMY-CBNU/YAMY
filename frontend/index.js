@@ -1,6 +1,7 @@
 (function () {
   const API_BASE = 'http://localhost:3000/api/recipes';
   const RECENT_API_URL = `${API_BASE}?limit=8`;
+  const QUICK_API_URL = `${API_BASE}/quick?maxMinutes=15&limit=8`;
   const POPULAR_API_URL = `${API_BASE}/popular?limit=8`;
   const RECOMMENDATIONS_API_URL = `${API_BASE}/recommendations?limit=12`;
   const desktopSearchForm = document.getElementById('desktop-search-form');
@@ -15,11 +16,13 @@
   const recommendedRecipeDescription = document.getElementById('recommended-recipe-description');
   const popularRecipesList = document.getElementById('popular-recipes-list');
   const recentRecipesList = document.getElementById('recent-recipes-list');
+  const quickRecipesList = document.getElementById('quick-recipes-list');
   let recommendedRecipes = [];
   let recommendedRecipeIndex = 0;
   let recommendationTimer = null;
   let popularRecipes = [];
   let recentRecipes = [];
+  let quickRecipes = [];
   let savedRecipeIds = new Set();
 
   function escapeHtml(value) {
@@ -262,6 +265,7 @@
   function renderRecipeSections() {
     renderRecipeList(popularRecipesList, popularRecipes, '표시할 인기 레시피가 없습니다.');
     renderRecipeList(recentRecipesList, recentRecipes, '아직 공개된 레시피가 없습니다.');
+    renderRecipeList(quickRecipesList, quickRecipes, '15분 이내 레시피가 없습니다.');
   }
 
   function renderRecentRecipes() {
@@ -346,6 +350,28 @@
     }
   }
 
+  async function loadQuickRecipes() {
+    if (!quickRecipesList) return;
+
+    try {
+      const response = await fetch(QUICK_API_URL);
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || '15분 이내 레시피를 불러오지 못했습니다.');
+      }
+
+      quickRecipes = Array.isArray(data.recipes) ? data.recipes : [];
+      await loadSavedRecipeIds();
+      renderRecipeList(quickRecipesList, quickRecipes, '15분 이내 레시피가 없습니다.');
+    } catch (error) {
+      quickRecipesList.innerHTML = `
+        <div class="min-w-full rounded-2xl bg-error-container px-6 py-10 text-center text-on-error-container">
+          ${escapeHtml(error.message)}
+        </div>
+      `;
+    }
+  }
+
   async function toggleSavedRecipe(recipeId, button) {
     const token = localStorage.getItem('yamy_token');
     if (!token) {
@@ -395,6 +421,7 @@
 
   popularRecipesList?.addEventListener('click', handleRecipeListClick);
   recentRecipesList?.addEventListener('click', handleRecipeListClick);
+  quickRecipesList?.addEventListener('click', handleRecipeListClick);
   desktopSearchForm?.addEventListener('submit', (event) => {
     handleSearchSubmit(event, desktopSearchInput);
   });
@@ -423,5 +450,6 @@
     loadRecommendedRecipes();
     loadPopularRecipes();
     loadRecentRecipes();
+    loadQuickRecipes();
   });
 })();

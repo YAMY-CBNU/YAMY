@@ -330,6 +330,28 @@ exports.getPublishedRecipes = async (req, res) => {
   }
 };
 
+exports.getQuickRecipes = async (req, res) => {
+  try {
+    const requestedLimit = Number(req.query.limit);
+    const requestedMaxMinutes = Number(req.query.maxMinutes);
+    const limit = Number.isInteger(requestedLimit) && requestedLimit > 0
+      ? Math.min(requestedLimit, 20)
+      : 8;
+    const maxMinutes = Number.isInteger(requestedMaxMinutes) && requestedMaxMinutes > 0
+      ? Math.min(requestedMaxMinutes, 180)
+      : 15;
+    const recipes = await recipesStore.listQuickRecipes(limit, maxMinutes);
+    return res.status(200).json({ recipes });
+  } catch (error) {
+    return sendError(
+      res,
+      error,
+      'Get quick recipes error:',
+      '빠른 요리 레시피를 불러오는 중 오류가 발생했습니다.'
+    );
+  }
+};
+
 exports.getPopularRecipes = async (req, res) => {
   try {
     const requestedLimit = Number(req.query.limit);

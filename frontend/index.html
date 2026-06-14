@@ -217,58 +217,13 @@
           >
           <h2 class="text-2xl md:text-4xl font-headline font-extrabold text-on-surface tracking-tight">15분 퀵 밀</h2>
         </div>
-        <div class="flex overflow-x-auto gap-6 md:gap-10 hide-scrollbar snap-x">
-          <!-- 슬림 카드 1 / Slim Card 1 -->
-          <div class="min-w-[280px] md:min-w-[320px] group cursor-pointer snap-start flex-shrink-0">
-            <div
-              class="relative h-[200px] rounded-2xl overflow-hidden mb-4 shadow-sm group-hover:shadow-xl transition-all"
-            >
-              <img
-                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                alt="가든 파워 샐러드"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0dway5B4jPvHW_HERmAM71-eARgYNNjs57Qa30wV-iTki6DQ7dJuR0HptK1CpypyFKXBHLvIFvXYSClqrsTfPLDvEPEuh0MNA7itqrwJTEPBq0KWbuxOz3ACAVAbwVAKdTdkh49nTGMbM2LP-GsRUayhwWL7S4OIktW2TPL7Tyk3ngW29oFjY0XE4msiVPb73NZkhUUoIfl3IBNIxqSaoDwjlUhd5FNE1K7CsiG_XKWffUxaTGbzI4Jz_5xY1CSRd4GrNISM9r60"
-              />
-              <div class="absolute top-3 right-3 bg-white/90 backdrop-blur p-1.5 rounded-full text-amber-500 shadow-sm">
-                <span class="material-symbols-outlined text-[20px]">star</span>
-              </div>
-            </div>
-            <div class="space-y-1">
-              <h3 class="text-lg font-bold group-hover:text-primary transition-colors">가든 파워 샐러드</h3>
-              <p class="text-sm text-on-surface-variant flex items-center gap-3">
-                <span class="flex items-center gap-1"
-                  ><span class="material-symbols-outlined text-base">schedule</span><span>12</span></span
-                >
-                <span class="flex items-center gap-1"
-                  ><span class="material-symbols-outlined text-base">bar_chart</span><span>초급</span></span
-                >
-              </p>
-            </div>
-          </div>
-          <!-- 슬림 카드 2 / Slim Card 2 -->
-          <div class="min-w-[280px] md:min-w-[320px] group cursor-pointer snap-start flex-shrink-0">
-            <div
-              class="relative h-[200px] rounded-2xl overflow-hidden mb-4 shadow-sm group-hover:shadow-xl transition-all"
-            >
-              <img
-                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                alt="수란 사워도우 토스트"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuA6iDuyvOcna5moXLJ7ZpG7yfKHp0taRpcpQRTlLaF45Q9gFW_mV6ByUSEF-LAI-SP5ByhSf__T9N_tOrZDM8pTzjJ3SuBTMw9gJ9QoXeTJPXPdHWJc9_OvnjzuR4w_Rbh6pjzfM_PjuC1ek1rTbYkgIJec-z-AdaId4F-j7PoUBrRrLg643RkfELF-qbQvyIWuL8ss1N4w9m1rV2aEbuWTfq8WrnyZUMLEcMVVvLzQH5w4ZGhwg5Skir9FM_05mOElhGr-ifITWno"
-              />
-              <div class="absolute top-3 right-3 bg-white/90 backdrop-blur p-1.5 rounded-full text-amber-500 shadow-sm">
-                <span class="material-symbols-outlined text-[20px]">star</span>
-              </div>
-            </div>
-            <div class="space-y-1">
-              <h3 class="text-lg font-bold group-hover:text-primary transition-colors">수란 사워도우 토스트</h3>
-              <p class="text-sm text-on-surface-variant flex items-center gap-3">
-                <span class="flex items-center gap-1"
-                  ><span class="material-symbols-outlined text-base">schedule</span><span>8</span></span
-                >
-                <span class="flex items-center gap-1"
-                  ><span class="material-symbols-outlined text-base">bar_chart</span><span>초급</span></span
-                >
-              </p>
-            </div>
+        <div
+          id="quick-recipes-list"
+          class="flex overflow-x-auto gap-6 md:gap-10 hide-scrollbar snap-x"
+          aria-live="polite"
+        >
+          <div class="min-w-full rounded-2xl bg-surface-container px-6 py-10 text-center text-on-surface-variant">
+            15분 이내 레시피를 불러오는 중입니다.
           </div>
         </div>
       </section>

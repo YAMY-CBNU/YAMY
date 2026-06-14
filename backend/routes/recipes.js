@@ -7,6 +7,7 @@ const commentsController = require('../controllers/commentsController');
 const router = express.Router();
 
 router.get('/', recipesController.getPublishedRecipes);
+router.get('/quick', recipesController.getQuickRecipes);
 router.get('/popular', recipesController.getPopularRecipes);
 router.get('/recommendations', recipesController.getRecommendedRecipes);
 router.get('/search', recipesController.searchRecipes);
