@@ -365,3 +365,33 @@ exports.getRecommendedRecipes = async (req, res) => {
     );
   }
 };
+
+exports.searchRecipes = async (req, res) => {
+  try {
+    const query = normalizeText(req.query.q);
+    if (!query) {
+      return res.status(400).json({ message: '검색어를 입력해 주세요.' });
+    }
+    if (query.length > 100) {
+      return res.status(400).json({ message: '검색어는 100자 이내로 입력해 주세요.' });
+    }
+
+    const requestedLimit = Number(req.query.limit);
+    const requestedOffset = Number(req.query.offset);
+    const limit = Number.isInteger(requestedLimit) && requestedLimit > 0
+      ? Math.min(requestedLimit, 20)
+      : 20;
+    const offset = Number.isInteger(requestedOffset) && requestedOffset >= 0
+      ? requestedOffset
+      : 0;
+    const result = await recipesStore.searchPublishedRecipes(query, limit, offset);
+    return res.status(200).json(result);
+  } catch (error) {
+    return sendError(
+      res,
+      error,
+      'Search recipes error:',
+      '레시피 검색 중 오류가 발생했습니다.'
+    );
+  }
+};

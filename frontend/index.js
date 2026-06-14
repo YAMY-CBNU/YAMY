@@ -3,6 +3,12 @@
   const RECENT_API_URL = `${API_BASE}?limit=8`;
   const POPULAR_API_URL = `${API_BASE}/popular?limit=8`;
   const RECOMMENDATIONS_API_URL = `${API_BASE}/recommendations?limit=12`;
+  const desktopSearchForm = document.getElementById('desktop-search-form');
+  const desktopSearchInput = document.getElementById('desktop-search-input');
+  const mobileSearchToggle = document.getElementById('mobile-search-toggle');
+  const mobileSearchPanel = document.getElementById('mobile-search-panel');
+  const mobileSearchForm = document.getElementById('mobile-search-form');
+  const mobileSearchInput = document.getElementById('mobile-search-input');
   const recommendedRecipeLink = document.getElementById('recommended-recipe-link');
   const recommendedRecipeImage = document.getElementById('recommended-recipe-image');
   const recommendedRecipeTitle = document.getElementById('recommended-recipe-title');
@@ -23,6 +29,21 @@
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#039;');
+  }
+
+  function submitRecipeSearch(input) {
+    const query = String(input?.value || '').trim().slice(0, 100);
+    if (!query) {
+      input?.focus();
+      return;
+    }
+
+    window.location.href = `search-results.html?q=${encodeURIComponent(query)}`;
+  }
+
+  function handleSearchSubmit(event, input) {
+    event.preventDefault();
+    submitRecipeSearch(input);
   }
 
   function createImageMarkup(recipe, title) {
@@ -374,6 +395,21 @@
 
   popularRecipesList?.addEventListener('click', handleRecipeListClick);
   recentRecipesList?.addEventListener('click', handleRecipeListClick);
+  desktopSearchForm?.addEventListener('submit', (event) => {
+    handleSearchSubmit(event, desktopSearchInput);
+  });
+  mobileSearchForm?.addEventListener('submit', (event) => {
+    handleSearchSubmit(event, mobileSearchInput);
+  });
+  mobileSearchToggle?.addEventListener('click', () => {
+    const willOpen = mobileSearchPanel?.classList.contains('hidden');
+    mobileSearchPanel?.classList.toggle('hidden', !willOpen);
+    mobileSearchToggle.setAttribute('aria-expanded', String(willOpen));
+    mobileSearchToggle.setAttribute('aria-label', willOpen ? '검색창 닫기' : '검색창 열기');
+    if (willOpen) {
+      window.setTimeout(() => mobileSearchInput?.focus(), 0);
+    }
+  });
 
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) {

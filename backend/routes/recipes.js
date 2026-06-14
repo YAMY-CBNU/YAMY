@@ -9,6 +9,7 @@ const router = express.Router();
 router.get('/', recipesController.getPublishedRecipes);
 router.get('/popular', recipesController.getPopularRecipes);
 router.get('/recommendations', recipesController.getRecommendedRecipes);
+router.get('/search', recipesController.searchRecipes);
 router.get('/mine', recipesController.getMyRecipes);
 router.get('/saved', savedRecipesController.getSavedRecipes);
 router.post('/', recipesController.createRecipe);

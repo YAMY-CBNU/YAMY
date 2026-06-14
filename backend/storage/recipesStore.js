@@ -934,6 +934,171 @@ async function listRandomPublishedRecipes(limit = 12) {
     ));
 }
 
+function normalizeSearchText(value) {
+  return String(value || '').trim().toLocaleLowerCase('ko-KR');
+}
+
+function getFileRecipeSearchRank(recipe, ingredients, keyword) {
+  const title = normalizeSearchText(recipe.title);
+  const description = normalizeSearchText(recipe.description);
+  const ingredientMatch = ingredients.some(
+    (ingredient) => normalizeSearchText(ingredient.name).includes(keyword)
+  );
+
+  if (title.includes(keyword)) return 3;
+  if (ingredientMatch) return 2;
+  if (description.includes(keyword)) return 1;
+  return 0;
+}
+
+async function searchPublishedRecipes(query, limit = 20, offset = 0) {
+  const mode = await getMode();
+  const keyword = normalizeSearchText(query);
+  const safeLimit = Math.min(Math.max(Number(limit) || 20, 1), 20);
+  const safeOffset = Math.max(Number(offset) || 0, 0);
+
+  if (mode === 'mysql') {
+    const searchCondition = `(
+      LOCATE(CAST(? AS BINARY), CAST(LOWER(recipe.title) AS BINARY)) > 0
+      OR LOCATE(
+        CAST(? AS BINARY),
+        CAST(LOWER(COALESCE(recipe.description, '')) AS BINARY)
+      ) > 0
+      OR EXISTS (
+        SELECT 1
+        FROM RECIPE_INGREDIENT ingredient
+        WHERE ingredient.recipe_id = recipe.recipe_id
+          AND LOCATE(CAST(? AS BINARY), CAST(LOWER(ingredient.name) AS BINARY)) > 0
+      )
+    )`;
+    const searchParams = [keyword, keyword, keyword];
+    const [countRows] = await mysqlPool.query(
+      `SELECT COUNT(*) AS total
+       FROM RECIPE recipe
+       WHERE recipe.status = 'published'
+         AND ${searchCondition}`,
+      searchParams
+    );
+    const [recipeRows] = await mysqlPool.query(
+      `SELECT
+        recipe.recipe_id,
+        recipe.author_id,
+        recipe.external_recipe_id,
+        recipe.source_url,
+        recipe.title,
+        recipe.description,
+        recipe.thumbnail_url,
+        recipe.difficulty,
+        recipe.serving_size,
+        recipe.cook_time,
+        recipe.cat1_method,
+        recipe.cat2_situation,
+        recipe.cat3_ingredient,
+        recipe.cat4_type,
+        recipe.status,
+        recipe.is_external,
+        recipe.created_at,
+        recipe.updated_at,
+        COALESCE(rating_summary.rating_count, 0) AS rating_count,
+        COALESCE(rating_summary.average_rating, 0) AS average_rating,
+        CASE
+          WHEN LOCATE(CAST(? AS BINARY), CAST(LOWER(recipe.title) AS BINARY)) > 0 THEN 3
+          WHEN EXISTS (
+            SELECT 1
+            FROM RECIPE_INGREDIENT ingredient
+            WHERE ingredient.recipe_id = recipe.recipe_id
+              AND LOCATE(CAST(? AS BINARY), CAST(LOWER(ingredient.name) AS BINARY)) > 0
+          ) THEN 2
+          WHEN LOCATE(
+            CAST(? AS BINARY),
+            CAST(LOWER(COALESCE(recipe.description, '')) AS BINARY)
+          ) > 0 THEN 1
+          ELSE 0
+        END AS search_rank
+       FROM RECIPE recipe
+       LEFT JOIN (
+         SELECT recipe_id, COUNT(*) AS rating_count, AVG(rating) AS average_rating
+         FROM RECIPE_RATING
+         GROUP BY recipe_id
+       ) rating_summary ON rating_summary.recipe_id = recipe.recipe_id
+       WHERE recipe.status = 'published'
+         AND ${searchCondition}
+       ORDER BY search_rank DESC, recipe.created_at DESC, recipe.recipe_id DESC
+       LIMIT ? OFFSET ?`,
+      [
+        keyword,
+        keyword,
+        keyword,
+        ...searchParams,
+        safeLimit,
+        safeOffset,
+      ]
+    );
+
+    const total = Number(countRows[0]?.total) || 0;
+    return {
+      recipes: recipeRows.map((recipe) => ({
+        ...mapRecipeRecord(recipe),
+        ratingSummary: {
+          count: Number(recipe.rating_count),
+          averageRating: Number(Number(recipe.average_rating).toFixed(1)),
+        },
+      })),
+      total,
+      hasMore: safeOffset + recipeRows.length < total,
+      nextOffset: safeOffset + recipeRows.length,
+    };
+  }
+
+  const recipes = await readRecipes();
+  const ratings = await readRecipeRatings();
+  const matchedRecipes = recipes
+    .filter((recipe) => (recipe.status || 'published') === 'published')
+    .map((recipe) => {
+      const ingredients = recipe.ingredients || [];
+      return {
+        recipe,
+        ingredients,
+        rank: getFileRecipeSearchRank(recipe, ingredients, keyword),
+      };
+    })
+    .filter((item) => item.rank > 0)
+    .sort((left, right) => (
+      right.rank - left.rank
+      || new Date(right.recipe.created_at || 0) - new Date(left.recipe.created_at || 0)
+      || Number(right.recipe.recipe_id) - Number(left.recipe.recipe_id)
+    ));
+  const page = matchedRecipes.slice(safeOffset, safeOffset + safeLimit);
+
+  return {
+    recipes: page.map(({ recipe, ingredients }) => {
+      const recipeRatings = ratings.filter(
+        (rating) => Number(rating.recipe_id) === Number(recipe.recipe_id)
+      );
+      const averageRating = recipeRatings.length
+        ? recipeRatings.reduce((sum, rating) => sum + Number(rating.rating), 0)
+          / recipeRatings.length
+        : 0;
+
+      return {
+        ...mapRecipeRecord(
+          recipe,
+          ingredients,
+          recipe.steps || [],
+          recipe.tips || []
+        ),
+        ratingSummary: {
+          count: recipeRatings.length,
+          averageRating: Number(averageRating.toFixed(1)),
+        },
+      };
+    }),
+    total: matchedRecipes.length,
+    hasMore: safeOffset + page.length < matchedRecipes.length,
+    nextOffset: safeOffset + page.length,
+  };
+}
+
 module.exports = {
   getMode,
   createRecipe,
@@ -945,5 +1110,6 @@ module.exports = {
   listPublishedRecipes,
   listPopularRecipes,
   listRandomPublishedRecipes,
+  searchPublishedRecipes,
   importExternalRecipes,
 };
