@@ -624,9 +624,33 @@
 
     const missing = Array.from(elements.ingredientForm.querySelectorAll('input[type="checkbox"]'))
       .filter((checkbox) => !checkbox.checked)
-      .map((checkbox) => checkbox.value);
+      .map((checkbox) => ({
+        name: checkbox.dataset.ingredientName || checkbox.value,
+        label: checkbox.value,
+      }));
 
-    elements.missingIngredients.textContent = missing.length > 0 ? missing.join(', ') : '없음';
+    if (missing.length === 0) {
+      elements.missingIngredients.textContent = '없음';
+      return;
+    }
+
+    const fragment = document.createDocumentFragment();
+    missing.forEach((ingredient, index) => {
+      if (index > 0) {
+        fragment.append(document.createTextNode(', '));
+      }
+
+      const link = document.createElement('a');
+      link.href = `https://www.coupang.com/np/search?q=${encodeURIComponent(ingredient.name)}`;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.className = 'underline decoration-secondary/50 underline-offset-4 hover:text-secondary transition-colors';
+      link.textContent = ingredient.label;
+      link.title = `쿠팡에서 ${ingredient.name} 검색`;
+      fragment.append(link);
+    });
+
+    elements.missingIngredients.replaceChildren(fragment);
   }
 
   // 재료 목록 / Ingredients
@@ -641,13 +665,22 @@
     }
 
     elements.ingredientForm.innerHTML = ingredients.map((ingredient) => {
-      const name = escapeHtml(ingredient.name || '');
-      const amount = escapeHtml(ingredient.amount || '');
-      const value = amount ? `${name} ${amount}` : name;
+      const ingredientName = String(ingredient.name || '').trim();
+      const ingredientAmount = String(ingredient.amount || '').trim();
+      const name = escapeHtml(ingredientName);
+      const amount = escapeHtml(ingredientAmount);
+      const value = escapeHtml(
+        ingredientAmount ? `${ingredientName} ${ingredientAmount}` : ingredientName
+      );
 
       return `
         <label class="flex items-center gap-3 p-3 bg-surface-container rounded-xl cursor-pointer hover:bg-surface-container-high transition-colors group">
-          <input type="checkbox" value="${value}" class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary/30 cursor-pointer"/>
+          <input
+            type="checkbox"
+            value="${value}"
+            data-ingredient-name="${name}"
+            class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary/30 cursor-pointer"
+          />
           <span class="text-sm font-medium text-on-surface group-hover:text-primary transition-colors">
             ${name}${amount ? ` <span class="text-on-surface-variant font-normal">${amount}</span>` : ''}
           </span>
