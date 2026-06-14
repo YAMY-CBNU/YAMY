@@ -59,6 +59,18 @@ h1, h2, h3 {
     background: linear-gradient(135deg, #C05B40 0%, #D9933D 100%);
 }
 
+.recent-recipe-card {
+    width: 280px;
+    flex: 0 0 280px;
+}
+
+@media (min-width: 768px) {
+    .recent-recipe-card {
+        width: 320px;
+        flex-basis: 320px;
+    }
+}
+
 /* === recipe-editor.html === */
 .drop-active {
     box-shadow: inset 0 0 0 2px rgba(155, 63, 39, 0.22);

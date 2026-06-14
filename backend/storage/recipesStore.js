@@ -67,6 +67,8 @@ function mapRecipeRecord(recipe, ingredients = [], steps = [], tips = []) {
   return {
     id: recipe.recipe_id,
     authorId: recipe.author_id,
+    externalRecipeId: recipe.external_recipe_id || null,
+    sourceUrl: recipe.source_url || null,
     status: recipe.status || 'published',
     title: recipe.title,
     description: recipe.description,
@@ -94,6 +96,7 @@ function mapRecipeRecord(recipe, ingredients = [], steps = [], tips = []) {
       imageUrl: step.image_url,
       timerSeconds: step.timer_seconds,
       heatLevel: step.heat_level,
+      tip: step.tip || null,
     })),
     tips: mappedTips,
     createdAt: recipe.created_at,
@@ -140,6 +143,208 @@ function buildFileRecord(recipeId, payload, createdAt) {
       content: tip,
     })),
   };
+}
+
+function buildExternalFileRecord(recipeId, recipe, createdAt) {
+  const now = new Date().toISOString();
+
+  return {
+    recipe_id: recipeId,
+    author_id: null,
+    external_recipe_id: recipe.externalRecipeId,
+    source_url: recipe.sourceUrl,
+    status: 'published',
+    title: recipe.title,
+    description: recipe.description,
+    thumbnail_url: recipe.thumbnailUrl,
+    difficulty: recipe.difficulty,
+    serving_size: recipe.servingSize,
+    cook_time: recipe.cookTime,
+    cat1_method: recipe.categories.method,
+    cat2_situation: recipe.categories.situation,
+    cat3_ingredient: recipe.categories.mainIngredient,
+    cat4_type: recipe.categories.type,
+    is_external: true,
+    created_at: createdAt || now,
+    updated_at: now,
+    ingredients: recipe.ingredients.map((ingredient, index) => ({
+      ingredient_id: index + 1,
+      name: ingredient.name,
+      amount: ingredient.amount,
+      section: ingredient.section,
+    })),
+    steps: recipe.steps.map((step, index) => ({
+      step_id: index + 1,
+      step_order: step.order,
+      description: step.description,
+      image_url: step.imageUrl,
+      timer_seconds: step.timerSeconds,
+      heat_level: step.heatLevel,
+      tip: step.tip,
+    })),
+    tips: [],
+  };
+}
+
+async function importExternalRecipesToFile(importedRecipes) {
+  const recipes = await readRecipes();
+  const externalIndex = new Map();
+  let nextRecipeId =
+    recipes.reduce((maxId, recipe) => Math.max(maxId, Number(recipe.recipe_id) || 0), 0) + 1;
+
+  recipes.forEach((recipe, index) => {
+    if (recipe.external_recipe_id) {
+      externalIndex.set(String(recipe.external_recipe_id), index);
+    }
+  });
+
+  let created = 0;
+  let updated = 0;
+
+  for (const recipe of importedRecipes) {
+    const existingIndex = externalIndex.get(String(recipe.externalRecipeId));
+
+    if (existingIndex === undefined) {
+      const record = buildExternalFileRecord(nextRecipeId, recipe);
+      externalIndex.set(String(recipe.externalRecipeId), recipes.length);
+      recipes.push(record);
+      nextRecipeId += 1;
+      created += 1;
+      continue;
+    }
+
+    const existing = recipes[existingIndex];
+    recipes[existingIndex] = buildExternalFileRecord(
+      existing.recipe_id,
+      recipe,
+      existing.created_at
+    );
+    updated += 1;
+  }
+
+  await writeRecipes(recipes);
+  return { mode: 'file', created, updated, total: importedRecipes.length };
+}
+
+async function insertExternalChildren(connection, recipeId, recipe) {
+  for (const ingredient of recipe.ingredients) {
+    await connection.query(
+      `INSERT INTO RECIPE_INGREDIENT (recipe_id, section, name, amount)
+       VALUES (?, ?, ?, ?)`,
+      [recipeId, ingredient.section, ingredient.name, ingredient.amount]
+    );
+  }
+
+  for (const step of recipe.steps) {
+    await connection.query(
+      `INSERT INTO RECIPE_STEP (
+        recipe_id,
+        step_order,
+        description,
+        image_url,
+        heat_level,
+        timer_seconds,
+        tip
+      ) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [
+        recipeId,
+        step.order,
+        step.description,
+        step.imageUrl,
+        step.heatLevel,
+        step.timerSeconds,
+        step.tip,
+      ]
+    );
+  }
+}
+
+async function importExternalRecipesToMysql(importedRecipes) {
+  const connection = await mysqlPool.getConnection();
+  let created = 0;
+  let updated = 0;
+
+  try {
+    await connection.beginTransaction();
+
+    for (const recipe of importedRecipes) {
+      const [result] = await connection.query(
+        `INSERT INTO RECIPE (
+          author_id,
+          external_recipe_id,
+          source_url,
+          title,
+          description,
+          thumbnail_url,
+          difficulty,
+          serving_size,
+          cook_time,
+          cat1_method,
+          cat2_situation,
+          cat3_ingredient,
+          cat4_type,
+          status,
+          is_external
+        ) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'published', TRUE)
+        ON DUPLICATE KEY UPDATE
+          recipe_id = LAST_INSERT_ID(recipe_id),
+          source_url = VALUES(source_url),
+          title = VALUES(title),
+          description = VALUES(description),
+          thumbnail_url = VALUES(thumbnail_url),
+          difficulty = VALUES(difficulty),
+          serving_size = VALUES(serving_size),
+          cook_time = VALUES(cook_time),
+          cat1_method = VALUES(cat1_method),
+          cat2_situation = VALUES(cat2_situation),
+          cat3_ingredient = VALUES(cat3_ingredient),
+          cat4_type = VALUES(cat4_type),
+          status = 'published',
+          is_external = TRUE`,
+        [
+          recipe.externalRecipeId,
+          recipe.sourceUrl,
+          recipe.title,
+          recipe.description,
+          recipe.thumbnailUrl,
+          recipe.difficulty,
+          recipe.servingSize,
+          recipe.cookTime,
+          recipe.categories.method,
+          recipe.categories.situation,
+          recipe.categories.mainIngredient,
+          recipe.categories.type,
+        ]
+      );
+
+      const recipeId = result.insertId;
+      if (result.affectedRows === 1) {
+        created += 1;
+      } else {
+        updated += 1;
+      }
+
+      await connection.query('DELETE FROM RECIPE_INGREDIENT WHERE recipe_id = ?', [recipeId]);
+      await connection.query('DELETE FROM RECIPE_STEP WHERE recipe_id = ?', [recipeId]);
+      await connection.query('DELETE FROM RECIPE_TIP WHERE recipe_id = ?', [recipeId]);
+      await insertExternalChildren(connection, recipeId, recipe);
+    }
+
+    await connection.commit();
+    return { mode: 'mysql', created, updated, total: importedRecipes.length };
+  } catch (error) {
+    await connection.rollback();
+    throw error;
+  } finally {
+    connection.release();
+  }
+}
+
+async function importExternalRecipes(importedRecipes) {
+  const mode = await getMode();
+  return mode === 'mysql'
+    ? importExternalRecipesToMysql(importedRecipes)
+    : importExternalRecipesToFile(importedRecipes);
 }
 
 async function insertChildren(connection, recipeId, payload) {
@@ -338,6 +543,8 @@ async function findRecipeById(recipeId) {
       `SELECT
         recipe_id,
         author_id,
+        external_recipe_id,
+        source_url,
         title,
         description,
         thumbnail_url,
@@ -452,6 +659,8 @@ async function listPublishedRecipes(limit = 8) {
       `SELECT
         recipe.recipe_id,
         recipe.author_id,
+        recipe.external_recipe_id,
+        recipe.source_url,
         recipe.title,
         recipe.description,
         recipe.thumbnail_url,
@@ -529,4 +738,5 @@ module.exports = {
   findRecipeById,
   listRecipesByAuthor,
   listPublishedRecipes,
+  importExternalRecipes,
 };

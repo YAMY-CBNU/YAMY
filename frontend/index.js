@@ -89,7 +89,7 @@
 
     return `
       <article
-        class="min-w-[280px] md:min-w-[320px] group cursor-pointer snap-start flex-shrink-0 block"
+        class="recent-recipe-card group cursor-pointer snap-start block"
       >
         <div class="relative h-[200px] rounded-2xl overflow-hidden mb-4 shadow-sm group-hover:shadow-xl transition-all">
           <a href="${href}" class="absolute inset-0 block">

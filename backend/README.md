@@ -86,3 +86,31 @@ npm run dev
   - body: `{ "content": "수정한 댓글" }`
 - `DELETE /api/recipes/:recipeId/comments/:commentId`
   - header: `Authorization: Bearer <token>`
+
+## CSV Recipe Import
+
+The importer reads only `recipe.csv`, `ingredient.csv`, and `step.csv`.
+`failed.csv` is not read. By default, the CSV files are expected in the
+workspace root, one level above the `main` repository.
+
+Validate the CSV files without saving:
+
+```bash
+npm run import:recipes:dry-run
+```
+
+Import or update recipes:
+
+```bash
+npm run import:recipes
+```
+
+Use a different CSV directory:
+
+```bash
+node scripts/import-recipes-from-csv.js --csv-dir C:\path\to\csv
+```
+
+The command uses MySQL when the configured database is available and otherwise
+stores recipes in `backend/data/recipes.json`. Re-running the command updates
+existing external recipes by `external_recipe_id` instead of creating duplicates.
