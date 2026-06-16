@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 
 <html lang="ko">
   <head>
@@ -17,7 +17,6 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body class="bg-surface text-on-surface font-body min-h-screen pb-32">
-    <!-- 상단 네비바 / TopNavBar -->
     <nav
       class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl flex justify-between items-center px-4 md:px-12 h-16 md:h-20 max-w-full mx-auto border-b border-outline-variant/30"
     >
@@ -51,7 +50,6 @@
         </div>
       </div>
       <div class="flex items-center gap-2 md:gap-3 lg:gap-6">
-        <!-- 검색 / Search -->
         <button
           type="button"
           class="flex lg:hidden p-2 text-on-surface-variant hover:text-primary rounded-full hover:bg-surface-container transition-all"
@@ -68,7 +66,6 @@
             type="text"
           />
         </div>
-        <!-- 프로필 / Profile -->
         <a
           href="profile.html"
           data-profile-link
@@ -77,7 +74,6 @@
           <span class="material-symbols-outlined lg:hidden">person</span>
           <span class="hidden lg:inline text-sm whitespace-nowrap" data-profile-text>프로필</span>
         </a>
-        <!-- 로그인/아웃 / Auth -->
         <a
           id="auth-action"
           href="login.html"
@@ -125,7 +121,6 @@
       </div>
     </nav>
     <main class="px-10 md:px-16 max-w-screen-xl mx-auto pt-20 md:pt-32">
-      <!-- 헤더 / Header -->
       <header class="mb-8 pt-10 pb-4">
         <span class="text-primary font-bold tracking-widest text-xs uppercase mb-2 block">SHARE YOUR COOKING TIPS</span>
         <div class="flex items-baseline justify-between mb-8">
@@ -137,7 +132,6 @@
         <div id="editor-status" class="hidden mt-4 rounded-xl border px-4 py-3 text-sm font-semibold"></div>
       </header>
 
-      <!-- 레시피 기본 정보 / Recipe Info -->
       <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-7">
         <div class="md:col-span-7 space-y-3">
           <div class="space-y-1">
@@ -249,7 +243,6 @@
         </div>
       </div>
 
-      <!-- 카테고리 / Category -->
       <section class="mb-12">
         <h2 class="font-headline text-lg font-bold mb-3">카테고리 선택</h2>
         <div class="bg-surface-container-low rounded-xl p-4 editorial-shadow">
@@ -334,7 +327,6 @@
         </div>
       </section>
 
-      <!-- 재료 섹션 / Ingredients -->
       <section class="mb-12">
         <div class="flex justify-between items-center mb-3">
           <h2 class="font-headline text-lg font-bold">필요한 재료</h2>
@@ -385,7 +377,6 @@
         </div>
       </section>
 
-      <!-- 조리 단계 / Cooking Steps -->
       <section class="mb-12">
         <h2 class="font-headline text-lg font-bold mb-3">조리 순서</h2>
         <div class="space-y-5" id="steps-list">
@@ -538,7 +529,6 @@
         </button>
       </section>
 
-      <!-- 요리 팁 / Cooking Tips -->
       <section class="mb-12">
         <h2 class="font-headline text-lg font-bold mb-3">요리 팁</h2>
         <div class="space-y-3" id="tips-list">
@@ -567,7 +557,6 @@
         </button>
       </section>
 
-      <!-- 최종 액션 / Actions -->
       <div class="flex gap-2 justify-end items-center py-5 border-t border-outline-variant/10">
         <button
           class="px-6 py-2 text-on-surface-variant font-bold text-sm hover:bg-surface-container-high rounded-full transition-colors"
@@ -592,7 +581,6 @@
         </button>
       </div>
     </main>
-    <!-- 하단 네비바 / BottomNavBar -->
     <nav
       class="md:hidden fixed bottom-0 left-0 w-full h-20 bg-stone-50/90 dark:bg-stone-900/90 backdrop-blur-xl flex justify-around items-center px-4 pb-2 z-50 rounded-t-[2rem] shadow-2xl"
     >

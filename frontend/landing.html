@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="ko">
   <head>
     <meta charset="utf-8" />
@@ -17,7 +17,6 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body class="bg-surface text-on-surface font-body">
-    <!-- 상단 네비바 / TopNavBar -->
     <nav
       class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl flex justify-between items-center px-4 md:px-12 h-16 md:h-20 max-w-full mx-auto border-b border-outline-variant/30"
     >
@@ -52,7 +51,6 @@
         </div>
       </div>
       <div class="flex items-center gap-2 md:gap-3 lg:gap-6">
-        <!-- 검색 / Search -->
         <button
           type="button"
           class="flex lg:hidden p-2 text-on-surface-variant hover:text-primary rounded-full hover:bg-surface-container transition-all"
@@ -69,7 +67,6 @@
             type="text"
           />
         </div>
-        <!-- 프로필 / Profile -->
         <a
           href="profile.html"
           data-profile-link
@@ -78,7 +75,6 @@
           <span class="material-symbols-outlined lg:hidden">person</span>
           <span class="hidden lg:inline text-sm whitespace-nowrap" data-profile-text>프로필</span>
         </a>
-        <!-- 로그인/아웃 / Auth -->
         <a
           id="auth-action"
           href="login.html"
@@ -128,10 +124,8 @@
     </nav>
 
     <main class="pt-16 md:pt-24 overflow-x-hidden">
-      <!-- 히어로 섹션 / Hero Section -->
       <section class="relative fluid-section fluid-px overflow-hidden" style="padding-top: clamp(5rem, 10vw, 8rem)">
         <div class="max-w-7xl mx-auto grid lg:grid-cols-2 fluid-gap items-center">
-          <!-- 텍스트 / Text Content -->
           <div class="z-10 text-center lg:text-left">
             <span
               class="inline-block px-4 py-1.5 fluid-mb-sm rounded-full bg-secondary-container text-on-secondary-container font-bold tracking-widest uppercase"
@@ -160,7 +154,6 @@
               >
             </div>
           </div>
-          <!-- 이미지 / Image -->
           <div class="relative mt-8 lg:mt-0">
             <div class="absolute -top-10 -right-10 w-64 h-64 bg-primary-fixed opacity-20 rounded-full blur-3xl"></div>
             <div
@@ -172,7 +165,6 @@
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1m40v495qLdbpUBccm7Byk8VOu0BjaWhybz4UJ9y140mqvndro4tP6w-mk2X4QKxeWH_Iplox4E0AZy2nPlJCg3C4mgSf6sblW2t_QRn2kCyDC3kgRiehI0OBZ7Xdh61D3liuVmtX8DV2BjM5MmhBeNBHnkJxZvOP2sl6Dr8EolBYA6uln1913u2K17xDZRcXXqW6Hll89EQfDnAXKmlOEXcNTLzt11s1NzKsKZxVto_N736lOI4G2mGhB-BjOsmFCRppsztjxk4"
               />
             </div>
-            <!-- 글래스 카드 / Glass Card -->
             <div
               class="hidden sm:block absolute -bottom-6 -left-6 md:left-[-5%] p-5 bg-surface/60 backdrop-blur-xl rounded-2xl shadow-xl max-w-xs border border-white/20"
             >
@@ -190,7 +182,6 @@
         </div>
       </section>
 
-      <!-- 기능 섹션 / Features -->
       <section class="fluid-section bg-surface-container-low">
         <div class="max-w-7xl mx-auto fluid-px">
           <div class="text-center fluid-mb">
@@ -200,7 +191,6 @@
             </p>
           </div>
           <div class="grid grid-cols-1 md:grid-cols-12 fluid-gap">
-            <!-- 단계별 조리 가이드 / Step-by-step Guide -->
             <div
               class="md:col-span-8 bg-surface-container-lowest rounded-[1.5rem] sm:rounded-[2rem] fluid-card relative overflow-hidden group md:min-h-[400px]"
             >
@@ -231,14 +221,12 @@
                 class="hidden md:block absolute right-0 bottom-0 w-2/3 h-2/3 object-cover rounded-tl-[3rem] transition-transform duration-500 group-hover:scale-105"
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZpTorghYmjQQQk3Ggu2j3dDVY1EH_0JjlfM5Zx6xmU9dYuUrWZvtQyrrbbQlQCQUrl3dO6DyuNJq2OS-p7R0sF6vgrwADod13l5kjWVOAdY49s6W-QSv0tz52s3MfujTssVA50UkaTRHL0r9ShNJj7ZvD96vAei-eWpGYH5ouB3EqlFpL-EZB2vCUQdrQuTWxfE-cP5kWjt9g3bFfWKf2J1tX_nh_zZdQecGWYCeV5sxuwS-6_RkC0LT7N-e8Tv3YCKzJEAx8nFM"
               />
-              <!-- 모바일 이미지 / Mobile Image -->
               <img
                 alt="Tablet cooking"
                 class="md:hidden w-full h-44 object-cover rounded-xl mt-4"
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZpTorghYmjQQQk3Ggu2j3dDVY1EH_0JjlfM5Zx6xmU9dYuUrWZvtQyrrbbQlQCQUrl3dO6DyuNJq2OS-p7R0sF6vgrwADod13l5kjWVOAdY49s6W-QSv0tz52s3MfujTssVA50UkaTRHL0r9ShNJj7ZvD96vAei-eWpGYH5ouB3EqlFpL-EZB2vCUQdrQuTWxfE-cP5kWjt9g3bFfWKf2J1tX_nh_zZdQecGWYCeV5sxuwS-6_RkC0LT7N-e8Tv3YCKzJEAx8nFM"
               />
             </div>
-            <!-- 검색 기능 / Recipe Search -->
             <div
               class="md:col-span-4 bg-tertiary text-on-tertiary rounded-[1.5rem] sm:rounded-[2rem] fluid-card flex flex-col justify-between group md:min-h-[400px]"
             >
@@ -262,7 +250,6 @@
                 />
               </div>
             </div>
-            <!-- 공유 기능 / Share -->
             <div class="md:col-span-4 bg-surface-container-lowest rounded-[1.5rem] sm:rounded-[2rem] fluid-card group">
               <div class="w-12 h-12 bg-secondary-container/20 flex items-center justify-center rounded-xl fluid-mb-sm">
                 <span class="material-symbols-outlined text-secondary">share</span>
@@ -270,7 +257,6 @@
               <h3 class="fluid-h4 font-bold fluid-mb-sm">나만의 레시피 공유</h3>
               <p class="fluid-sm text-secondary">직접 만든 레시피를 등록하고 사람들과 공유하는 즐거움을 느껴보세요.</p>
             </div>
-            <!-- 북마크 기능 / Bookmark -->
             <div
               class="md:col-span-4 bg-secondary text-on-secondary rounded-[1.5rem] sm:rounded-[2rem] fluid-card group"
             >
@@ -282,7 +268,6 @@
                 마음에 드는 레시피만 쏙쏙 골라 나만의 소중한 요리책을 만드세요.
               </p>
             </div>
-            <!-- 쇼핑 기능 / Shopping -->
             <div
               class="md:col-span-4 bg-surface-container-lowest rounded-[1.5rem] sm:rounded-[2rem] fluid-card border border-outline-variant/15 group"
             >
@@ -298,7 +283,6 @@
         </div>
       </section>
 
-      <!-- 팀 섹션 / Team -->
       <section class="fluid-section fluid-px max-w-7xl mx-auto">
         <div class="text-center fluid-mb">
           <h2 class="fluid-h2 font-bold text-on-surface fluid-mb-sm">YAMY를 만드는 사람들</h2>
@@ -307,7 +291,6 @@
           </p>
         </div>
         <div class="grid grid-cols-2 md:grid-cols-4 fluid-gap">
-          <!-- 팀원 1 / Team Member 1 -->
           <div class="text-center group">
             <div class="fluid-photo relative fluid-mb-sm mx-auto">
               <div
@@ -323,7 +306,6 @@
             <p class="fluid-sm text-primary font-medium">Team Leader</p>
             <p class="fluid-sm text-secondary font-medium mt-1">Full-Stack</p>
           </div>
-          <!-- 팀원 2 / Team Member 2 -->
           <div class="text-center group">
             <div class="fluid-photo relative fluid-mb-sm mx-auto">
               <div
@@ -339,7 +321,6 @@
             <p class="fluid-sm text-primary font-medium">Backend</p>
             <p class="fluid-sm text-secondary font-medium mt-1">Database</p>
           </div>
-          <!-- 팀원 3 / Team Member 3 -->
           <div class="text-center group">
             <div class="fluid-photo relative fluid-mb-sm mx-auto">
               <div
@@ -355,7 +336,6 @@
             <p class="fluid-sm text-primary font-medium">Frontend</p>
             <p class="fluid-sm text-secondary font-medium mt-1">UI/UX Design</p>
           </div>
-          <!-- 팀원 4 / Team Member 4 -->
           <div class="text-center group">
             <div class="fluid-photo relative fluid-mb-sm mx-auto">
               <div
@@ -374,7 +354,6 @@
         </div>
       </section>
 
-      <!-- CTA 섹션 / CTA -->
       <section class="fluid-section fluid-px">
         <div
           class="max-w-5xl mx-auto bg-primary rounded-[2rem] sm:rounded-[3rem] fluid-card text-center relative overflow-hidden shadow-2xl"
@@ -407,7 +386,6 @@
       </section>
     </main>
 
-    <!-- ?명꽣 / Footer -->
     <div id="site-footer"></div>
     <script src="footer-component.js"></script>
     <script src="auth-guard.js"></script>

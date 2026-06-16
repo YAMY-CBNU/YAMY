@@ -32,5 +32,5 @@ app.use((error, req, res, next) => {
 });
 
 app.listen(port, () => {
-  console.log(`YAMY auth server running on http://localhost:${port}`);
+  console.log(`YAMY backend running on http://localhost:${port}`);
 });

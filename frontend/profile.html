@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 
 <html lang="ko">
   <head>
@@ -17,7 +17,6 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body class="bg-surface text-on-surface font-body selection:bg-primary-fixed selection:text-on-primary-fixed">
-    <!-- 상단 네비바 / TopNavBar -->
     <nav
       class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl flex justify-between items-center px-4 md:px-12 h-16 md:h-20 max-w-full mx-auto border-b border-outline-variant/30"
     >
@@ -51,7 +50,6 @@
         </div>
       </div>
       <div class="flex items-center gap-2 md:gap-3 lg:gap-6">
-        <!-- 검색 / Search -->
         <button
           type="button"
           class="flex lg:hidden p-2 text-on-surface-variant hover:text-primary rounded-full hover:bg-surface-container transition-all"
@@ -68,7 +66,6 @@
             type="text"
           />
         </div>
-        <!-- 프로필 / Profile -->
         <a
           href="profile.html"
           data-profile-link
@@ -77,7 +74,6 @@
           <span class="material-symbols-outlined lg:hidden">person</span>
           <span class="hidden lg:inline text-sm whitespace-nowrap" data-profile-text>프로필</span>
         </a>
-        <!-- 로그인/아웃 / Auth -->
         <a
           id="auth-action"
           href="login.html"
@@ -87,9 +83,7 @@
       </div>
     </nav>
     <main class="pt-20 md:pt-32 pb-32 px-6 max-w-6xl mx-auto">
-      <!-- Profile Edit Section -->
       <section class="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-20">
-        <!-- Left: Sidebar / Instructions (Editorial Style) -->
         <div class="lg:col-span-4 space-y-4">
           <h1 class="text-4xl font-bold tracking-tight text-primary">프로필 설정</h1>
           <p class="text-on-surface-variant leading-relaxed body-lg">
@@ -102,11 +96,9 @@
             </div>
           </div>
         </div>
-        <!-- Right: Form -->
         <div class="lg:col-span-8 bg-surface-container-low rounded-3xl p-8 md:p-12 editorial-shadow">
           <div id="profile-status" class="mb-6 rounded-xl border px-4 py-3 text-sm font-semibold hidden"></div>
           <form id="profile-form" class="space-y-8">
-            <!-- Image Upload -->
             <div class="flex flex-col md:flex-row items-center gap-8 pb-8 border-b border-outline-variant/10">
               <div class="relative group">
                 <div class="w-32 h-32 rounded-3xl overflow-hidden ring-4 ring-white shadow-lg bg-white"></div>
@@ -123,7 +115,6 @@
                 <button class="text-primary text-sm font-bold mt-2 hover:underline" type="button">이미지 제거</button>
               </div>
             </div>
-            <!-- Input Fields Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div class="space-y-2">
                 <label class="text-sm font-bold text-on-surface-variant ml-1">닉네임</label>
@@ -174,7 +165,6 @@
           </form>
         </div>
       </section>
-      <!-- Recently Viewed Recipes -->
       <section class="space-y-8">
         <div class="flex justify-between items-end">
           <div class="space-y-2">
@@ -185,9 +175,7 @@
             전체보기 <span class="material-symbols-outlined">chevron_right</span>
           </a>
         </div>
-        <!-- Horizontal Scroll Rail -->
         <div class="flex gap-6 overflow-x-auto pb-8 scrollbar-hide -mx-6 px-6">
-          <!-- Recipe Card 1 -->
           <div class="min-w-[280px] md:min-w-[320px] group cursor-pointer">
             <div
               class="relative h-[200px] rounded-2xl overflow-hidden mb-4 shadow-sm group-hover:shadow-xl transition-all"
@@ -218,7 +206,6 @@
               </p>
             </div>
           </div>
-          <!-- Recipe Card 2 -->
           <div class="min-w-[280px] md:min-w-[320px] group cursor-pointer">
             <div
               class="relative h-[200px] rounded-2xl overflow-hidden mb-4 shadow-sm group-hover:shadow-xl transition-all"
@@ -246,7 +233,6 @@
               </p>
             </div>
           </div>
-          <!-- Recipe Card 3 -->
           <div class="min-w-[280px] md:min-w-[320px] group cursor-pointer">
             <div
               class="relative h-[200px] rounded-2xl overflow-hidden mb-4 shadow-sm group-hover:shadow-xl transition-all"
@@ -277,7 +263,6 @@
               </p>
             </div>
           </div>
-          <!-- Recipe Card 4 -->
           <div class="min-w-[280px] md:min-w-[320px] group cursor-pointer">
             <div
               class="relative h-[200px] rounded-2xl overflow-hidden mb-4 shadow-sm group-hover:shadow-xl transition-all"
@@ -308,7 +293,6 @@
         </div>
       </section>
     </main>
-    <!-- 하단 네비바 / BottomNavBar -->
     <nav
       class="md:hidden fixed bottom-0 left-0 w-full h-20 bg-stone-50/90 backdrop-blur-xl flex justify-around items-center px-4 pb-2 z-50 rounded-t-[2rem] shadow-2xl"
     >

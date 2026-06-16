@@ -8,7 +8,6 @@
     draftCount: document.getElementById('draft-count'),
   };
 
-  // HTML 이스케이프 / Escape HTML
   function escapeHtml(value) {
     return String(value ?? '')
       .replace(/&/g, '&amp;')
@@ -18,7 +17,6 @@
       .replace(/'/g, '&#039;');
   }
 
-  // 날짜 포맷 / Date Format
   function formatDate(value) {
     if (!value) return '';
 
@@ -32,12 +30,10 @@
     });
   }
 
-  // 레시피 링크 / Recipe Link
   function getRecipeLink(recipe) {
     return `recipe-detail.html?id=${encodeURIComponent(recipe.id)}`;
   }
 
-  // 이미지 마크업 / Image Markup
   function createImageMarkup(recipe, title) {
     if (recipe.thumbnailUrl) {
       return `<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="${escapeHtml(recipe.thumbnailUrl)}" alt="${title}"/>`;
@@ -51,7 +47,6 @@
     `;
   }
 
-  // 공개 레시피 카드 / Published Card
   function createRecipeCard(recipe) {
     const title = escapeHtml(recipe.title || '제목 없는 레시피');
     const cookTime = escapeHtml(recipe.cookTime || '시간 미정');
@@ -102,7 +97,6 @@
     `;
   }
 
-  // 임시저장 카드 / Draft Card
   function createDraftCard(recipe) {
     const title = escapeHtml(recipe.title || '제목 없는 레시피');
     const updatedAt = escapeHtml(formatDate(recipe.updatedAt));
@@ -147,7 +141,6 @@
     `;
   }
 
-  // 새 레시피 추가 카드 / Add Card
   function createAddCard() {
     return `
       <a href="recipe-editor.html" class="flex flex-col items-center justify-center border-2 border-dashed border-outline-variant/50 rounded-lg aspect-[4/3] p-4 text-center bg-surface-container/30 hover:bg-surface-container/60 hover:border-primary/40 transition-all cursor-pointer group">
@@ -158,7 +151,6 @@
     `;
   }
 
-  // 공개 레시피 렌더링 / Render Published
   function renderPublished(recipes) {
     if (elements.publishedCount) {
       elements.publishedCount.textContent = String(recipes.length);
@@ -180,7 +172,6 @@
     elements.publishedGrid.innerHTML = recipes.map(createRecipeCard).join('') + createAddCard();
   }
 
-  // 임시저장 렌더링 / Render Drafts
   function renderDrafts(recipes) {
     if (elements.draftCount) {
       elements.draftCount.textContent = String(recipes.length);
@@ -201,7 +192,6 @@
     elements.draftGrid.innerHTML = recipes.map(createDraftCard).join('') + createAddCard();
   }
 
-  // 내 레시피 불러오기 / Load My Recipes
   async function loadMyRecipes() {
     const token = localStorage.getItem('yamy_token');
     if (!token) return;

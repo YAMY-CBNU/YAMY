@@ -1,7 +1,6 @@
 (function () {
   const API_BASE = 'http://localhost:3000/api/recipes';
 
-  // DOM 요소 / DOM Elements
   const elements = {
     title: document.getElementById('recipe-title-main'),
     description: document.getElementById('recipe-description-main'),
@@ -51,7 +50,6 @@
     pauseTimerButton: document.getElementById('pause-timer'),
     resetTimerButton: document.getElementById('reset-timer'),
     notification: document.getElementById('notification'),
-    // fullscreen
     viewAllButton: document.getElementById('view-all-btn'),
     fsModal: document.getElementById('step-fullscreen-modal'),
     closeFullscreenButton: document.getElementById('close-fullscreen-btn'),
@@ -73,7 +71,6 @@
     fsNextButton: null,
   };
 
-  // 상태 변수 / State
   let steps = [];
   let currentStepIndex = 0;
   let timerInterval = null;
@@ -205,7 +202,6 @@
     }
   }
 
-  // 이미지 플레이스홀더 / Image Placeholder
   function getImagePlaceholderMarkup(label) {
     return `
       <div class="w-full h-full min-h-52 flex flex-col items-center justify-center bg-surface-container text-on-surface-variant">
@@ -237,7 +233,6 @@
     elements[key] = container.querySelector('img');
   }
 
-  // HTML 이스케이프 / Escape HTML
   function escapeHtml(value) {
     return String(value ?? '')
       .replace(/&/g, '&amp;')
@@ -589,13 +584,11 @@
     }
   }
 
-  // 정보 칩 / Info Chip
   function renderChip(element, icon, text) {
     if (!element) return;
     element.innerHTML = `<span class="material-symbols-outlined text-base text-primary">${icon}</span>${escapeHtml(text || '-')}`;
   }
 
-  // 카테고리 태그 / Category Tags
   function renderTags(recipe) {
     if (!elements.tags) return;
 
@@ -618,7 +611,6 @@
     )).join('');
   }
 
-  // 미준비 재료 업데이트 / Missing Ingredients
   function updateMissingIngredients() {
     if (!elements.missingIngredients || !elements.ingredientForm) return;
 
@@ -653,7 +645,6 @@
     elements.missingIngredients.replaceChildren(fragment);
   }
 
-  // 재료 목록 / Ingredients
   function renderIngredients(recipe) {
     const ingredients = Array.isArray(recipe.ingredients) ? recipe.ingredients : [];
     if (!elements.ingredientForm) return;
@@ -694,7 +685,6 @@
     updateMissingIngredients();
   }
 
-  // Cooking Tips
   function renderCookingTips(recipe) {
     if (!elements.cookingTipsSection || !elements.cookingTipsList) return;
 
@@ -711,7 +701,6 @@
     `).join('');
   }
 
-  // 조리 단계 생성 / Build Steps
   function buildSteps(recipe) {
     const recipeSteps = Array.isArray(recipe.steps) ? recipe.steps : [];
 
@@ -730,7 +719,6 @@
       }];
   }
 
-  // 단계 인디케이터 / Step Indicators
   function renderIndicators() {
     if (!elements.indicators) return;
 
@@ -752,14 +740,12 @@
     });
   }
 
-  // 타이머 포맷 / Timer Format
   function formatTimer(seconds) {
     const minutes = Math.floor(seconds / 60);
     const rest = seconds % 60;
     return `${String(minutes).padStart(2, '0')}:${String(rest).padStart(2, '0')}`;
   }
 
-  // 타이머 정지 / Stop Timer
   function stopTimer() {
     timerRunning = false;
     window.clearInterval(timerInterval);
@@ -769,7 +755,6 @@
     if (elements.fsPauseTimerButton) elements.fsPauseTimerButton.style.display = 'none';
   }
 
-  // 타이머 렌더링 / Render Timer
   function renderTimer(step) {
     stopTimer();
     totalSeconds = step.timerSeconds;
@@ -796,7 +781,6 @@
     if (elements.fsTimerProgressBar) elements.fsTimerProgressBar.style.width = '0%';
   }
 
-  // 조리 단계 렌더링 / Render Step
   function renderStep() {
     const step = steps[currentStepIndex];
     if (!step) return;
@@ -817,7 +801,6 @@
     }
   }
 
-  // 전체화면 단계 렌더링 / Render Fullscreen Step
   function renderFullscreenStep() {
     const step = steps[currentStepIndex];
     if (!step) return;
@@ -835,7 +818,6 @@
     updateIndicators(elements.fsIndicators);
   }
 
-  // 전체화면 열기 / Open Fullscreen
   function openFullscreen() {
     if (!elements.fsModal) return;
     elements.fsModal.style.display = 'flex';
@@ -869,14 +851,12 @@
     }
   }
 
-  // 전체화면 닫기 / Close Fullscreen
   function closeFullscreen() {
     if (!elements.fsModal) return;
     elements.fsModal.style.display = 'none';
     document.body.style.overflow = '';
   }
 
-  // 레시피 렌더링 / Render Recipe
   function renderRecipe(recipe) {
     currentRecipe = recipe;
     if (elements.saveRecipeButton) elements.saveRecipeButton.disabled = false;
@@ -907,7 +887,6 @@
     renderStep();
   }
 
-  // 레시피 불러오기 / Load Recipe
   async function loadRecipe() {
     const recipeId = new URLSearchParams(window.location.search).get('id');
     if (!recipeId) return;
@@ -982,7 +961,6 @@
     }
   }
 
-  // 타이머 틱 / Timer Tick
   function tickTimer() {
     if (remainingSeconds <= 0) {
       stopTimer();
@@ -1004,7 +982,6 @@
     }
   }
 
-  // 타이머 시작 / Start Timer
   function startTimer() {
     if (timerRunning || remainingSeconds <= 0) return;
     timerRunning = true;
@@ -1015,7 +992,6 @@
     timerInterval = window.setInterval(tickTimer, 1000);
   }
 
-  // 이벤트 리스너 / Event Listeners
   elements.startTimerButton?.addEventListener('click', startTimer);
   elements.pauseTimerButton?.addEventListener('click', stopTimer);
   elements.resetTimerButton?.addEventListener('click', () => {
@@ -1085,7 +1061,6 @@
     }
   });
 
-  // 전체화면 클릭 이동 / Fullscreen Click Nav
   elements.fsSlideArea?.addEventListener('click', (e) => {
     if (e.target.closest('button, input, select, a, label')) return;
     const rect = elements.fsSlideArea.getBoundingClientRect();
@@ -1099,7 +1074,6 @@
     }
   });
 
-  // 마우스 커서 & 힌트 / Mouse Cursor & Hints
   elements.fsSlideArea?.addEventListener('mousemove', (e) => {
     const onInteractive = !!e.target.closest('button, input, select, a, label');
     if (onInteractive) {
@@ -1130,7 +1104,6 @@
   elements.viewAllButton?.addEventListener('click', openFullscreen);
   elements.closeFullscreenButton?.addEventListener('click', closeFullscreen);
 
-  // 키보드 네비게이션 / Keyboard Nav
   document.addEventListener('keydown', (e) => {
     if (elements.fsModal?.style.display !== 'flex') return;
     if (e.key === 'ArrowLeft' && currentStepIndex > 0) {
@@ -1144,7 +1117,6 @@
     }
   });
 
-  // 터치 스와이프 / Touch Swipe
   let fsSwipeStartX = 0;
   elements.fsModal?.addEventListener('touchstart', (e) => {
     fsSwipeStartX = e.touches[0].clientX;

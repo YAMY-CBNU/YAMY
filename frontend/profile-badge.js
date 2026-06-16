@@ -1,5 +1,4 @@
 (function () {
-  // 저장된 유저 정보 / Stored User
   function getStoredUser() {
     const rawUser = window.localStorage.getItem('yamy_user');
 
@@ -14,12 +13,10 @@
     }
   }
 
-  // 로그인 상태 / Auth State
   function isLoggedIn() {
     return Boolean(window.localStorage.getItem('yamy_token'));
   }
 
-  // 프로필 라벨 / Profile Label
   function getProfileLabel(user) {
     const username =
       (typeof user?.username === 'string' && user.username.trim()) ||
@@ -29,7 +26,6 @@
     return username ? `${username} 요리사` : '프로필';
   }
 
-  // 로그아웃 / Logout
   function handleLogout(event) {
     event.preventDefault();
     window.localStorage.removeItem('yamy_token');
@@ -37,7 +33,6 @@
     window.location.href = 'index.html';
   }
 
-  // 네비 UI 업데이트 / Nav UI Update
   function applyAuthUi() {
     const loggedIn = isLoggedIn();
     const label = getProfileLabel(getStoredUser());
@@ -73,7 +68,6 @@
     });
   }
 
-  // 초기화 / Init
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', applyAuthUi);
     return;

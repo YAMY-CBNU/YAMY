@@ -1,4 +1,3 @@
-// Footer Component
 (function () {
   const placeholder = document.getElementById('site-footer');
   if (!placeholder) return;

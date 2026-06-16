@@ -2,7 +2,7 @@
   "name": "yamy-backend",
   "version": "1.0.0",
   "private": true,
-  "description": "YAMY authentication backend",
+  "description": "YAMY backend API",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

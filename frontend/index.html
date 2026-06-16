@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 
 <html class="light" lang="ko">
   <head>
@@ -17,7 +17,6 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body class="bg-surface text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container">
-    <!-- 상단 네비바 / TopNavBar -->
     <nav
       class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl flex justify-between items-center px-4 md:px-12 h-16 md:h-20 max-w-full mx-auto border-b border-outline-variant/30"
     >
@@ -52,7 +51,6 @@
         </div>
       </div>
       <div class="flex items-center gap-2 md:gap-3 lg:gap-6">
-        <!-- 검색 / Search -->
         <button
           id="mobile-search-toggle"
           type="button"
@@ -76,7 +74,6 @@
             autocomplete="off"
           />
         </form>
-        <!-- 프로필 / Profile -->
         <a
           href="profile.html"
           data-profile-link
@@ -85,7 +82,6 @@
           <span class="material-symbols-outlined lg:hidden">person</span>
           <span class="hidden lg:inline text-sm whitespace-nowrap" data-profile-text>프로필</span>
         </a>
-        <!-- 로그인/아웃 / Auth -->
         <a
           id="auth-action"
           href="login.html"
@@ -119,7 +115,6 @@
       </form>
     </div>
     <main class="pt-20 md:pt-32 pb-32 overflow-x-hidden max-w-7xl mx-auto">
-      <!-- 히어로 섹션 / Hero Section -->
       <section class="px-4 md:px-8 mb-16 md:mb-24">
         <a
           id="recommended-recipe-link"
@@ -153,7 +148,6 @@
           </div>
         </a>
       </section>
-      <!-- 인기 레시피 / Popular Now -->
       <section class="mb-16 md:mb-24">
         <div class="px-4 md:px-8 flex justify-between items-end mb-8 md:mb-10">
           <div>
@@ -184,7 +178,6 @@
         </div>
       </section>
 
-      <!-- 최근 공개 레시피 / Recently Published -->
       <section id="recent-recipes-section" class="mb-16 md:mb-24">
         <div class="px-4 md:px-8 flex justify-between items-end mb-8 md:mb-10">
           <div>
@@ -207,7 +200,6 @@
         </div>
       </section>
 
-      <!-- 빠른 요리 / Quick Meals -->
       <section
         class="mb-16 md:mb-24 bg-surface-variant py-14 md:py-24 -mx-4 md:-mx-8 px-6 md:px-16 rounded-[2rem] md:rounded-[3rem]"
       >
@@ -227,7 +219,6 @@
           </div>
         </div>
       </section>
-      <!-- 추천 레시피 / Recommended -->
       <section class="mb-16 md:mb-24">
         <div class="px-4 md:px-8 flex justify-between items-end mb-8 md:mb-10">
           <div>
@@ -248,7 +239,6 @@
           </button>
         </div>
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-10 px-4 md:px-8">
-          <!-- 카드 1 / Card 1 -->
           <div class="group cursor-pointer">
             <div
               class="relative h-[200px] rounded-2xl overflow-hidden mb-4 shadow-sm group-hover:shadow-xl transition-all"
@@ -274,7 +264,6 @@
               </p>
             </div>
           </div>
-          <!-- 카드 2 / Card 2 -->
           <div class="group cursor-pointer">
             <div
               class="relative h-[200px] rounded-2xl overflow-hidden mb-4 shadow-sm group-hover:shadow-xl transition-all"
@@ -300,7 +289,6 @@
               </p>
             </div>
           </div>
-          <!-- 카드 3 / Card 3 -->
           <div class="group cursor-pointer">
             <div
               class="relative h-[200px] rounded-2xl overflow-hidden mb-4 shadow-sm group-hover:shadow-xl transition-all"
@@ -326,7 +314,6 @@
               </p>
             </div>
           </div>
-          <!-- 카드 4 / Card 4 -->
           <div class="group cursor-pointer">
             <div
               class="relative h-[200px] rounded-2xl overflow-hidden mb-4 shadow-sm group-hover:shadow-xl transition-all"
@@ -355,7 +342,6 @@
         </div>
       </section>
     </main>
-    <!-- ?명꽣 / Footer -->
     <div id="site-footer"></div>
     <script src="footer-component.js"></script>
     <script>
@@ -384,22 +370,18 @@
           localStorage.removeItem("yamy_user");
         }
 
-        // 로그인 상태에 따라 네비게이션 메뉴 제어
         const myRecipeLink = document.getElementById("nav-my-recipe");
         if (!window.authGuard.isLoggedIn()) {
-          // 로그인 안 됨 → "내 레시피" 숨김
           if (myRecipeLink) {
             myRecipeLink.style.display = "none";
           }
         } else {
-          // 로그인 됨 → "내 레시피" 정상 링크로 복구
           if (myRecipeLink) {
             myRecipeLink.style.display = "";
           }
         }
       });
     </script>
-    <!-- 하단 네비바 / BottomNavBar -->
     <nav
       class="md:hidden fixed bottom-0 left-0 w-full h-20 bg-stone-50/90 backdrop-blur-xl flex justify-around items-center px-4 pb-2 z-50 rounded-t-[2rem] shadow-2xl"
     >

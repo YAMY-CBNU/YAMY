@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="ko">
   <head>
     <meta charset="utf-8" />
@@ -17,7 +17,6 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body class="bg-background text-on-background font-body h-screen overflow-hidden flex flex-col">
-    <!-- 상단 네비바 / TopNavBar -->
     <nav
       class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl flex justify-between items-center px-5 md:px-12 h-16 md:h-20 max-w-full mx-auto border-b border-outline-variant/30"
     >
@@ -52,7 +51,6 @@
         </div>
       </div>
       <div class="flex items-center gap-2 md:gap-3 lg:gap-6">
-        <!-- 검색 / Search -->
         <button
           type="button"
           class="flex lg:hidden p-2 text-on-surface-variant hover:text-primary rounded-full hover:bg-surface-container transition-all"
@@ -69,7 +67,6 @@
             type="text"
           />
         </div>
-        <!-- 프로필 / Profile -->
         <a
           href="profile.html"
           data-profile-link
@@ -78,7 +75,6 @@
           <span class="material-symbols-outlined lg:hidden">person</span>
           <span class="hidden lg:inline text-sm whitespace-nowrap" data-profile-text>프로필</span>
         </a>
-        <!-- 로그인/아웃 / Auth -->
         <a
           id="auth-action"
           href="login.html"
@@ -100,9 +96,7 @@
       </div>
     </nav>
 
-    <!-- 메인 콘텐츠 / Main Content -->
     <main class="flex flex-1 min-h-0 pt-16 md:pt-24 overflow-hidden">
-      <!-- 좌측 이미지 / Left Image -->
       <div class="hidden lg:block lg:w-1/2 relative h-full">
         <img
           alt="Cozy kitchen interior with warm morning light and fresh ingredients"
@@ -123,12 +117,10 @@
         </div>
       </div>
 
-      <!-- 우측 폼 / Signup Form -->
       <div
         class="w-full lg:w-1/2 h-full overflow-y-auto bg-[#ffffff] flex items-center justify-center px-6 md:px-16 py-6"
       >
         <div class="w-full max-w-[480px]">
-          <!-- 탭 전환기 / Tab Switcher -->
           <div class="flex border-b border-[#ddc0b8]/30 mb-8">
             <a
               href="login.html"
@@ -142,7 +134,6 @@
             >
           </div>
 
-          <!-- 헤더 / Header -->
           <div class="mb-8">
             <h1 class="text-xl md:text-2xl font-extrabold text-[#9d3d1c] tracking-tight mb-2">YAMY와 함께 시작해요!</h1>
             <p class="text-sm text-[#56423c] leading-relaxed font-medium">
@@ -150,9 +141,7 @@
             </p>
           </div>
 
-          <!-- 회원가입 폼 / Signup Form -->
           <form class="space-y-5" action="login.html" method="get">
-            <!-- 닉네임 / Username -->
             <div class="space-y-2">
               <label for="signup-name" class="block text-xs font-bold text-[#74593d] tracking-wider uppercase px-1"
                 >닉네임</label
@@ -167,7 +156,6 @@
               />
             </div>
 
-            <!-- 이메일 / Email -->
             <div class="space-y-2">
               <label for="signup-email" class="block text-xs font-bold text-[#74593d] tracking-wider uppercase px-1"
                 >이메일</label
@@ -182,7 +170,6 @@
               />
             </div>
 
-            <!-- 비밀번호 / Password -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div class="space-y-2">
                 <label
@@ -218,7 +205,6 @@
               </div>
             </div>
 
-            <!-- 약관 동의 / Terms -->
             <label class="flex items-start gap-3 cursor-pointer" for="agree-terms">
               <input
                 id="agree-terms"
@@ -232,7 +218,6 @@
               </span>
             </label>
 
-            <!-- 제출 버튼 / Submit -->
             <button
               type="submit"
               class="w-full py-3.5 px-6 bg-gradient-to-r from-[#9d3d1c] to-[#bd5532] text-white font-bold text-base rounded-xl active:scale-95 hover:scale-[1.01] transition-all shadow-lg hover:shadow-xl"
@@ -241,7 +226,6 @@
             </button>
           </form>
 
-          <!-- 로그인 링크 / Login Link -->
           <div class="mt-8 text-center">
             <a
               href="login.html"
@@ -252,7 +236,6 @@
             </a>
           </div>
 
-          <!-- 모바일 저작권 / Copyright -->
           <div class="mt-12 pt-8 border-t border-[#ddc0b8]/20 lg:hidden text-center text-xs text-[#56423c]/60">
             © 2026 YAMY. Your Assistant for Making Yummy.
           </div>
@@ -260,7 +243,6 @@
       </div>
     </main>
 
-    <!-- 데스크톱 푸터 / Desktop Footer -->
     <footer class="hidden lg:block flex-none w-full border-t border-[#ddc0b8]/20 bg-[#f6f3ee] text-sm">
       <div class="flex justify-between items-center px-10 py-6 w-full">
         <p class="text-[#74593d]">© 2026 YAMY. Your Assistant for Making Yummy.</p>

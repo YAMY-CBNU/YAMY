@@ -1,4 +1,3 @@
-/* ramen.html + recipe-detail.html 공유 */
 tailwind.config = {
     darkMode: "class",
     theme: {

@@ -1,4 +1,3 @@
-/* landing.html + login.html + signup.html 공유 */
 tailwind.config = {
     darkMode: "class",
     theme: {

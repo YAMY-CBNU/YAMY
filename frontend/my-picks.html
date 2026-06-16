@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 
 <html lang="ko">
   <head>
@@ -19,7 +19,6 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body class="bg-surface text-on-surface font-body min-h-screen flex flex-col">
-    <!-- 상단 네비바 / TopNavBar -->
     <nav
       class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl flex justify-between items-center px-4 md:px-12 h-16 md:h-20 max-w-full mx-auto border-b border-outline-variant/30"
     >
@@ -54,7 +53,6 @@
         </div>
       </div>
       <div class="flex items-center gap-2 md:gap-3 lg:gap-6">
-        <!-- 검색 / Search -->
         <button
           type="button"
           class="flex lg:hidden p-2 text-on-surface-variant hover:text-primary rounded-full hover:bg-surface-container transition-all"
@@ -71,7 +69,6 @@
             type="text"
           />
         </div>
-        <!-- 프로필 / Profile -->
         <a
           href="profile.html"
           data-profile-link
@@ -80,7 +77,6 @@
           <span class="material-symbols-outlined lg:hidden">person</span>
           <span class="hidden lg:inline text-sm whitespace-nowrap" data-profile-text>프로필</span>
         </a>
-        <!-- 로그인/아웃 / Auth -->
         <a
           id="auth-action"
           href="login.html"
@@ -90,7 +86,6 @@
       </div>
     </nav>
     <main class="pt-20 md:pt-32 flex-grow">
-      <!-- 히어로 섹션 / Hero Section -->
       <section class="px-6 py-8 md:py-10 max-w-screen-xl mx-auto">
         <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
           <div>
@@ -102,7 +97,6 @@
               다시 요리하고 싶은 순간을 위해 보관된 레시피 컬렉션입니다.
             </p>
           </div>
-          <!-- 검색 & 필터 / Search & Filters -->
           <div class="flex flex-col gap-2 w-full md:w-auto">
             <div class="relative">
               <span
@@ -118,7 +112,6 @@
             </div>
           </div>
         </div>
-        <!-- 필터 칩 / Filter Chips -->
         <div class="hidden flex-wrap gap-1.5 mb-6">
           <button
             class="px-3.5 py-1 rounded-full bg-primary text-on-primary font-bold text-xs transition-all shadow-md shadow-primary/20"
@@ -151,13 +144,11 @@
             파스타
           </button>
         </div>
-        <!-- 그리드 / Grid -->
         <div id="saved-recipes-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-6">
           <div class="col-span-full p-10 text-center text-on-surface-variant font-semibold">
             저장된 레시피를 불러오는 중입니다.
           </div>
           <template>
-          <!-- 카드 1 / Card 1 -->
           <div class="group cursor-pointer">
             <div
               class="relative h-[200px] rounded-2xl overflow-hidden mb-4 shadow-sm group-hover:shadow-xl transition-all"
@@ -185,7 +176,6 @@
               </p>
             </div>
           </div>
-          <!-- 카드 2 / Card 2 -->
           <div class="group cursor-pointer">
             <div
               class="relative h-[200px] rounded-2xl overflow-hidden mb-4 shadow-sm group-hover:shadow-xl transition-all"
@@ -213,7 +203,6 @@
               </p>
             </div>
           </div>
-          <!-- 카드 3 / Card 3 -->
           <div class="group cursor-pointer">
             <div
               class="relative h-[200px] rounded-2xl overflow-hidden mb-4 shadow-sm group-hover:shadow-xl transition-all"
@@ -241,7 +230,6 @@
               </p>
             </div>
           </div>
-          <!-- 카드 4 / Card 4 -->
           <div class="group cursor-pointer">
             <div
               class="relative h-[200px] rounded-2xl overflow-hidden mb-4 shadow-sm group-hover:shadow-xl transition-all"
@@ -269,7 +257,6 @@
               </p>
             </div>
           </div>
-          <!-- 추가 버튼 / Add New -->
           <a
             href="index.html"
             class="flex flex-col items-center justify-center border-2 border-dashed border-outline-variant/50 rounded-lg aspect-[4/3] p-4 text-center bg-surface-container/30 hover:bg-surface-container/50 transition-all cursor-pointer"
@@ -284,10 +271,8 @@
         </div>
       </section>
     </main>
-    <!-- ?명꽣 / Footer -->
     <div id="site-footer"></div>
     <script src="footer-component.js"></script>
-    <!-- 하단 네비바 / BottomNavBar -->
     <nav
       class="md:hidden fixed bottom-0 left-0 w-full h-20 bg-stone-50/90 backdrop-blur-xl flex justify-around items-center px-4 pb-2 z-50 rounded-t-[2rem] shadow-2xl"
     >

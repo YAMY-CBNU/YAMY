@@ -1,4 +1,3 @@
-/* recipe-editor.html + profile.html 공유 */
 tailwind.config = {
     darkMode: "class",
     theme: {
