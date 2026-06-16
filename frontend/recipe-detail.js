@@ -231,7 +231,7 @@
         id="${key === 'finishedImage' ? 'recipe-finished-image' : 'step-image'}"
         src="${escapeHtml(src)}"
         alt="${escapeHtml(alt)}"
-        class="${key === 'finishedImage' ? 'w-full h-52 object-cover hover:scale-105 transition-transform duration-500' : 'w-full h-52 md:h-[440px] object-cover hover:scale-105 transition-transform duration-500'}"
+        class="${key === 'finishedImage' ? 'w-full h-80 md:h-[360px] object-contain bg-surface-container hover:scale-105 transition-transform duration-500' : 'w-full h-52 md:h-[440px] object-cover hover:scale-105 transition-transform duration-500'}"
       />
     `;
     elements[key] = container.querySelector('img');
